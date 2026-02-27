@@ -19,3 +19,11 @@ export type StudyModuleTabKey =
 export type FacultyNClassroomTabKey = "faculty" | "classroom" | "assign-class";
 export type AssessmentNGradingTabKey = "assessment" | "grading";
 export type YearsNTerms = "years" | "terms";
+
+
+export interface ReportPaths {
+  studentId: string;
+  academicYearId: string;
+  academicTermId: string;
+  subLevelId: string;
+}

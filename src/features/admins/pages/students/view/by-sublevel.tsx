@@ -72,8 +72,8 @@ const ViewBySubLevel = () => {
 
   return (
     <StudentListPage<SubLevelStudentsGet>
-      title="All Students"
-      breadcrumb={["Students", "Educational Level Students"]}
+      title="SubLevel Students"
+      breadcrumb={["Students", "Sub-Level Students"]}
       showCardHeader={false}
       icon={<Building className="w-4 h-4" />}
       stats={[

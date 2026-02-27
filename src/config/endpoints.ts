@@ -1,4 +1,5 @@
 import dayjs from "@/lib/dayjs";
+import type { ReportPaths } from "@/types/ui";
 
 const endpoints = {
   auth: {
@@ -159,6 +160,10 @@ const endpoints = {
       parents: (id: string) => `/UpdateStudentParentDetails/${id}`,
       guardians: (id: string) => `/UpdateStudentGuardianDetails/${id}`,
       enrollment: (id: string) => `/UpdateStudentEnrollmentDetails/${id}`,
+    },
+    reports: {
+      terminal: (paths: ReportPaths) =>
+        `/GetStudentTerminalReport/Student/${paths.studentId}/AcademicYear/${paths.academicYearId}/AcademicTerm/${paths.academicTermId}/SubLevel/${paths.subLevelId}`,
     },
 
     getAllPn: "/GetAllStudents",

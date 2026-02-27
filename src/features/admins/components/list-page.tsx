@@ -24,6 +24,8 @@ import { Table, type TableProps } from "antd";
 import { ChevronRight } from "lucide-react";
 import { ListPagination } from "./pagination";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUIStore } from "@/store/ui.store";
+import { cn } from "@/lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────
 export interface StatBadge {
@@ -54,6 +56,7 @@ export interface ListPageProps<T extends object> {
   rowKey?: string;
   emptyText?: string;
   showCardHeader?: boolean;
+  className?: string;
 }
 
 // ── Stat chip colour map ──────────────────────────────────────
@@ -81,10 +84,21 @@ export function ListPage<T extends object>({
   rowKey = "studentId",
   emptyText = "No students found",
   showCardHeader = true,
+  className,
 }: ListPageProps<T>) {
   const isMobile = useIsMobile();
+  const collapsed = useUIStore((s) => s.menuCollapsed);
+  // const opened = useUIStore((s) => s.sidebarOpen);
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-2">
+    <div
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+      className={cn(
+        "p-2",
+        collapsed ? "max-w-[94.1dvw]" : "max-w-[81dvw]",
+        isMobile && "max-w-[94.1dvw]",
+        className,
+      )}
+    >
       {/* ── Page header ── */}
       <MotionDiv
         initial={{ opacity: 0, y: -8 }}

@@ -23,6 +23,8 @@ import {
   // Contact2Icon,
   UserCogIcon,
   ShieldCheckIcon,
+  FileTextIcon,
+  CalendarCheckIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -30,6 +32,7 @@ const { admin } = paths;
 const { index } = admin;
 
 const menu: MenuProps["items"] = [
+  // dashboard
   {
     key: admin.index.href,
     label: <Link to={index.href}>{index.label}</Link>,
@@ -269,6 +272,37 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ShieldCheckIcon className="size-3.5" />,
+      },
+    ],
+  },
+  // reports
+  {
+    key: admin.reports.href,
+    label: (
+      <SidebarLabel to={admin.reports.href} type="span">
+        {admin.reports.label}
+      </SidebarLabel>
+    ),
+    icon: <FileTextIcon className="size-3.75" />,
+    type: "submenu",
+    children: [
+      {
+        key: admin.stuTermReport.href,
+        label: (
+          <SidebarLabel type="link" to={admin.stuTermReport.href}>
+            {admin.stuTermReport.label}
+          </SidebarLabel>
+        ),
+        icon: <FileTextIcon className="size-3.5" />,
+      },
+      {
+        key: admin.stuAttReport.href,
+        label: (
+          <SidebarLabel type="link" to={admin.stuAttReport.href}>
+            {admin.stuAttReport.label}
+          </SidebarLabel>
+        ),
+        icon: <CalendarCheckIcon className="size-3.5" />,
       },
     ],
   },

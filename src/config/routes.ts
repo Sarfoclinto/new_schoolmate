@@ -107,6 +107,21 @@ const paths = {
       label: "View by Role",
       href: "/admin/staff/view/by-role",
     },
+
+    // reports
+    reports: { label: "Reports", href: "/admin/reports" },
+    stuTermReport: {
+      label: "Terminal Report",
+      href: "/admin/reports/student-report",
+    },
+    stuReportDetail: {
+      label: "Student Report Detail",
+      href: "/admin/reports/student-report-detail",
+    },
+    stuAttReport: {
+      label: "Attendance",
+      href: "/admin/reports/student-attendance-report",
+    },
   },
   staff: {
     index: { href: "/staff", label: "Staff" },

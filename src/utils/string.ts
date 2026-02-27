@@ -80,10 +80,15 @@ export const getUserDashboardRoute = () => {
   return paths.public.unknown.redirect(`Invalid role: ${user.role}`);
 };
 
-export const getInitials = (text = "Fist Last") => {
-  const [first, last] = text.split(" ");
-  return `${first?.charAt(0)}${last?.charAt(0)}`.toUpperCase();
-};
+export const getInitials = (text = "Fist Last") =>
+  text
+    ? text
+        .trim()
+        .split(" ")
+        .filter(Boolean)
+        .map((n) => n[0])
+        .join("")
+    : "N/A";
 
 export const copyToClipboard = async (text?: string) => {
   if (!text) return;
