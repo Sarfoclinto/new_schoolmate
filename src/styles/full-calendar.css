@@ -1,0 +1,374 @@
+/*
+ * FullCalendar — SchoolMate Admin Theme
+ * Deep Navy (#0D1B2E) × Gold (#C9A84C)
+ * Font: DM Sans
+ * ─────────────────────────────────────────────────────────
+ * Import this file in your dashboard component or global CSS:
+ *   import "./fullcalendar-theme.css";
+ */
+
+/* ── 1. Root container ───────────────────────────────────── */
+.fc {
+  font-family: 'DM Sans', sans-serif !important;
+  --fc-border-color: #E8EDF5;
+  --fc-today-bg-color: rgba(201, 168, 76, 0.08);
+  --fc-neutral-bg-color: #F4F6FA;
+  --fc-page-bg-color: #ffffff;
+  --fc-highlight-color: rgba(30, 58, 95, 0.06);
+
+  /* Event colors */
+  --fc-event-bg-color: #1E3A5F;
+  --fc-event-border-color: transparent;
+  --fc-event-text-color: #ffffff;
+  --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.15);
+
+  /* Non-business */
+  --fc-non-business-color: rgba(244, 246, 250, 0.6);
+}
+
+/* ── 2. Toolbar (header with prev/next/title) ────────────── */
+.fc .fc-toolbar {
+  padding: 0 0 16px 0 !important;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.fc .fc-toolbar-title {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: #0D1B2E !important;
+  letter-spacing: 0.01em;
+}
+
+/* Toolbar button group */
+.fc .fc-button-group,
+.fc .fc-button {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.fc .fc-button {
+  background: #F4F6FA !important;
+  color: #1E3A5F !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #E8EDF5 !important;
+  transition: all 0.15s ease !important;
+  text-transform: capitalize !important;
+  letter-spacing: 0.02em;
+}
+
+.fc .fc-button:hover {
+  background: #1E3A5F !important;
+  color: #ffffff !important;
+  border-color: #1E3A5F !important;
+}
+
+.fc .fc-button:active,
+.fc .fc-button:focus {
+  background: #0D1B2E !important;
+  color: #C9A84C !important;
+  border-color: #0D1B2E !important;
+  box-shadow: none !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: #0D1B2E !important;
+  color: #C9A84C !important;
+  border-color: #0D1B2E !important;
+}
+
+/* Prev / Next icon buttons */
+.fc .fc-prev-button,
+.fc .fc-next-button {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+}
+
+.fc .fc-prev-button .fc-icon,
+.fc .fc-next-button .fc-icon {
+  font-size: 13px !important;
+}
+
+/* Today button */
+.fc .fc-today-button {
+  background: transparent !important;
+  border: 1px solid #C9A84C !important;
+  color: #8B6914 !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  padding: 5px 14px !important;
+}
+
+.fc .fc-today-button:hover {
+  background: #C9A84C !important;
+  color: #0D1B2E !important;
+}
+
+.fc .fc-today-button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+}
+
+/* ── 3. Day-of-week header row ───────────────────────────── */
+.fc .fc-col-header {
+  background: #0D1B2E;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+}
+
+.fc .fc-col-header-cell {
+  border: none !important;
+  padding: 10px 0 !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  text-decoration: none !important;
+  padding: 0 !important;
+}
+
+/* Gold highlight for Sat/Sun headers */
+.fc .fc-day-sat .fc-col-header-cell-cushion,
+.fc .fc-day-sun .fc-col-header-cell-cushion {
+  color: #C9A84C !important;
+}
+
+/* ── 4. Day cells ────────────────────────────────────────── */
+.fc .fc-daygrid-body {
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+
+.fc td,
+.fc th {
+  border-color: #E8EDF5 !important;
+}
+
+.fc .fc-daygrid-day {
+  background: #ffffff;
+  transition: background 0.12s ease;
+}
+
+.fc .fc-daygrid-day:hover {
+  background: #F8FAFD !important;
+}
+
+/* Day number */
+.fc .fc-daygrid-day-number {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748B !important;
+  padding: 6px 8px !important;
+  text-decoration: none !important;
+  line-height: 1;
+  width: 26px;
+  height: 26px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 4px;
+  transition: all 0.15s ease;
+}
+
+.fc .fc-daygrid-day-number:hover {
+  background: #1E3A5F;
+  color: #ffffff !important;
+}
+
+/* Today cell */
+.fc .fc-day-today {
+  background: rgba(201, 168, 76, 0.07) !important;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+  background: #C9A84C !important;
+  color: #0D1B2E !important;
+  font-weight: 800 !important;
+}
+
+/* Weekend day numbers */
+.fc .fc-day-sat .fc-daygrid-day-number,
+.fc .fc-day-sun .fc-daygrid-day-number {
+  color: #C9A84C !important;
+}
+
+.fc .fc-day-today.fc-day-sat .fc-daygrid-day-number,
+.fc .fc-day-today.fc-day-sun .fc-daygrid-day-number {
+  color: #0D1B2E !important;
+}
+
+/* Other month days */
+.fc .fc-day-other .fc-daygrid-day-number {
+  color: #CBD5E1 !important;
+  font-weight: 400 !important;
+}
+
+.fc .fc-day-other {
+  background: #FAFBFD !important;
+}
+
+/* ── 5. Events ───────────────────────────────────────────── */
+.fc .fc-event {
+  border: none !important;
+  border-radius: 5px !important;
+  padding: 1px 6px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  letter-spacing: 0.01em;
+  cursor: pointer !important;
+  transition: filter 0.15s ease, transform 0.1s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fc .fc-event:hover {
+  filter: brightness(1.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.fc .fc-event:active {
+  transform: translateY(0) scale(0.97) !important;
+}
+
+.fc .fc-event-title {
+  font-weight: 600 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "More" link */
+.fc .fc-daygrid-more-link {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #1E3A5F !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  background: rgba(30, 58, 95, 0.08) !important;
+  text-decoration: none !important;
+  transition: background 0.12s ease, color 0.12s ease !important;
+}
+
+.fc .fc-daygrid-more-link:hover {
+  background: #1E3A5F !important;
+  color: #ffffff !important;
+}
+
+/* ── 6. Popover (when clicking "more") ──────────────────── */
+.fc .fc-popover {
+  border: 1px solid #E8EDF5 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px rgba(13, 27, 46, 0.15) !important;
+  overflow: hidden !important;
+}
+
+.fc .fc-popover-header {
+  background: #0D1B2E !important;
+  padding: 10px 14px !important;
+  border-bottom: none !important;
+}
+
+.fc .fc-popover-title {
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #C9A84C !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.fc .fc-popover-close {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 16px !important;
+  transition: color 0.12s ease !important;
+}
+
+.fc .fc-popover-close:hover {
+  color: #ffffff !important;
+}
+
+.fc .fc-popover-body {
+  background: #ffffff !important;
+  padding: 8px !important;
+}
+
+/* ── 7. Table frame ──────────────────────────────────────── */
+.fc .fc-scrollgrid {
+  border-color: #E8EDF5 !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+.fc .fc-scrollgrid-section > td {
+  border: none !important;
+}
+
+.fc .fc-scrollgrid-sync-table {
+  border-bottom-color: #E8EDF5 !important;
+}
+
+/* Remove double borders */
+.fc .fc-daygrid-body table {
+  border-collapse: collapse !important;
+}
+
+/* ── 8. Day cell frame in daygrid ────────────────────────── */
+.fc .fc-daygrid-day-frame {
+  min-height: 80px !important;
+  padding: 0 !important;
+}
+
+.fc .fc-daygrid-day-events {
+  padding: 0 3px 3px !important;
+}
+
+/* ── 9. Scroll / overflow ────────────────────────────────── */
+.fc .fc-scroller {
+  overflow: hidden !important;
+}
+
+/* ── 10. Legend hint (add this below <FullCalendar> in JSX) ─
+   This is a CSS-only legend to show event color meanings.
+   Add class="fc-legend" to a div below the calendar.        */
+.fc-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 4px 0;
+  flex-wrap: wrap;
+}
+
+.fc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748B;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.fc-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
