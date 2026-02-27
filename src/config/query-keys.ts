@@ -69,6 +69,8 @@ export const termKeys = createQueryKeys("terms");
 
 export const studentKeys = createQueryKeys("students");
 export const staffKeys = createQueryKeys("staff");
+export const reportKeys = createQueryKeys("report");
+
 
 // educational level
 export const eduKeys = {

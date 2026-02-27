@@ -2,6 +2,7 @@ import { getHelper, postWithFile, updateWithFile } from "@/api/crud";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/config/constants";
 import endpoints from "@/config/endpoints";
 import type { RegisterResponse } from "@/types/api";
+import type { StudentsMonthlyAttendance } from "@/types/api/attendance";
 import type {
   AcademicLevelStudentsGet,
   AcaStudentsResponse,
@@ -49,9 +50,18 @@ export const getAllSubLevelStuFn = async (sublevelId: string) => {
 export const getStuByIdFn = async (id: string) => {
   return getHelper<StudentGet>(students.getById(id));
 };
+
+// REPORTS START
 export const getStuReportFn = async (py: ReportPaths) => {
   return getHelper<StudentTerminalReportGet>(students.reports.terminal(py));
 };
+
+export const getMonthlyAttendanceFn = async (subId: string, date: string) => {
+  return getHelper<StudentsMonthlyAttendance[]>(
+    students.reports.attendance(subId, date),
+  );
+};
+// REPORTS END
 
 export const getAllAcaStuUnPnFn = async (acaId: string) => {
   return getHelper<AcademicLevelStudentsGet[]>(students.getByAcaIdUnPn(acaId));
