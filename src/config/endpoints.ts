@@ -164,6 +164,8 @@ const endpoints = {
     reports: {
       terminal: (paths: ReportPaths) =>
         `/GetStudentTerminalReport/Student/${paths.studentId}/AcademicYear/${paths.academicYearId}/AcademicTerm/${paths.academicTermId}/SubLevel/${paths.subLevelId}`,
+      attendance: (subId: string, date: string) =>
+        `/GetStudentAttendancePreviews/SubLevel/${subId}/AttendanceDate/${date}`,
     },
 
     getAllPn: "/GetAllStudents",
