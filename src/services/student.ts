@@ -8,9 +8,11 @@ import type {
   AllStudentsResponse,
   EduStudentsResponse,
   StudentGet,
+  StudentTerminalReportGet,
   StudentUpdateWithFile,
   SubLevelStudentsGet,
 } from "@/types/api/student";
+import type { ReportPaths } from "@/types/ui";
 
 const { students } = endpoints;
 const { updates } = students;
@@ -46,6 +48,9 @@ export const getAllSubLevelStuFn = async (sublevelId: string) => {
 };
 export const getStuByIdFn = async (id: string) => {
   return getHelper<StudentGet>(students.getById(id));
+};
+export const getStuReportFn = async (py: ReportPaths) => {
+  return getHelper<StudentTerminalReportGet>(students.reports.terminal(py));
 };
 
 export const getAllAcaStuUnPnFn = async (acaId: string) => {

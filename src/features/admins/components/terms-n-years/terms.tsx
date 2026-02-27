@@ -115,6 +115,7 @@ const Terms = () => {
     postFn: activeTermFn,
     mutationOptions: { mutationKey: ["term", "activate"] },
     onSuccess: ({ responseCode, responseMessage }) => {
+      // TODO: recieve newly activated and replace in store : AcademicTermGet
       if (responseCode === 1) {
         invalidate();
         toast.success(responseMessage);

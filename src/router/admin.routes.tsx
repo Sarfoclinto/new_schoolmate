@@ -34,6 +34,11 @@ const {
   allStaff,
   staffByMode,
   staffByRole,
+
+  // reports
+  stuTermReport,
+  stuAttReport,
+  stuReportDetail,
 } = paths.admin;
 
 // admin pages component
@@ -87,8 +92,6 @@ const StudentDetails = lazy(
   () => import("@/features/admins/pages/students/view/detail"),
 );
 
-// TODO: Student detailed page
-
 // staff
 const CreateStaff = lazy(() => import("@/features/admins/pages/staff/create"));
 const StaffAssignment = lazy(
@@ -103,6 +106,17 @@ const StaffByMode = lazy(
 );
 const StaffByRole = lazy(
   () => import("@/features/admins/pages/staff/view/by-role"),
+);
+
+// reports
+const ViewTerminalReport = lazy(
+  () => import("@/features/admins/pages/reports/terminal"),
+);
+const ViewMonthlyAttendance = lazy(
+  () => import("@/features/admins/pages/reports/monthly-attendance"),
+);
+const ReportDetail = lazy(
+  () => import("@/features/admins/pages/reports/report-details"),
 );
 
 const adminRoutes: RouteObject[] = [
@@ -214,6 +228,20 @@ const adminRoutes: RouteObject[] = [
       {
         path: staffByRole.href,
         element: <StaffByRole />,
+      },
+
+      //
+      {
+        path: stuTermReport.href,
+        element: <ViewTerminalReport />,
+      },
+      {
+        path: stuAttReport.href,
+        element: <ViewMonthlyAttendance />,
+      },
+      {
+        path: stuReportDetail.href,
+        element: <ReportDetail />,
       },
     ],
   },

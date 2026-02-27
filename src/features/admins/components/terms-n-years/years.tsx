@@ -135,6 +135,7 @@ const Years = () => {
     updateFn: activeYearFn,
     mutationOptions: { mutationKey: ["year", "activate"] },
     onSuccess: ({ responseCode, responseMessage }) => {
+      // TODO: recieve newly activated and replace in store: AcademicYearGet
       if (responseCode === 1) {
         invalidate();
         toast.success(responseMessage);

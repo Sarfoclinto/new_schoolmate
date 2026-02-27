@@ -1,5 +1,8 @@
 import type { PaginationProps } from "@/types/ui";
 import type { Dayjs } from "dayjs";
+import type { InstitutionGet } from "./setup/institution";
+import type { GradeGet } from "./setup/assessment-n-grading";
+import type { VacationGet } from "./vacation";
 
 export interface StudentPost {
   // personal data
@@ -172,4 +175,72 @@ export interface StudentUpdateWithFile {
 export interface StudentUpdateWithoutFile {
   id: string;
   data: unknown;
+}
+
+// report
+interface studentDetails {
+  studentId: string;
+  surname: string;
+  firstName: string;
+  otherName: string;
+  status: string;
+  studentImage: string;
+  gender: string;
+
+  programId: string;
+  programName: string;
+
+  subLevelId: string;
+  subLevelName: string;
+  capacity: number;
+  numberOfStudentInSublevel: number;
+
+  academicYearId: string;
+  startYear: string;
+  endYear: string;
+  academicYearStatus: string;
+
+  academicTermId: string;
+  academicTermType: string;
+  academicTermName: string;
+  academicTermStatus: string;
+}
+
+export interface Assessment {
+  assessmentId: string;
+  assessmentName: string;
+  assessmentPercentage: number;
+  scaledMarks: number;
+}
+
+export interface SubjectReport {
+  subjectId: string;
+  subjectName: string;
+  assessments: Assessment[];
+  total: number;
+  positionInSubject: number;
+  gradings: { grade: string; remark: string };
+  teacherId: string;
+  teacherName: string;
+}
+
+export interface StudentSubLevelPosition {
+  studentId: string;
+  totalMarks: number;
+  positionInSubLevel: number;
+}
+
+interface studentAttendance {
+  schoolDays: number;
+  attendedDays: number;
+}
+
+export interface StudentTerminalReportGet {
+  institution: InstitutionGet;
+  studentDetails: studentDetails;
+  subjectReports: SubjectReport[];
+  subLevelPosition: StudentSubLevelPosition;
+  studentAttendance: studentAttendance;
+  vacation: VacationGet[];
+  gradingSystem: GradeGet[];
 }

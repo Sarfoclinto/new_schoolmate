@@ -13,10 +13,11 @@ import {
   type TableColumnType,
 } from "antd";
 import type { NavigateFunction } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, FileText, GraduationCap } from "lucide-react";
 import { formatDate } from "@/utils/date-n-time";
 import { buildMediaUrl } from "@/utils/media";
 import paths from "@/config/routes";
+import { toast } from "sonner";
 
 // ─── Inline search filter helper ─────────────────────────────
 function searchFilter<T>(
@@ -256,6 +257,61 @@ export function viewActionCol<T extends { studentId: string }>(
           icon={<Eye className="w-3.5 h-3.5" />}
         />
       </Tooltip>
+    ),
+  };
+}
+
+type ReportReq = {
+  studentId: string;
+  subLevelId: string;
+};
+
+export function generateReportCol<T extends ReportReq>(
+  navigate: NavigateFunction,
+  year?: string,
+  term?: string,
+  width = 100,
+): TableColumnType<T> {
+  return {
+    key: "report-actions",
+    title: "Reports",
+    width,
+    align: "center",
+    fixed: "right" as const,
+    render: (_: unknown, record: T) => (
+      <div className="flex items-center gap-x-2">
+        <Tooltip title="Generate Report">
+          <Button
+            size="small"
+            onClick={() => {
+              if (!year || !term) {
+                toast.info("Please select year and term first");
+                return;
+              }
+              navigate(paths.admin.stuReportDetail.href, {
+                state: {
+                  studentId: record.studentId,
+                  subLevelId: record.subLevelId,
+                  year,
+                  term,
+                },
+              });
+            }}
+            className="rounded-lg! w-8! h-8! p-0! border-[#1E3A5F]/20! text-[#1E3A5F]! hover:bg-[#0D1B2E]! hover:text-[#C9A84C]! hover:border-[#0D1B2E]! flex items-center justify-center"
+            icon={<FileText className="w-3.5 h-3.5" />}
+          />
+        </Tooltip>
+        <Tooltip title="Generate Transcript">
+          <Button
+            size="small"
+            onClick={() => {
+              // Logic for transcript generation
+            }}
+            className="rounded-lg! w-8! h-8! p-0! border-amber-200! text-amber-600! hover:bg-amber-600! hover:text-white! hover:border-amber-600! flex items-center justify-center bg-amber-50"
+            icon={<GraduationCap className="w-3.5 h-3.5" />}
+          />
+        </Tooltip>
+      </div>
     ),
   };
 }
