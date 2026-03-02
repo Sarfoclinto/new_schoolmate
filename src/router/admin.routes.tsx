@@ -39,6 +39,9 @@ const {
   stuTermReport,
   stuAttReport,
   stuReportDetail,
+
+  // finance
+  fees,
 } = paths.admin;
 
 // admin pages component
@@ -118,6 +121,9 @@ const ViewMonthlyAttendance = lazy(
 const ReportDetail = lazy(
   () => import("@/features/admins/pages/reports/report-details"),
 );
+
+// finance
+const FeesSetup = lazy(() => import("@/features/admins/pages/finance/setup"));
 
 const adminRoutes: RouteObject[] = [
   {
@@ -230,7 +236,7 @@ const adminRoutes: RouteObject[] = [
         element: <StaffByRole />,
       },
 
-      //
+      // reports
       {
         path: stuTermReport.href,
         element: <ViewTerminalReport />,
@@ -242,6 +248,12 @@ const adminRoutes: RouteObject[] = [
       {
         path: stuReportDetail.href,
         element: <ReportDetail />,
+      },
+
+      // finance
+      {
+        path: fees.href,
+        element: <FeesSetup />,
       },
     ],
   },

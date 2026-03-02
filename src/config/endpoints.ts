@@ -192,6 +192,18 @@ const endpoints = {
       `/DeleteTeacherSubLevel/Teacher/${teachId}/SubLevel/${sublevelId}`,
     getById: (id: string) => `/GetStaffById/${id}`,
   },
+  finance: {
+    ledgers: {
+      getAllSub: "/GetAllSubsidiaryLedgers",
+    },
+    fees: {
+      setup: "/CreateTuitionSetup",
+      getAll: "/GetAllTuitionFees",
+      getById: (id: string) => `/GetTuitionSetupById/${id}`,
+      update: (id: string) => `/UpdateTuitionSetup/${id}`,
+      delete: (id: string) => `/DeleteTuitionSetup/${id}`,
+    },
+  },
 };
 
 export default endpoints;
