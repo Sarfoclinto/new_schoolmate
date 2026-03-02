@@ -1,4 +1,4 @@
-import type { EventGet } from "./event";
+import type { EventGet } from "../event";
 import type { InstitutionGet } from "./institution";
 import type { NoticeGet } from "./notice";
 

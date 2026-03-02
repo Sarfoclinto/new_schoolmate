@@ -56,11 +56,13 @@ const endpoints = {
     createNotice: "CreateNotice",
     userNotice: (userId: string, date: string = dayjs().format("YYYY-MM-DD")) =>
       `/GetUserNotices/User/${userId}/${date}`,
-    "30daysEvents": "/Get30daysEvent",
     deleteNotice: (noticeId: string, userId: string) =>
       `/DeleteNotice/${noticeId}/User/${userId}`,
     updateNotice: (noticeId: string, userId: string) =>
       `/UpdateNotice/${noticeId}/User/${userId}`,
+  },
+  event: {
+    "30daysEvents": "/Get30daysEvent",
   },
   studyModules: {
     createMapping: "/SubjectProgramMapping",
