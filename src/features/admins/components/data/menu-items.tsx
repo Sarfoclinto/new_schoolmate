@@ -24,6 +24,8 @@ import {
   UserCogIcon,
   ShieldCheckIcon,
   FileTextIcon,
+  WalletIcon,
+  ReceiptIcon,
   CalendarCheckIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -303,6 +305,28 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <CalendarCheckIcon className="size-3.5" />,
+      },
+    ],
+  },
+  // finance
+  {
+    key: admin.finance.href,
+    label: (
+      <SidebarLabel to={admin.finance.href} type="span">
+        {admin.finance.label}
+      </SidebarLabel>
+    ),
+    icon: <WalletIcon className="size-3.75" />,
+    type: "submenu",
+    children: [
+      {
+        key: admin.fees.href,
+        label: (
+          <SidebarLabel type="link" to={admin.fees.href}>
+            {admin.fees.label}
+          </SidebarLabel>
+        ),
+        icon: <ReceiptIcon className="size-3.5" />,
       },
     ],
   },

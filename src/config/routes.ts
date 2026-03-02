@@ -122,6 +122,10 @@ const paths = {
       label: "Attendance",
       href: "/admin/reports/student-attendance-report",
     },
+
+    // finance
+    finance: { label: "Finance Setup", href: "/admin/finance" },
+    fees: { label: "Fees", href: "/admin/finance/fees" },
   },
   staff: {
     index: { href: "/staff", label: "Staff" },

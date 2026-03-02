@@ -56,11 +56,13 @@ const endpoints = {
     createNotice: "CreateNotice",
     userNotice: (userId: string, date: string = dayjs().format("YYYY-MM-DD")) =>
       `/GetUserNotices/User/${userId}/${date}`,
-    "30daysEvents": "/Get30daysEvent",
     deleteNotice: (noticeId: string, userId: string) =>
       `/DeleteNotice/${noticeId}/User/${userId}`,
     updateNotice: (noticeId: string, userId: string) =>
       `/UpdateNotice/${noticeId}/User/${userId}`,
+  },
+  event: {
+    "30daysEvents": "/Get30daysEvent",
   },
   studyModules: {
     createMapping: "/SubjectProgramMapping",
@@ -191,6 +193,18 @@ const endpoints = {
     delTeacherSublevel: (teachId: string, sublevelId: string) =>
       `/DeleteTeacherSubLevel/Teacher/${teachId}/SubLevel/${sublevelId}`,
     getById: (id: string) => `/GetStaffById/${id}`,
+  },
+  finance: {
+    ledgers: {
+      getAllSub: "/GetAllSubsidiaryLedgers",
+    },
+    fees: {
+      setup: "/CreateTuitionSetup",
+      getAll: "/GetAllTuitionFees",
+      getById: (id: string) => `/GetTuitionSetupById/${id}`,
+      update: (id: string) => `/UpdateTuitionSetup/${id}`,
+      delete: (id: string) => `/DeleteTuitionSetup/${id}`,
+    },
   },
 };
 

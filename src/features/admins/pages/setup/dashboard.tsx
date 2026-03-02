@@ -12,7 +12,7 @@ import CalendarnPreviewBoard from "@/components/common/calendar_n_preview_board"
 import type { CalendarItem } from "@/types/api/setup/year-n-term";
 import { getAdminDashboardData } from "@/services/setup/admin";
 import { getUserNotices } from "@/services/setup/notice";
-import { get30daysEvents } from "@/services/setup/event";
+import { get30daysEvents } from "@/services/event";
 import { dashboardKeys, eventKeys, noticeKeys } from "@/config/query-keys";
 
 const AdminDashboard = () => {

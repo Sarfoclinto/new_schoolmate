@@ -1,41 +1,3 @@
-// export const queryKeys = {
-//   institution: {
-//     profile: () => ["institution", "profile"] as const,
-//     dashboard: () => ["institution", "dashboard"] as const,
-//   },
-
-//   education: {
-//     levels: () => ["education", "levels"] as const,
-//     academicLevels: () => ["education", "academic-levels"] as const,
-
-//     academicLevelsByEdu: (eduId?: string) =>
-//       ["education", "academic-levels", { eduId }] as const,
-
-//     sublevels: () => ["education", "sublevels"] as const,
-
-//     sublevelsByAcademic: (acaIds: string[]) =>
-//       ["education", "sublevels", { acaIds }] as const,
-
-//     sublevelsByEdu: (eduId?: string) =>
-//       ["education", "sublevels", { eduId }] as const,
-
-//     sublevelsByEduAndAcademic: (eduId?: string, acaId?: string) =>
-//       ["education", "sublevels", { eduId, acaId }] as const,
-//   },
-
-//   events: {
-//     all: () => ["events"] as const,
-//     byDate: (date?: string) => ["events", { date }] as const,
-//   },
-
-//   notices: {
-//     byDate: (date?: string) => ["notices", { date }] as const,
-//   },
-
-//   roles: {
-//     all: () => ["roles"] as const,
-//   },
-// };
 export const createQueryKeys = <T extends string>(root: T) => ({
   all: [root] as const,
 
@@ -70,7 +32,8 @@ export const termKeys = createQueryKeys("terms");
 export const studentKeys = createQueryKeys("students");
 export const staffKeys = createQueryKeys("staff");
 export const reportKeys = createQueryKeys("report");
-
+export const financeKeys = createQueryKeys("finance");
+export const ledgerKeys = createQueryKeys("ledgers");
 
 // educational level
 export const eduKeys = {
