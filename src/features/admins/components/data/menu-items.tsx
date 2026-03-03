@@ -27,6 +27,10 @@ import {
   WalletIcon,
   ReceiptIcon,
   CalendarCheckIcon,
+  CalendarDaysIcon,
+  CalendarPlusIcon,
+  CalendarCheck2Icon,
+  AlertOctagon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -327,6 +331,46 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ReceiptIcon className="size-3.5" />,
+      },
+    ],
+  },
+  // events
+  {
+    key: admin.events.href,
+    label: (
+      <SidebarLabel to={admin.events.href} type="span">
+        {admin.events.label}
+      </SidebarLabel>
+    ),
+    icon: <CalendarCheck2Icon className="size-3.75" />,
+    type: "submenu",
+    children: [
+      {
+        key: admin.notice.href,
+        label: (
+          <SidebarLabel type="link" to={admin.notice.href}>
+            {admin.notice.label}
+          </SidebarLabel>
+        ),
+        icon: <AlertOctagon className="size-3.5" />,
+      },
+      {
+        key: admin.allEvents.href,
+        label: (
+          <SidebarLabel type="link" to={admin.allEvents.href}>
+            {admin.allEvents.label}
+          </SidebarLabel>
+        ),
+        icon: <CalendarDaysIcon className="size-3.5" />,
+      },
+      {
+        key: admin.createEvent.href,
+        label: (
+          <SidebarLabel type="link" to={admin.createEvent.href}>
+            {admin.createEvent.label}
+          </SidebarLabel>
+        ),
+        icon: <CalendarPlusIcon className="size-3.5" />,
       },
     ],
   },

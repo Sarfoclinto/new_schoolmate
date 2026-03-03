@@ -63,6 +63,11 @@ const endpoints = {
   },
   event: {
     "30daysEvents": "/Get30daysEvent",
+    getAll: (termId: string, year?: string) =>
+      `/GetEvents/AcademicYear/${year ?? null}/AcademicTerm/${termId}`,
+    create: "/CreateCalendar",
+    update: (id: string) => `/UpdateCalendar/${id}`,
+    delete: (id: string) => `/DeleteCalendar/${id}`,
   },
   studyModules: {
     createMapping: "/SubjectProgramMapping",

@@ -42,11 +42,16 @@ const {
 
   // finance
   fees,
+
+  // events & notice
+  notice,
+  allEvents,
+  createEvent,
 } = paths.admin;
 
 // admin pages component
 // setup
-const Dashboard = lazy(() => import("@/features/admins/pages/setup/dashboard"));
+const Dashboard = lazy(() => import("@/features/admins/pages/dashboard"));
 const InsititutionProfile = lazy(
   () => import("@/features/admins/pages/setup/institution-profile"),
 );
@@ -124,6 +129,11 @@ const ReportDetail = lazy(
 
 // finance
 const FeesSetup = lazy(() => import("@/features/admins/pages/finance/setup"));
+
+// events & notices
+const Notice = lazy(() => import("@/features/admins/pages/notice"));
+const AllEvents = lazy(() => import("@/features/admins/pages/events/view"));
+const CreateEvent = lazy(() => import("@/features/admins/pages/events/create"));
 
 const adminRoutes: RouteObject[] = [
   {
@@ -254,6 +264,22 @@ const adminRoutes: RouteObject[] = [
       {
         path: fees.href,
         element: <FeesSetup />,
+      },
+
+      // events
+      {
+        path: allEvents.href,
+        element: <AllEvents />,
+      },
+      {
+        path: createEvent.href,
+        element: <CreateEvent />,
+      },
+
+      // notice
+      {
+        path: notice.href,
+        element: <Notice />,
       },
     ],
   },

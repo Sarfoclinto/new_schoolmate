@@ -10,11 +10,13 @@ export const StatCard = ({
   value,
   loading,
   index,
+  link,
 }: {
   stat: StatConfig;
   value?: number;
   loading: boolean;
   index: number;
+  link: string;
 }) => (
   <MotionDiv
     custom={index}
@@ -48,7 +50,7 @@ export const StatCard = ({
 
     <div className="mt-4 flex items-center justify-between">
       <Link
-        to=""
+        to={link ? link : ""}
         className="text-sm font-semibold text-slate-600 hover:text-[#1E3A5F] transition-colors duration-200 no-underline group flex items-center gap-x-1"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >

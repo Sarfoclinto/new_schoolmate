@@ -37,7 +37,7 @@ const NoticePreview = ({ sortedNotices, noticesLoading }: Props) => {
           itemLayout="vertical"
           dataSource={sortedNotices}
           pagination={{
-            pageSize: 3,
+            pageSize: 5,
             showSizeChanger: false,
             hideOnSinglePage: true,
             size: "small",
