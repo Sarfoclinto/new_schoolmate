@@ -62,6 +62,6 @@ export interface CalendarItem {
 
 export interface ActivePeriods {
   academicYear: AcademicYearGet;
-  academicTerm: AcademicTermGet;
+  academicTerm: AcademicTermGet[];
   institution: InstitutionGet;
 }

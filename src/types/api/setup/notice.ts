@@ -11,3 +11,23 @@ export interface NoticeGet {
   targetType: string;
   targetName: string;
 }
+
+export interface Target {
+  TargetType: string;
+  TargetId: string;
+}
+
+export interface NoticePost {
+  Title: string;
+  Body: string;
+  UserId: string;
+  Targets: Target[];
+}
+export interface NoticeUpdate {
+  id: string;
+  userId: string;
+  data: {
+    Title: string;
+    Body: string;
+  };
+}

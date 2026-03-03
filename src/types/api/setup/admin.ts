@@ -21,4 +21,5 @@ export interface StatConfig {
   icon: React.ReactNode;
   accent: string; // tailwind bg color for icon bubble
   iconColor: string; // tailwind text color
+  link: string
 }

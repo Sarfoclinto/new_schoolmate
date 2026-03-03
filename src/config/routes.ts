@@ -126,6 +126,22 @@ const paths = {
     // finance
     finance: { label: "Finance Setup", href: "/admin/finance" },
     fees: { label: "Fees", href: "/admin/finance/fees" },
+
+    // events & notice
+    notice: { label: "Notices", href: "/admin/notices" },
+    events: { label: "Events & Notices", href: "/admin/events" },
+    createEvent: {
+      label: "Create Event",
+      href: "/admin/events/create",
+    },
+    eventDetails: {
+      label: "Event Details",
+      href: "/admin/events/details",
+    },
+    allEvents: {
+      label: "Events",
+      href: "/admin/events/view/all",
+    },
   },
   staff: {
     index: { href: "/staff", label: "Staff" },

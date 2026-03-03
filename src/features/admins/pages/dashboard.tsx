@@ -6,7 +6,6 @@ import useFetch from "@/hooks/api/use-fetch";
 import { useAuth } from "@/store/auth.store";
 import { PageHeader, type Crumb } from "@/components/common/page-header";
 import type { EventApi, EventClickArg } from "@fullcalendar/core";
-import { StatCard } from "../../components/stat-card";
 import { STATS } from "@/data/dashboard";
 import CalendarnPreviewBoard from "@/components/common/calendar_n_preview_board";
 import type { CalendarItem } from "@/types/api/setup/year-n-term";
@@ -14,6 +13,7 @@ import { getAdminDashboardData } from "@/services/setup/admin";
 import { getUserNotices } from "@/services/setup/notice";
 import { get30daysEvents } from "@/services/event";
 import { dashboardKeys, eventKeys, noticeKeys } from "@/config/query-keys";
+import { StatCard } from "../components/stat-card";
 
 const AdminDashboard = () => {
   const [date] = useState<Dayjs | null>(dayjs());
@@ -140,6 +140,7 @@ const AdminDashboard = () => {
             index={i}
             loading={isLoading}
             value={data?.dashboardDetails[stat.key]}
+            link={stat.link}
           />
         ))}
       </section>
