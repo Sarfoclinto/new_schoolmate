@@ -1,7 +1,7 @@
 import { MotionDiv } from "@/components/custom/motion";
 import { subjectKeys } from "@/config/query-keys";
 import useFetch from "@/hooks/api/use-fetch";
-import { getTeachersSubjectsFn } from "@/services/staff";
+import { getTeacherMappingFn } from "@/services/staff";
 import type { SelectTypes } from "@/types/ui";
 import { BookOpen } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -13,7 +13,7 @@ interface Props {
 
 const StaffSubjects = ({ teacherId, isATeacher }: Props) => {
   const { data: teachersData, isLoading: loadingTeacherData } = useFetch({
-    queryFn: () => getTeachersSubjectsFn(teacherId!),
+    queryFn: () => getTeacherMappingFn(teacherId!),
     queryKeys: subjectKeys.custom("teacher", { teacherId }),
     enabled: !!isATeacher && !!teacherId,
   });

@@ -5,6 +5,8 @@ import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 
 const {
+  // profile
+  adminProfile,
   // setup
   index,
   profile,
@@ -135,6 +137,8 @@ const Notice = lazy(() => import("@/features/admins/pages/notice"));
 const AllEvents = lazy(() => import("@/features/admins/pages/events/view"));
 const CreateEvent = lazy(() => import("@/features/admins/pages/events/create"));
 
+// progile
+const Profile = lazy(() => import("@/features/auth/pages/profile"));
 const adminRoutes: RouteObject[] = [
   {
     path: index.href,
@@ -280,6 +284,12 @@ const adminRoutes: RouteObject[] = [
       {
         path: notice.href,
         element: <Notice />,
+      },
+
+      // profile
+      {
+        path: adminProfile.href,
+        element: <Profile />,
       },
     ],
   },

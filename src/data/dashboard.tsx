@@ -1,7 +1,13 @@
-import type { StatConfig } from "@/types/api/setup/admin";
-import { Users, User, LayoutGrid, GraduationCap } from "lucide-react";
+import type { StaffStatConfig, StatConfig } from "@/types/api/setup/admin";
+import {
+  Users,
+  User,
+  LayoutGrid,
+  GraduationCap,
+  BookOpenCheckIcon,
+} from "lucide-react";
 
-export const STATS: StatConfig[] = [
+export const ADMINSTATS: StatConfig[] = [
   {
     label: "Total Students",
     key: "totalStudents",
@@ -65,5 +71,24 @@ export const STATS: StatConfig[] = [
     accent: "bg-orange-50",
     iconColor: "text-orange-500",
     link: `/admin/institutionsetup/subLevel`,
+  },
+];
+
+export const STAFFSTATS: StaffStatConfig[] = [
+  {
+    label: "Sub-Levels",
+    key: "totalSubLevels",
+    icon: <LayoutGrid className="w-5 h-5" />,
+    accent: "bg-orange-50",
+    iconColor: "text-orange-500",
+    link: `/staff/assignments/classes-n-subjects?selected=classes`,
+  },
+  {
+    label: "Subjects",
+    key: "totalSubjects",
+    icon: <BookOpenCheckIcon className="w-5 h-5" />,
+    accent: "bg-orange-50",
+    iconColor: "text-orange-500",
+    link: `/staff/assignments/classes-n-subjects?selected=subjects`,
   },
 ];

@@ -13,7 +13,7 @@ const Home = lazy(() => import("@/components/error/home"));
 const Login = lazy(() => import("@/features/auth/pages/login"));
 const Error = lazy(() => import("@/components/error/error"));
 const Unknown = lazy(() => import("@/components/error/unknown"));
-
+const Page404 = lazy(() => import("@/components/error/404"));
 
 const routes: RouteObject[] = [
   {
@@ -34,6 +34,10 @@ const routes: RouteObject[] = [
       },
       ...adminRoutes,
       ...staffRoutes,
+      {
+        path: paths.public["404"].href,
+        element: <Page404 />,
+      },
     ],
   },
 ];

@@ -26,9 +26,8 @@
  *  - Print / export button       →  opens print-optimised window
  */
 
-import { eduKeys, reportKeys } from "@/config/query-keys";
+import { attendanceKeys, eduKeys } from "@/config/query-keys";
 import useFetch from "@/hooks/api/use-fetch";
-import { getMonthlyAttendanceFn } from "@/services/student";
 import type { SelectTypes } from "@/types/ui";
 import { useMemo, useState } from "react";
 import dayjs from "@/lib/dayjs";
@@ -49,6 +48,7 @@ import { DatePicker, Select, Skeleton } from "antd";
 import { MotionButton, MotionDiv } from "@/components/custom/motion";
 import { AnimatePresence } from "motion/react";
 import { format } from "date-fns";
+import { getMonthlyAttendanceFn } from "@/services/attendance";
 
 // ─────────────────────────────────────────────────────────
 // Utils
@@ -284,7 +284,7 @@ const ViewMonthlyAttendance = () => {
   const { data, isLoading } = useFetch({
     queryFn: () =>
       getMonthlyAttendanceFn(selectedSubLevel?.value ?? "", monthYearString!),
-    queryKeys: reportKeys.custom("monthly-attendance", {
+    queryKeys: attendanceKeys.custom("monthly", {
       monthYearString,
       sublevel: selectedSubLevel?.value,
     }),
@@ -512,17 +512,17 @@ const ViewMonthlyAttendance = () => {
             <Select
               size="large"
               labelInValue
-              showSearch
+              showSearch={{
+                filterOption: (input, opt) =>
+                  String(opt?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
               placeholder="Search and select a class…"
               className="w-full"
               options={subLevelOptions}
               loading={loadingSublevels}
               disabled={loadingSublevels}
-              filterOption={(input, opt) =>
-                String(opt?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
               onChange={(opt) =>
                 setSublevel({
                   value: opt.value,

@@ -1,4 +1,4 @@
-export interface AttendancePostTypes {
+export interface AttendancePost {
   Status: "Present" | "Absent";
   StudentId: string;
   SubLevelId: string;
@@ -6,7 +6,7 @@ export interface AttendancePostTypes {
   UserId: string;
 }
 
-export interface SubLevelAttendanceGetType {
+export interface SubLevelAttendanceGet {
   studentAttendanceId: string;
   studentId: string;
   studentFullName: string;
@@ -14,10 +14,6 @@ export interface SubLevelAttendanceGetType {
   status: "Present" | "Absent";
 }
 
-export interface monthlyAttendanceParams {
-  sublevelId: string;
-  monthYear: string;
-}
 
 interface attendanceRecord {
   attendanceDate: string;

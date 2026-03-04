@@ -1,6 +1,6 @@
 import { MotionDiv } from "@/components/custom/motion";
 import { cardVariants } from "@/data/variants";
-import type { StatConfig } from "@/types/api/setup/admin";
+import type { StaffStatConfig, StatConfig } from "@/types/api/setup/admin";
 import { ChevronRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -12,7 +12,7 @@ export const StatCard = ({
   index,
   link,
 }: {
-  stat: StatConfig;
+  stat: StatConfig | StaffStatConfig;
   value?: number;
   loading: boolean;
   index: number;

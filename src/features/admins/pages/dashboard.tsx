@@ -6,7 +6,7 @@ import useFetch from "@/hooks/api/use-fetch";
 import { useAuth } from "@/store/auth.store";
 import { PageHeader, type Crumb } from "@/components/common/page-header";
 import type { EventApi, EventClickArg } from "@fullcalendar/core";
-import { STATS } from "@/data/dashboard";
+import { ADMINSTATS } from "@/data/dashboard";
 import CalendarnPreviewBoard from "@/components/common/calendar_n_preview_board";
 import type { CalendarItem } from "@/types/api/setup/year-n-term";
 import { getAdminDashboardData } from "@/services/setup/admin";
@@ -126,6 +126,7 @@ const AdminDashboard = () => {
     },
   ];
 
+
   return (
     <section className="flex-1 p-2 min-w-fit w-full h-full overflow-auto">
       {/* ── Page header ── */}
@@ -133,7 +134,7 @@ const AdminDashboard = () => {
 
       {/* ── Stat cards grid ── */}
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-        {STATS.map((stat, i) => (
+        {ADMINSTATS.map((stat, i) => (
           <StatCard
             key={stat.key}
             stat={stat}

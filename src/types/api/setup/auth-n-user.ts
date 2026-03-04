@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { LoginPayloadSchema, UserSchema } from "../../../schemas";
 import type { ActivePeriods } from "./year-n-term";
+import type { MdResponse } from "@/types/api";
 
 // inferred types from schema
 export type LoginPayload = z.infer<typeof LoginPayloadSchema>;
@@ -14,4 +15,9 @@ export interface LoginReturn {
   isAuth: boolean;
   responseCode: 0 | 1;
   responseMessage: string;
+}
+
+export interface UpdateReturn {
+  user: User | null;
+  response: MdResponse;
 }

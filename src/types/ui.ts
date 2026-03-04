@@ -20,6 +20,8 @@ export type FacultyNClassroomTabKey = "faculty" | "classroom" | "assign-class";
 export type AssessmentNGradingTabKey = "assessment" | "grading";
 export type YearsNTerms = "years" | "terms";
 
+// staff
+export type ClassesnSubjects = "classes" | "subjects";
 
 export interface ReportPaths {
   studentId: string;

@@ -13,7 +13,6 @@ const endpoints = {
     create: "/CreateInstitution",
     update: (instId: string) => `/UpdateInstitution/${instId}`,
   },
-  staff: {},
   roles: {
     getAllRoles: "/GetAllRoles",
     createRole: "/CreateRole",
@@ -53,9 +52,14 @@ const endpoints = {
     getAll: "/GetAllAcademicLevelPromotionPaths",
   },
   notice: {
-    createNotice: "CreateNotice",
+    createNotice: "/CreateNotice",
+    teacherNoticeAction: "/NoticeReadLog",
     userNotice: (userId: string, date: string = dayjs().format("YYYY-MM-DD")) =>
       `/GetUserNotices/User/${userId}/${date}`,
+    staffNotice: (
+      teacherId: string,
+      date: string = dayjs().format("YYYY-MM-DD"),
+    ) => `/GetTeacherNotices/Teacher/${teacherId}/${date}`,
     deleteNotice: (noticeId: string, userId: string) =>
       `/DeleteNotice/${noticeId}/User/${userId}`,
     updateNotice: (noticeId: string, userId: string) =>
@@ -171,8 +175,6 @@ const endpoints = {
     reports: {
       terminal: (paths: ReportPaths) =>
         `/GetStudentTerminalReport/Student/${paths.studentId}/AcademicYear/${paths.academicYearId}/AcademicTerm/${paths.academicTermId}/SubLevel/${paths.subLevelId}`,
-      attendance: (subId: string, date: string) =>
-        `/GetStudentAttendancePreviews/SubLevel/${subId}/AttendanceDate/${date}`,
     },
 
     getAllPn: "/GetAllStudents",
@@ -186,6 +188,8 @@ const endpoints = {
   },
   staffMn: {
     create: "/CreateStaff",
+    updateProfile: (id: string) => `/UpdateStaff/${id}`,
+    updatePassword: (id: string) => `/UpdateStaffPassword/${id}`,
     updateStaff: (id: string) => `/StaffUpdatedByAdmin/${id}`,
     createMapping: "/CreateTeacherMappings",
     getAllPn: "/GetPaginatedStaff",
@@ -193,6 +197,9 @@ const endpoints = {
     allTeachers: "/GetAllTeachers",
     teacherSubjects: (id: string) => `/GetTeacherMappings/${id}`,
     teacherSublevels: (id: string) => `/GetTeacherSubLevels/${id}`,
+    subLevelSubjects: (teacherId: string, sublevelId: string) =>
+      `/GetTeacherSubLevelSubjects/Teacher/${teacherId}/SubLevel/${sublevelId}`,
+
     delTeacherSubject: (teachId: string, subId: string) =>
       `/DeleteTeacherSubject/Teacher/${teachId}/Subject/${subId}`,
     delTeacherSublevel: (teachId: string, sublevelId: string) =>
@@ -210,6 +217,41 @@ const endpoints = {
       update: (id: string) => `/UpdateTuitionSetup/${id}`,
       delete: (id: string) => `/DeleteTuitionSetup/${id}`,
     },
+  },
+  academicRecords: {
+    passmark: {
+      create: "/CreatePassMark",
+      teacherSublevelSubject: (teacherId: string, sublevelId: string) =>
+        `/GetTeacherSubLevelSubjectsPassMarks/Teacher/${teacherId}/SubLevel/${sublevelId}`,
+      update: (id: string) => `/UpdatePassMark/${id}`,
+      delete: (id: string) => `/DeletePassMark/${id}`,
+    },
+    records: {
+      add: "/CreateAcademicRecord",
+      sublevelSubjectsRecords: (
+        assessId: string,
+        sublevelId: string,
+        subjectId: string,
+      ) =>
+        `/GetSubLevelSubjectAcademicRecords/Assessment/${assessId}/SubLevel/${sublevelId}/Subject/${subjectId}`,
+      sublevelAcademicRecords: (
+        sublevelId: string,
+        assessId: string,
+        teacherId: string,
+      ) =>
+        `/GetSubLevelAcademicRecords/Assessment/${assessId}/SubLevel/${sublevelId}/Teacher/${teacherId}`,
+    },
+  },
+  attendance: {
+    mark: "/MarkStudentAttendance",
+    update: (id: string) => `/UpdateAttendanceStatus/${id}`,
+    sublevelAttByDate: (
+      sublevelId: string,
+      date: string = dayjs().format("YYYY-MM-DD"),
+    ) =>
+      `/GetStudentAttendancePreviews/SubLevel/${sublevelId}/AttendanceDate/${date}`,
+    monthly: (subId: string, date: string) =>
+      `/GetStudentAttendancePreviews/SubLevel/${subId}/AttendanceDate/${date}`,
   },
 };
 

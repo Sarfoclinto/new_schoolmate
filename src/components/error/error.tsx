@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Navigate,
   useNavigate,
   useRouteError,
 } from "react-router-dom";
@@ -7,6 +8,7 @@ import { Button } from "antd";
 import Section from "@/components/custom/section";
 import { AlertOctagonIcon } from "lucide-react";
 import { getUserDashboardRoute } from "@/utils/string";
+import paths from "@/config/routes";
 
 const PageError = () => {
   const navigate = useNavigate();
@@ -20,6 +22,14 @@ const PageError = () => {
   let stack = "";
 
   if (isRouteErrorResponse(error)) {
+    if (error.status === 404) {
+      return (
+        <Navigate
+          to={paths.public["404"].redirect(window.location.pathname)}
+          replace
+        />
+      );
+    }
     message = `${error.status} ${error.statusText}`;
   } else if (error instanceof Error) {
     message = error.message;

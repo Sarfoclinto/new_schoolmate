@@ -77,7 +77,26 @@ export const getUserDashboardRoute = () => {
   if (DEFAULT_ROLES.STAFF.includes(normalizedRole))
     return paths.staff.index.href;
 
-  return paths.public.unknown.redirect(`Invalid role: ${user.role}`);
+  return paths.public.unknown.redirect(
+    `Invalid role for dashboard: ${user.role}`,
+  );
+};
+export const getUserProfileRoute = () => {
+  const user = useAuth.getState().user;
+
+  if (!user || !user.role) {
+    return paths.auth.login.href;
+  }
+
+  const normalizedRole = user.role.toLowerCase();
+  if (DEFAULT_ROLES.ADMIN.includes(normalizedRole))
+    return paths.admin.adminProfile.href;
+  if (DEFAULT_ROLES.STAFF.includes(normalizedRole))
+    return paths.staff.profile.href;
+
+  return paths.public.unknown.redirect(
+    `Invalid role for profile: ${user.role}`,
+  );
 };
 
 export const getInitials = (text = "Fist Last") =>

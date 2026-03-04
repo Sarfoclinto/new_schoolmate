@@ -1,9 +1,6 @@
 import { MotionDiv } from "@/components/custom/motion";
 import { studentKeys } from "@/config/query-keys";
-import {
-  drawerMeta,
-  type UpdateKey,
-} from "@/features/admins/components/data/utils";
+import { drawerMeta, type UpdateKey } from "@/features/admins/data/utils";
 import {
   DetailField,
   GenderBadge,
@@ -669,5 +666,5 @@ const StudentDetails = () => {
       </Drawer>
     </div>
   );
-};;
+};
 export default StudentDetails;

@@ -4,12 +4,20 @@ import type {
   NoticeGet,
   NoticePost,
   NoticeUpdate,
+  StaffNoticeGet,
+  UserNoticeAction,
 } from "@/types/api/setup/notice";
 
 const { notice } = endpoints;
 
+// users (adminstration)
 export const getUserNotices = async (userId: string, date?: string) => {
   return getHelper<NoticeGet[]>(notice.userNotice(userId, date));
+};
+
+// staff
+export const getStaffNotices = async (userId: string, date?: string) => {
+  return getHelper<StaffNoticeGet[]>(notice.staffNotice(userId, date));
 };
 
 export const createNoticeFn = async (data: NoticePost) => {
@@ -20,6 +28,13 @@ export const updateNoticeFn = async (update: NoticeUpdate) => {
     notice.updateNotice(update.id, update.userId),
     update.data,
   );
+};
+
+export const noticeActionFn = async (update: UserNoticeAction) => {
+  return postHelper(notice.teacherNoticeAction, update);
+};
+export const markAllAsReadFn = async (update: UserNoticeAction[]) => {
+  return Promise.all(update.map((u) => noticeActionFn(u)));
 };
 
 type DeleteNoticeMap = {

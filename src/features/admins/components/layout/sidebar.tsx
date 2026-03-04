@@ -3,9 +3,10 @@ import { Drawer, Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Link, useLocation } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import menu, { menuStyle } from "../data/menu-items";
+import menu, { menuStyle } from "../../data/menu-items";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { getUserDashboardRoute } from "@/utils/string";
+import { getInitials, getUserDashboardRoute } from "@/utils/string";
+import { useAuth } from "@/store/auth.store";
 
 const SIDEBAR_BG = "#0D1B2E";
 const SIDEBAR_WIDTH = 260;
@@ -61,6 +62,7 @@ const LogoSection = ({ collapsed }: { collapsed: boolean }) => (
 
 const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
   const { pathname } = useLocation();
+  const user = useAuth((s) => s.user);
   return (
     <div className="flex flex-col h-full" style={{ background: SIDEBAR_BG }}>
       <LogoSection collapsed={collapsed} />
@@ -97,20 +99,20 @@ const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
               color: "#0D1B2E",
             }}
           >
-            AD
+            {getInitials(user?.name)}
           </div>
           <div className="min-w-0">
             <p
-              className="text-white text-sm font-semibold truncate leading-none mb-0.5"
+              className="text-white text-sm font-semibold truncate uppercase leading-none mb-0.5"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              Administrator
+              {user?.role ?? "role"}
             </p>
             <p
               className="text-xs truncate"
               style={{ color: "#4A6080", fontFamily: "'DM Sans', sans-serif" }}
             >
-              admin@schoolmate.edu
+              {user?.email ?? "email"}
             </p>
           </div>
         </div>
