@@ -1,4 +1,4 @@
-import type { SubjectGet } from "./setup/study-modules";
+import type { SubjectGet, SubjectLite } from "./setup/study-modules";
 import type { SubLevelGet } from "./setup/sublevel";
 
 export interface StaffGet {
@@ -26,6 +26,20 @@ export interface StaffGet {
   createdOn: string;
 }
 
+export interface StaffUpdateWithFile {
+  id: string;
+  data: FormData;
+}
+
+export interface UpdateSecurity {
+  id: string;
+  data: {
+    Password: string;
+    NewPassword: string;
+    ConfirmPassword: string;
+  };
+}
+
 export interface StaffGetResponse {
   data: StaffGet[];
   pagination: {
@@ -42,7 +56,7 @@ export interface TeacherMappingPost {
   ProgramId?: string;
 }
 
-export interface TeachersSubjects {
+export interface TeachersMapping {
   staffId: string;
   teacherName: string;
   subjects: SubjectGet[];
@@ -54,10 +68,10 @@ export interface TeacherSubLevelsGet {
   subLevels: SubLevelGet[];
 }
 
-export interface TeacherSubjectSubLevels {
-  subjectId: string;
-  subjectName: string;
-  subLevels: SubLevelGet[];
+export interface TeacherSubjectsGet {
+  teacherId: string;
+  teacherName: string;
+  subjects: SubjectLite[];
 }
 
 export interface DeleteMapping {

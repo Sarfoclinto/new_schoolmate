@@ -20,29 +20,30 @@ const SidebarLabel = ({
   children,
   type = "link",
   showIconWhenCollapsed = true,
-  hideTextWhenCollapsed = false,
+  // hideTextWhenCollapsed = false,
   tooltip,
   ...props
 }: SidebarLabelProps) => {
   const collapsed = useUIStore((s) => s.menuCollapsed);
 
   const showIcon = !!icon && (!collapsed || showIconWhenCollapsed);
-  const showText = !collapsed || !hideTextWhenCollapsed;
+  // const showText = !collapsed || !hideTextWhenCollapsed;
+  const showText = true;
 
   const baseClasses = cn(
     "flex items-center gap-x-2.5 w-full",
     "text-[13px] font-medium",
-    "text-slate-300",
+    "text-slate-300. text-black",
     "transition-colors duration-150",
     className,
   );
 
   const content = (
-    <>
-      {showIcon && <span className="text-slate-400 shrink-0">{icon}</span>}
+    <div className="flex items-center ">
+      {showIcon && <span className="text-slate-400 shrink-0 ">{icon}</span>}
       {showText && (
         <span
-          className={cn("truncate text-white", collapsed && "text-black!")}
+          className={cn("truncate text-white ")}
           style={{
             fontFamily: "'DM Sans', sans-serif",
             letterSpacing: "0.01em",
@@ -51,7 +52,7 @@ const SidebarLabel = ({
           {children as unknown as React.ReactNode}
         </span>
       )}
-    </>
+    </div>
   );
 
   const spanEl = collapsed ? (
@@ -74,7 +75,8 @@ const SidebarLabel = ({
       className={({ isActive }) =>
         cn(
           baseClasses,
-          "px-2.5 py-1.5 rounded-md text-black!",
+          "px-2.5 py-1.5 rounded-md text-black!. .",
+          !collapsed ? "text-black!" : "text-white!",
           isActive
             ? "text-white bg-white/10 font-semibold"
             : "hover:text-white hover:bg-white/5",

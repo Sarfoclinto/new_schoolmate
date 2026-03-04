@@ -566,7 +566,7 @@ textarea.ant-input {
 
 .ant-table-thead > tr > th {
   background: var(--navy-900) !important;
-  color: rgba(255, 255, 255, 0.65) !important;
+  /* color: rgba(255, 255, 255, 0.65) !important; */
   font-family: "DM Sans", sans-serif !important;
   font-size: 11px !important;
   font-weight: 700 !important;
@@ -845,10 +845,6 @@ textarea.ant-input {
   color: #ef4444 !important;
 }
 
-.anticon .anticon-filter svg {
-  color: var(--navy-700) !important;
-}
-
 /* ══════════════════════════════════════════════════════════
    19. TABS
 ══════════════════════════════════════════════════════════ */
@@ -903,7 +899,7 @@ textarea.ant-input {
 
 .cms-sider .ant-menu-item-selected {
   background: rgba(201, 168, 76, 0.12) !important;
-  color: #fff !important;
+  /* color: #fff !important; */
   position: relative;
 }
 
@@ -929,7 +925,7 @@ textarea.ant-input {
   color: var(--gold) !important;
 }
 .cms-sider .ant-menu-submenu-open > .ant-menu-submenu-title {
-  color: #fff !important;
+  /* color: #fff !important; */
   background: rgba(255, 255, 255, 0.06) !important;
 }
 .cms-sider .ant-menu-sub {
@@ -1020,6 +1016,11 @@ textarea.ant-input {
   font-family: "DM Sans", sans-serif !important;
   font-size: 12px !important;
   color: var(--slate-400) !important;
+}
+
+/* anticon */
+.anticon-filter svg {
+  color: var(--gold) !important;
 }
 
 /* ══════════════════════════════════════════════════════════

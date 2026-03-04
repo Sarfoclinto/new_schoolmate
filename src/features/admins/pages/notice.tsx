@@ -74,6 +74,7 @@ import { getAllStaffUnPnFn } from "@/services/staff";
 import usePost from "@/hooks/api/use-post";
 import useUpdate from "@/hooks/api/use-update";
 import { MotionDiv } from "@/components/custom/motion";
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/config/constants";
 
 type Options = {
   label: string;
@@ -651,8 +652,8 @@ const Notice = () => {
   const [record, setRecord] = useState<NoticeGet | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   // Pagination
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 5;
+  const [page, setPage] = useState(DEFAULT_PAGE);
+  const PAGE_SIZE = DEFAULT_LIMIT;
 
   const selectedDate = useMemo(() => date?.format("YYYY-MM-DD"), [date]);
 
@@ -846,7 +847,7 @@ const Notice = () => {
   // Paginated slice
   const paginated = useMemo(
     () => sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [sorted, page],
+    [sorted, page, PAGE_SIZE],
   );
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
 

@@ -3,15 +3,20 @@ import { env } from "@/config/constants";
 interface BuildMediaUrlOptions {
   baseUrl?: string;
   fallback?: string;
+  useNoLogo?: boolean;
 }
 
 export const buildMediaUrl = (
   path?: string | null,
   options?: BuildMediaUrlOptions,
 ) => {
-  const { baseUrl = env.baseUrl, fallback = "/no-logo.png" } = options || {};
+  const {
+    baseUrl = env.baseUrl,
+    fallback = "/no-logo.png",
+    useNoLogo = true,
+  } = options || {};
 
-  if (!path) return fallback;
+  if (!path) return useNoLogo ? fallback : "";
 
   // Already absolute URL
   if (path.startsWith("http://") || path.startsWith("https://")) {

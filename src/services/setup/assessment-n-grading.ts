@@ -39,7 +39,7 @@ export const getAllAssessmentsFn = async () => {
   return getHelper<AssessmentGet[]>(assessment.getAll);
 };
 export const getAssessmentsBySubIdFn = async (id: string) => {
-  return getHelper<AssessmentGet[]>(assessment.getBySubId(id));
+  return getHelper<AssessmentGetResponse>(assessment.getBySubId(id));
 };
 export const getAssessmentsByEduIdFn = async (id: string) => {
   return getHelper<AssessmentGetResponse>(assessment.getByEduId(id));

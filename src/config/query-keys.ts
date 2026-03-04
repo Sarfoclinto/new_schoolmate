@@ -35,6 +35,12 @@ export const reportKeys = createQueryKeys("report");
 export const financeKeys = createQueryKeys("finance");
 export const ledgerKeys = createQueryKeys("ledgers");
 
+export const academicRecordsKeys = createQueryKeys("academic-records");
+
+export const attendanceKeys = createQueryKeys("attendance");
+
+
+
 // educational level
 export const eduKeys = {
   all: educationKeys.all,

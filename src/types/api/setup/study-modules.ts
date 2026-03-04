@@ -59,3 +59,8 @@ export interface ModulesMappingPost {
   SubLevelIds?: string[];
   SubjectIds?: string[];
 }
+
+export interface SubjectLite {
+  subjectId: string;
+  subjectName: string;
+}

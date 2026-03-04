@@ -9,6 +9,10 @@ export interface CardData {
   totalFemaleStaff: number;
   totalNonTeachingStaff: number;
 }
+export interface StaffCardData {
+  totalSubjects: number;
+  totalSubLevels: number;
+}
 
 export interface DashboardData {
   dashboardDetails: CardData;
@@ -21,5 +25,13 @@ export interface StatConfig {
   icon: React.ReactNode;
   accent: string; // tailwind bg color for icon bubble
   iconColor: string; // tailwind text color
-  link: string
+  link: string;
+}
+export interface StaffStatConfig {
+  label: string;
+  key: keyof StaffCardData;
+  icon: React.ReactNode;
+  accent: string; // tailwind bg color for icon bubble
+  iconColor: string; // tailwind text color
+  link: string;
 }

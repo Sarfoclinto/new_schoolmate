@@ -33,7 +33,7 @@ import {
   deleteTeachersSubjectFn,
   deleteTeachersSublevelFn,
   getAllTeachersFn,
-  getTeachersSubjectsFn,
+  getTeacherMappingFn,
 } from "@/services/staff";
 import {
   eduKeys,
@@ -92,7 +92,7 @@ const StaffAssignment = () => {
     queryKeys: eduKeys.sublevels(),
   });
   const { data: teachersData, isLoading: loadingTeacherData } = useFetch({
-    queryFn: () => getTeachersSubjectsFn(teacherId!),
+    queryFn: () => getTeacherMappingFn(teacherId!),
     queryKeys: subjectKeys.custom("teacher", { teacherId }),
     enabled: !!teacherId,
   });

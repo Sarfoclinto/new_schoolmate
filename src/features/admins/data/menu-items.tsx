@@ -32,7 +32,6 @@ import {
   CalendarCheck2Icon,
   AlertOctagon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const { admin } = paths;
 const { index } = admin;
@@ -41,7 +40,7 @@ const menu: MenuProps["items"] = [
   // dashboard
   {
     key: admin.index.href,
-    label: <Link to={index.href}>{index.label}</Link>,
+    label: <SidebarLabel to={index.href}>{index.label}</SidebarLabel>,
     icon: <HomeIcon className="size-3.75" />,
   },
   // setup

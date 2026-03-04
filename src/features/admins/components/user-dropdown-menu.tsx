@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
-import { getInitials } from "@/utils/string";
+import { getInitials, getUserProfileRoute } from "@/utils/string";
 import { DoorOpenIcon, SettingsIcon, User2Icon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const UserMenu = () => {
   const user = useAuth((s) => s.user);
@@ -47,10 +48,12 @@ const UserMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-42">
         <DropdownMenuGroup>
-          <DropdownMenuItem className="flex items-center gap-x-2">
-            <User2Icon />
-            Profile
-          </DropdownMenuItem>
+          <Link to={getUserProfileRoute()}>
+            <DropdownMenuItem className="flex items-center gap-x-2">
+              <User2Icon />
+              Profile
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem className="flex items-center gap-x-2">
             <SettingsIcon />
             Settings

@@ -4,18 +4,23 @@ import {
   postHelper,
   postWithFile,
   updateHelper,
+  updateWithFile,
 } from "@/api/crud";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/config/constants";
 import endpoints from "@/config/endpoints";
 import type { RegisterResponse } from "@/types/api";
+import type { UpdateReturn } from "@/types/api/setup/auth-n-user";
 import type {
   AdminUpdateStaffType,
   DeleteMapping,
   StaffGet,
   StaffGetResponse,
+  StaffUpdateWithFile,
   TeacherMappingPost,
-  TeachersSubjects,
+  TeachersMapping,
+  TeacherSubjectsGet,
   TeacherSubLevelsGet,
+  UpdateSecurity,
 } from "@/types/api/staff";
 
 const { staffMn } = endpoints;
@@ -35,8 +40,18 @@ export const getStaffByIdFn = async (id: string) => {
 export const getAllTeachersFn = async () => {
   return getHelper<StaffGet[]>(staffMn.allTeachers);
 };
-export const getTeachersSubjectsFn = async (id: string) => {
-  return getHelper<TeachersSubjects>(staffMn.teacherSubjects(id));
+export const getTeacherMappingFn = async (id: string) => {
+  return getHelper<TeachersMapping>(staffMn.teacherSubjects(id));
+};
+
+// TODO: use the below function at the appropraite places
+export const getTeacherSublevelSubjectsFn = async (
+  teacherId: string,
+  sublevelId: string,
+) => {
+  return getHelper<TeacherSubjectsGet>(
+    staffMn.subLevelSubjects(teacherId, sublevelId),
+  );
 };
 export const getTeachersSublevelsFn = async (id: string) => {
   return getHelper<TeacherSubLevelsGet>(staffMn.teacherSublevels(id));
@@ -47,6 +62,17 @@ export const createStaffFn = async (data: FormData) => {
 export const adminUpdateStaffFn = async (update: AdminUpdateStaffType) => {
   return updateHelper(staffMn.updateStaff(update.id), update.data);
 };
+export const updateStaffProfileFn = async (update: StaffUpdateWithFile) => {
+  return updateWithFile<UpdateReturn>(
+    staffMn.updateProfile(update.id),
+    update.data,
+  );
+};
+
+export const updateStaffPasswordFn = async (update: UpdateSecurity) => {
+  return updateHelper(staffMn.updatePassword(update.id), update.data);
+};
+
 export const createTeacherMapFn = async (data: TeacherMappingPost) => {
   return postHelper(staffMn.createMapping, data);
 };
