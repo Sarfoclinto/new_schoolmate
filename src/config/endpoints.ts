@@ -132,7 +132,7 @@ const endpoints = {
     },
     assessment: {
       getAll: "/GetAllAssessments",
-      getBySubId: (id: string) => `/GetEducationalLevelAssessments/${id}`,
+      getBySubId: (id: string) => `/GetSubLevelAssessments/${id}`,
       getByEduId: (id: string) => `/GetEducationalLevelAssessments/${id}`,
       create: "/CreateAssessment",
       update: (id: string) => `/UpdateAssessment/${id}`,

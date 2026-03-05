@@ -1,14 +1,13 @@
-import { createEnv } from "@/utils/string";
 import { QueryClient } from "@tanstack/react-query";
+import { createEnv } from "./app-config";
 
 export const queryClient = new QueryClient();
-// defaultOptions: {
-//   queries: {
-//     staleTime: 1000 * 60 * 5, // example: 5 mins
-//   },
-// },
+
 export const env = createEnv();
+console.log("env: ", env);
+
 export const isProduction = import.meta.env.PROD;
+export const isDeveloplement = import.meta.env.DEV;
 
 export const DEFAULT_ROLES = {
   ADMIN: ["admin", "super-admin", "administrator"],

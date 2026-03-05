@@ -19,6 +19,7 @@ import { getAllProgramsFn } from "@/services/setup/study-module";
 import { getSubLevelsByAcaIdFn } from "@/services/setup/sublevel";
 import { getAllYearsFn, getTermsByEduIdFn } from "@/services/setup/year-n-term";
 import { updateStuEnrollmentInfoFn } from "@/services/student";
+import type { UpdateStudentEnrollment } from "@/types/api/student";
 import type { SelectTypes } from "@/types/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { Form, Select } from "antd";
@@ -193,12 +194,16 @@ const UpdateStudentEnrollmentInfo = ({ enrollment }: Props) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = (v: any) => {
-    const formdata = new FormData();
-    formdata.append("SubLevelId", v.SubLevel?.value ?? v.SubLevel);
-    formdata.append("ProgramId", v.ProgramId);
-    formdata.append("AcademicYearId", "");
-    formdata.append("AcademicTermId", "");
-    update({ data: formdata, id: enrollment.studentId });
+    const payload: UpdateStudentEnrollment = {
+      id: enrollment.studentId,
+      data: {
+        SubLevelId: v.SubLevel?.value ?? v.SubLevel,
+        ProgramId: v.ProgramId,
+        AcademicYearId: "",
+        AcademicTermId: "",
+      },
+    };
+    update(payload);
   };
 
   return (

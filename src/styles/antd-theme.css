@@ -597,6 +597,10 @@ textarea.ant-input {
   transition: background 0.12s ease !important;
 }
 
+.setup-table .ant-table-thead .antd-table-cell {
+  color: whitesmoke !important;
+}
+
 .ant-table-tbody > tr:hover > td {
   background: var(--slate-50) !important;
 }

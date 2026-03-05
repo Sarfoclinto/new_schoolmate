@@ -41,7 +41,6 @@ interface SetupPageProps<T extends object> {
     | "pagination"
     | "showHeader"
     | "title"
-    | "styles"
   > & {
     title?: () => React.ReactNode;
     scroll?: TableProps<T>["scroll"];
@@ -257,11 +256,13 @@ export function SetupPage<T extends object>({
 
           <div className="overflow-x-auto">
             <Table
+              styles={{ header: { cell: { color: "white" } } }}
               {...tableProps}
               pagination={
                 tableProps.pagination ?? { pageSize: 6, showSizeChanger: false }
               }
               className="setup-table"
+              classNames={{ header: { cell: "setup-page-header-cell" } }}
               size="middle"
             />
           </div>

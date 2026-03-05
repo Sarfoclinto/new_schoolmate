@@ -44,9 +44,7 @@ export const ReportHeader = ({
   >
     {/* School logo */}
     <img
-      src={
-        logo ? `${import.meta.env.VITE_BACKEND_URL}${logo}` : "/schoolLogo.png"
-      }
+      src={buildMediaUrl(logo)}
       alt="School logo"
       style={{
         width: 150,

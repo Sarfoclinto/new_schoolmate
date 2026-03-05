@@ -244,3 +244,13 @@ export interface StudentTerminalReportGet {
   vacation: VacationGet[];
   gradingSystem: GradeGet[];
 }
+
+export interface UpdateStudentEnrollment {
+  id: string;
+  data: {
+    SubLevelId: string;
+    ProgramId: string;
+    AcademicYearId: string;
+    AcademicTermId: string;
+  };
+}

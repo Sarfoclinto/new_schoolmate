@@ -1,22 +1,20 @@
+import { buildMediaUrl } from "@/utils/media";
 import { dataURLtoFile } from "@/utils/others";
 import type { UploadFile } from "antd";
 import { useEffect, useRef, useState } from "react";
 import type Webcam from "react-webcam";
 
 /** Build a preview URL from a path — handles empty/undefined */
-const imgUrl = (path?: string) =>
-  path ? `${import.meta.env.VITE_BACKEND_URL}${path}` : "/no-logo.png";
-
 /** usePhotoState — manages file list + preview URL + webcam capture */
 export function usePhotoState(initialPath?: string) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [previewUrl, setPreviewUrl] = useState(imgUrl(initialPath));
+  const [previewUrl, setPreviewUrl] = useState(buildMediaUrl(initialPath));
   const webcamRef = useRef<Webcam | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPreviewUrl(imgUrl(initialPath));
+    setPreviewUrl(buildMediaUrl(initialPath));
     setFileList([]);
   }, [initialPath]);
 

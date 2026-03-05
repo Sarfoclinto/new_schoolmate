@@ -4,10 +4,18 @@ import { AlertOctagonIcon } from "lucide-react";
 import { useAuth } from "@/store/auth.store";
 import { DEFAULT_ROLES } from "@/config/constants";
 import { getUserDashboardRoute } from "@/utils/string";
+import { LogOutIcon } from "lucide-react";
+import { Button } from "antd";
+import { useShallow } from "zustand/react/shallow";
 
 const UnknownPage = () => {
   const [searchParams] = useSearchParams();
-  const role = useAuth((s) => s.user?.role) ?? "unknown";
+  const { logout, role } = useAuth(
+    useShallow((s) => ({
+      role: s.user?.role ?? "unknown",
+      logout: s.logout,
+    })),
+  );
   const allRoles = [DEFAULT_ROLES.ADMIN, DEFAULT_ROLES.STAFF].flat();
 
   if (allRoles.includes(role.toLowerCase())) {
@@ -39,6 +47,20 @@ const UnknownPage = () => {
           </pre>
         )}
       </Section>
+
+      <Button
+        type="primary"
+        danger
+        size="large"
+        icon={<LogOutIcon size={18} />}
+        onClick={() => {
+          logout();
+          window.location.assign(window.location.origin);
+        }}
+        className="mt-8 px-8 h-12 flex items-center gap-2 font-semibold rounded-xl shadow-lg shadow-red-900/20"
+      >
+        Logout & Restart
+      </Button>
     </div>
   );
 };

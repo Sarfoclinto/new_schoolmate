@@ -715,6 +715,7 @@ const StaffAssignment = () => {
                   size="middle"
                   showHeader={false}
                   pagination={{ pageSize: 8, showSizeChanger: false }}
+                  styles={{ header: { cell: { color: "white" } } }}
                   locale={{
                     emptyText: (
                       <EmptyState
@@ -742,6 +743,7 @@ const StaffAssignment = () => {
                   size="middle"
                   showHeader={false}
                   pagination={{ pageSize: 8, showSizeChanger: false }}
+                  styles={{ header: { cell: { color: "white" } } }}
                   locale={{
                     emptyText: (
                       <EmptyState
