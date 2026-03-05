@@ -289,6 +289,7 @@ const AssignSubLevel = () => {
                 showHeader={false}
                 size="middle"
                 pagination={{ pageSize: 6, showSizeChanger: false }}
+                styles={{ header: { cell: { color: "white" } } }}
                 locale={{
                   emptyText: (
                     <div className="flex flex-col items-center py-8 gap-2 text-slate-400">
@@ -328,6 +329,7 @@ const AssignSubLevel = () => {
               showHeader={false}
               size="middle"
               pagination={{ pageSize: 6, showSizeChanger: false }}
+              styles={{ header: { cell: { color: "white" } } }}
               locale={{
                 emptyText: (
                   <div className="flex flex-col items-center py-8 gap-2 text-slate-400">

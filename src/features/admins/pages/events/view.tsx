@@ -767,6 +767,7 @@ const ViewEvents = () => {
               dataSource={filtered}
               columns={columns}
               pagination={{ pageSize: 8, showSizeChanger: false }}
+              styles={{ header: { cell: { color: "white" } } }}
               onRow={(row) => ({
                 onClick: () => setDetailEvent(row),
                 className: "cursor-pointer hover:bg-slate-50 transition-colors",

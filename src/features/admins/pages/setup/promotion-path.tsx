@@ -168,10 +168,6 @@ const PromotionPath = () => {
         title: () => (
           <div className="flex items-center justify-between h-0! p-0!"></div>
         ),
-        styles: {
-          title: { padding: "6px" },
-          // header: { wrapper: { border } },
-        },
       }}
       formContent={
         <>

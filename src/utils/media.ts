@@ -11,7 +11,7 @@ export const buildMediaUrl = (
   options?: BuildMediaUrlOptions,
 ) => {
   const {
-    baseUrl = env.baseUrl,
+    baseUrl = env.API_BASE_URL,
     fallback = "/no-logo.png",
     useNoLogo = true,
   } = options || {};

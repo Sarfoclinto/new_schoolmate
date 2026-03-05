@@ -9,7 +9,7 @@ const DEFAULT_HEADERS: AxiosRequestHeaders = {
 };
 
 const resolveBaseUrl = (baseUrl?: string, baseRoute?: string): string => {
-  const resolved = baseUrl?.trim() || env.baseUrl?.trim();
+  const resolved = baseUrl?.trim() || env.API_BASE_URL?.trim();
 
   if (!resolved) {
     throw new Error(

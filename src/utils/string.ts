@@ -53,16 +53,6 @@ export function getOrdinal(position: number): string {
   return `${position}${suffix}`;
 }
 
-export const createEnv = () => {
-  const baseUrl = import.meta.env.VITE_BACKEND_URL as string;
-
-  if (!baseUrl) {
-    throw new Error("VITE_BACKEND_URL is missing in env");
-  }
-  return {
-    baseUrl,
-  };
-};
 
 export const getUserDashboardRoute = () => {
   const user = useAuth.getState().user;

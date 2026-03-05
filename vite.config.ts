@@ -13,7 +13,10 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
-  base: "./",
+  base: "/",
+  build: {
+    outDir: "frontend",
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

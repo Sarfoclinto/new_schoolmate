@@ -18,3 +18,11 @@ export const UserSchema = z.object({
   phone: z.string(),
   createdAt: z.string(),
 });
+
+export const EnvSchema = z.object({
+  API_BASE_URL: z.url(),
+  APP_NAME: z.string(),
+  ENVIRONMENT: z.string(),
+  ISPROD: z.boolean(),
+  ISDEV: z.boolean(),
+});

@@ -75,6 +75,7 @@ import usePost from "@/hooks/api/use-post";
 import useUpdate from "@/hooks/api/use-update";
 import { MotionDiv } from "@/components/custom/motion";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/config/constants";
+import { buildMediaUrl } from "@/utils/media";
 
 type Options = {
   label: string;
@@ -166,7 +167,7 @@ const Avatar = ({
     >
       {img ? (
         <img
-          src={`${import.meta.env.VITE_BACKEND_URL}${img}`}
+          src={buildMediaUrl(img)}
           alt={name}
           className="w-full h-full object-cover"
           onError={(e) => {

@@ -57,6 +57,7 @@ import useUpdate from "@/hooks/api/use-update";
 import { useQueryClient } from "@tanstack/react-query";
 import { CardHeader } from "@/features/admins/components/teacher-util-components";
 import { useStaffNotices } from "@/hooks/custom/use-staff-notice";
+import { buildMediaUrl } from "@/utils/media";
 
 const Avatar = ({
   name,
@@ -86,7 +87,7 @@ const Avatar = ({
     >
       {img ? (
         <img
-          src={`${import.meta.env.VITE_BACKEND_URL}${img}`}
+          src={buildMediaUrl(img)}
           alt={name}
           className="w-full h-full object-cover"
           onError={(e) => {

@@ -55,6 +55,7 @@ import { toast } from "sonner";
 import type { MdResponse } from "@/types/api";
 import { DatePicker } from "antd";
 import { AnimatePresence } from "motion/react";
+import { buildMediaUrl } from "@/utils/media";
 
 // ═══════════════════════════════════════════════════════════════════
 // PRIMITIVES
@@ -88,7 +89,7 @@ const Avatar = ({
     >
       {img ? (
         <img
-          src={`${import.meta.env.VITE_BACKEND_URL}${img}`}
+          src={buildMediaUrl(img)}
           alt={name}
           className="w-full h-full object-cover"
           onError={(e) => {

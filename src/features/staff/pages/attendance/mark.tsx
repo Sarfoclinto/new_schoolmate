@@ -77,7 +77,7 @@ const CardHeader = ({
     className="flex items-center gap-x-3 px-5 py-3.5"
     style={{ background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)" }}
   >
-    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] flex-shrink-0">
+    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
       {icon}
     </div>
     <span
@@ -113,7 +113,7 @@ const EmptyState = ({
       {message}
     </p>
     {sub && (
-      <p className="text-xs text-slate-300 text-center max-w-[220px]">{sub}</p>
+      <p className="text-xs text-slate-300 text-center max-w-55">{sub}</p>
     )}
   </div>
 );
@@ -626,7 +626,7 @@ const MarkAttendance = () => {
                 <button
                   type="button"
                   onClick={toggleAll}
-                  className="flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all cursor-pointer"
+                  className="shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all cursor-pointer"
                   style={{
                     borderColor: allChecked
                       ? "#0D1B2E"
@@ -719,7 +719,7 @@ const MarkAttendance = () => {
                       <button
                         type="button"
                         onClick={() => toggleCheck(student.studentId)}
-                        className="flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all cursor-pointer"
+                        className="shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all cursor-pointer"
                         style={{
                           borderColor: isChecked ? "#0D1B2E" : "#CBD5E1",
                           background: isChecked ? "#0D1B2E" : "white",
@@ -746,7 +746,7 @@ const MarkAttendance = () => {
                         type="button"
                         disabled={isPending}
                         onClick={() => markOne(student)}
-                        className="flex-shrink-0 flex items-center gap-x-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-[#1E3A5F] bg-[#EEF2F8] hover:bg-[#1E3A5F] hover:text-white disabled:opacity-40 transition-all cursor-pointer"
+                        className="shrink-0 flex items-center gap-x-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-[#1E3A5F] bg-[#EEF2F8] hover:bg-[#1E3A5F] hover:text-white disabled:opacity-40 transition-all cursor-pointer"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Mark
@@ -816,7 +816,7 @@ const MarkAttendance = () => {
             <div className="px-4 pt-3.5 pb-2 flex items-center gap-x-3 border-b border-slate-100">
               {/* Date display */}
               {selectedDate && (
-                <div className="flex items-center gap-x-1.5 text-[11px] text-slate-500 font-bold flex-shrink-0">
+                <div className="flex items-center gap-x-1.5 text-[11px] text-slate-500 font-bold shrink-0">
                   <CalendarDays className="w-3.5 h-3.5 text-slate-300" />
                   {formatDate(selectedDate)}
                   {dayName && (
@@ -906,7 +906,7 @@ const MarkAttendance = () => {
                         <button
                           type="button"
                           disabled={isPending}
-                          className="flex-shrink-0 flex items-center gap-x-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-rose-600 bg-rose-50 hover:bg-rose-500 hover:text-white disabled:opacity-40 transition-all cursor-pointer"
+                          className="shrink-0 flex items-center gap-x-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-rose-600 bg-rose-50 hover:bg-rose-500 hover:text-white disabled:opacity-40 transition-all cursor-pointer"
                         >
                           <XCircle className="w-3.5 h-3.5" />
                           Absent

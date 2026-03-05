@@ -12,7 +12,10 @@ import {
   getSublvelSubjectRecordsFn,
 } from "@/services/academic-records";
 import { getAssessmentsBySubIdFn } from "@/services/setup/assessment-n-grading";
-import { getTeacherMappingFn } from "@/services/staff";
+import {
+  getTeachersSublevelsFn,
+  getTeacherSublevelSubjectsFn,
+} from "@/services/staff";
 import { getAllSubLevelStuFn } from "@/services/student";
 import { useAuth } from "@/store/auth.store";
 import type {
@@ -20,6 +23,7 @@ import type {
   SubLevelSubjectAcademicRecordGet,
 } from "@/types/api/academic-records";
 import type { SelectTypes } from "@/types/ui";
+import { capitalizeWords } from "@/utils/string";
 import { useQueryClient } from "@tanstack/react-query";
 import { Form, InputNumber, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -55,11 +59,19 @@ const AddRecords = () => {
     queryKeys: educationKeys.custom("assessment", { sublevelId }),
     enabled: !!sublevelId,
   });
-  const { data: mapping, isLoading: isLoadingMap } = useFetch({
-    queryFn: () => getTeacherMappingFn(teacherId!),
-    //  TODO: Find all occurrence of this and change the key to sth related to the teacher
-    queryKeys: subjectKeys.custom("teacher", { teacherId }),
+
+  const { data: sublevelData, isLoading: loadingSubs } = useFetch({
+    queryFn: () => getTeachersSublevelsFn(teacherId!),
+    queryKeys: educationKeys.custom("teacher-sublevels", { teacherId }),
     enabled: !!teacherId,
+  });
+  const { data: subjectsData, isLoading: loadingSubjects } = useFetch({
+    queryFn: () => getTeacherSublevelSubjectsFn(teacherId!, sublevelId!),
+    queryKeys: subjectKeys.custom("teacher-sublevel", {
+      sublevelId,
+      teacherId,
+    }),
+    enabled: !!sublevelId && !!teacherId,
   });
   const { data: students, isLoading: loadingStu } = useFetch({
     queryFn: () => getAllSubLevelStuFn(sublevelId!),
@@ -81,26 +93,26 @@ const AddRecords = () => {
   });
 
   // memoized values
-  const subjectOptions = useMemo(() => {
-    if (!mapping?.subjects) return [];
-    return mapping.subjects.map((s) => ({
-      label: s.subjectName,
-      value: s.subjectId,
-    }));
-  }, [mapping?.subjects]);
   const sublevelOptions = useMemo(() => {
-    if (!mapping?.subLevels) return [];
-    return mapping.subLevels.map((s) => ({
+    if (!sublevelData?.subLevels) return [];
+    return sublevelData.subLevels.map((s) => ({
       label: s.subLevelName,
       value: s.subLevelId,
     }));
-  }, [mapping?.subLevels]);
-  console.log("assessment: ", assessment);
+  }, [sublevelData?.subLevels]);
+
+  const subjectOptions = useMemo(() => {
+    if (!subjectsData?.subjects) return [];
+    return subjectsData.subjects.map((s) => ({
+      label: s.subjectName,
+      value: s.subjectId,
+    }));
+  }, [subjectsData?.subjects]);
 
   const assessmentOptions = useMemo(() => {
     if (!assessments) return [];
     return assessments.assessments.map((a) => ({
-      label: a.assessmentName,
+      label: capitalizeWords(a.assessmentName),
       value: a.assessmentId,
     }));
   }, [assessments]);
@@ -234,8 +246,8 @@ const AddRecords = () => {
                   });
                 }}
                 options={sublevelOptions}
-                loading={isLoadingMap}
-                disabled={isLoadingMap}
+                loading={loadingSubs}
+                disabled={loadingSubs}
               />
             </Form.Item>
             <Form.Item
@@ -284,8 +296,8 @@ const AddRecords = () => {
                   });
                 }}
                 options={subjectOptions}
-                loading={isLoadingMap}
-                disabled={isLoadingMap}
+                loading={loadingSubjects}
+                disabled={loadingSubjects}
               />
             </Form.Item>
 

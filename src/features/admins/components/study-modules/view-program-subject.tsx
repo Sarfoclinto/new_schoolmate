@@ -188,6 +188,7 @@ const ProgramCard = ({
                   loading={loadingProgramData}
                   size="small"
                   pagination={false}
+                  styles={{ header: { cell: { color: "white" } } }}
                   locale={{
                     emptyText: (
                       <div className="py-6 text-slate-400 text-xs text-center">
@@ -213,6 +214,7 @@ const ProgramCard = ({
                   loading={loadingProgramData}
                   size="small"
                   pagination={false}
+                  styles={{ header: { cell: { color: "white" } } }}
                   locale={{
                     emptyText: (
                       <div className="py-6 text-slate-400 text-xs text-center">

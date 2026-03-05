@@ -1,4 +1,4 @@
-import { getHelper, postWithFile, updateWithFile } from "@/api/crud";
+import { getHelper, postWithFile, updateHelper, updateWithFile } from "@/api/crud";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/config/constants";
 import endpoints from "@/config/endpoints";
 import type { RegisterResponse } from "@/types/api";
@@ -11,6 +11,7 @@ import type {
   StudentTerminalReportGet,
   StudentUpdateWithFile,
   SubLevelStudentsGet,
+  UpdateStudentEnrollment,
 } from "@/types/api/student";
 import type { ReportPaths } from "@/types/ui";
 
@@ -82,8 +83,6 @@ export const updateStuGuardiansInfoFn = async (
 ) => {
   return updateWithFile(updates.guardians(update.id), update.data);
 };
-export const updateStuEnrollmentInfoFn = async (
-  update: StudentUpdateWithFile,
-) => {
-  return updateWithFile(updates.enrollment(update.id), update.data);
+export const updateStuEnrollmentInfoFn = async (update: UpdateStudentEnrollment) => {
+  return updateHelper(updates.enrollment(update.id), update.data);
 };

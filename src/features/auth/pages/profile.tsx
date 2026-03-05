@@ -19,12 +19,12 @@
  * NOTE: Adjust service imports, query keys, and type paths for your project.
  */
 
-import { Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AnimatePresence } from "motion/react";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import {
   ChevronRight,
   User,
@@ -33,10 +33,7 @@ import {
   Calendar,
   Phone,
   Mail,
-  MapPin,
   Lock,
-  Eye,
-  EyeOff,
   Camera,
   Copy,
   Check,
@@ -94,7 +91,7 @@ const Field = ({
     label={<FL>{label}</FL>}
     rules={rules}
     extra={extra && <span className="text-[11px] text-slate-400">{extra}</span>}
-    className="!mb-0"
+    className="mb-0!"
   >
     <div className="relative">
       {icon && (
@@ -107,7 +104,7 @@ const Field = ({
           type={type}
           placeholder={placeholder}
           disabled={disabled}
-          className={`!rounded-xl !h-11 ${icon ? "!pl-9" : ""}`}
+          className={`rounded-xl! h-11! ${icon ? "pl-9!" : ""}`}
         />
       </Form.Item>
     </div>
@@ -136,7 +133,7 @@ const InfoRow = ({
 
   return (
     <div className="flex items-center gap-x-3 py-3.5 border-b border-slate-100 last:border-0">
-      <div className="w-8 h-8 rounded-xl bg-[#EEF2F8] flex items-center justify-center text-[#1E3A5F] flex-shrink-0">
+      <div className="w-8 h-8 rounded-xl bg-[#EEF2F8] flex items-center justify-center text-[#1E3A5F] shrink-0">
         {icon}
       </div>
       <div className="flex-1 min-w-0">
@@ -156,7 +153,7 @@ const InfoRow = ({
         <button
           type="button"
           onClick={copy}
-          className="flex-shrink-0 w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center hover:bg-[#EEF2F8] hover:text-[#1E3A5F] transition-all cursor-pointer text-slate-400"
+          className="shrink-0 w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center hover:bg-[#EEF2F8] hover:text-[#1E3A5F] transition-all cursor-pointer text-slate-400"
         >
           {copied ? (
             <Check className="w-3.5 h-3.5 text-emerald-500" />
@@ -198,7 +195,7 @@ const SectionHeader = ({
     className="flex items-center gap-x-3 px-5 py-3.5"
     style={{ background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)" }}
   >
-    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] flex-shrink-0">
+    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
       {icon}
     </div>
     <div className="flex-1">
@@ -221,37 +218,29 @@ const PasswordField = ({
   name,
   placeholder,
   rules,
+  dependencies,
 }: {
   label: string;
   name: string;
   placeholder?: string;
   rules?: Rule[];
+  dependencies?: string[];
 }) => {
-  const [show, setShow] = useState(false);
   return (
     <Form.Item
       name={name}
       label={<FL>{label}</FL>}
       rules={rules}
-      className="!mb-0"
+      dependencies={dependencies}
+      className="mb-0!"
     >
-      <div className="relative">
-        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none z-10" />
-        <Form.Item name={name} noStyle rules={rules}>
-          <Input
-            type={show ? "text" : "password"}
-            placeholder={placeholder}
-            className="!rounded-xl !h-11 !pl-9 !pr-10"
-          />
-        </Form.Item>
-        <button
-          type="button"
-          onClick={() => setShow((v) => !v)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer z-10"
-        >
-          {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-        </button>
-      </div>
+      <Input.Password
+        placeholder={placeholder}
+        className="rounded-xl! h-11!"
+        prefix={
+          <Lock className="w-4 h-4 text-slate-300 pointer-events-none z-10" />
+        }
+      />
     </Form.Item>
   );
 };
@@ -463,6 +452,7 @@ const UserProfile = () => {
     onSuccess: async ({ responseCode, responseMessage }) => {
       if (responseCode === 1) {
         await qc.invalidateQueries({ queryKey: staffKeys.detail(userId!) });
+        passwordForm.resetFields();
         toast.success(responseMessage);
       } else {
         toast.info(responseMessage);
@@ -631,19 +621,19 @@ const UserProfile = () => {
                   <div className="flex flex-col gap-y-1.5 w-full text-left mt-1">
                     {profile?.staffPhone && (
                       <div className="flex items-center gap-x-2 text-xs text-slate-500">
-                        <Phone className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
+                        <Phone className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                         {profile.staffPhone}
                       </div>
                     )}
                     {profile?.gender && (
                       <div className="flex items-center gap-x-2 text-xs text-slate-500">
-                        <User className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
+                        <User className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                         {profile.gender}
                       </div>
                     )}
                     {profile?.createdOn && (
                       <div className="flex items-center gap-x-2 text-xs text-slate-500">
-                        <Calendar className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
+                        <Calendar className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                         Joined {dayjs(profile.createdOn).format("MMM YYYY")}
                       </div>
                     )}
@@ -767,7 +757,7 @@ const UserProfile = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                       <div>
                         <FL>Gender</FL>
-                        <Form.Item name="Gender" className="!mb-0">
+                        <Form.Item name="Gender" className="mb-0!">
                           <Select
                             size="large"
                             className="w-full"
@@ -782,18 +772,12 @@ const UserProfile = () => {
                       </div>
                       <div>
                         <FL>Date of Birth</FL>
-                        <Form.Item name="DateOfBirth" className="!mb-0">
-                          <input
-                            type="date"
-                            name="DateOfBirth"
+                        <Form.Item name="DateOfBirth" className="mb-0!">
+                          <DatePicker
+                            // type="date"
+                            // name="DateOfBirth"
                             className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-sm text-[#0D1B2E] focus:outline-none focus:border-[#1E3A5F] focus:ring-1 focus:ring-[#1E3A5F]/20 transition-all"
                             style={{ fontFamily: "'DM Sans', sans-serif" }}
-                            onChange={(e) =>
-                              profileForm.setFieldValue(
-                                "DateOfBirth",
-                                e.target.value,
-                              )
-                            }
                           />
                         </Form.Item>
                       </div>
@@ -802,15 +786,12 @@ const UserProfile = () => {
                     {/* Address */}
                     <div className="mb-4">
                       <FL>Address / Residence</FL>
-                      <Form.Item name="Address" className="!mb-0">
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300 pointer-events-none z-10" />
-                          <Input.TextArea
-                            rows={3}
-                            placeholder="Street address or town/city…"
-                            className="!rounded-xl !pl-9 resize-none"
-                          />
-                        </div>
+                      <Form.Item name="Address" className="mb-0! relative">
+                        <Input.TextArea
+                          rows={3}
+                          placeholder="Street address or town/city…"
+                          className="rounded-xl! pl-9!. resize-none"
+                        />
                       </Form.Item>
                     </div>
 
@@ -846,7 +827,7 @@ const UserProfile = () => {
                   >
                     {/* Tips banner */}
                     <div className="flex items-start gap-x-3 p-3.5 bg-amber-50 border border-amber-200 rounded-xl mb-5">
-                      <Shield className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <Shield className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                       <p className="text-xs text-amber-700 font-medium leading-relaxed">
                         Use at least 8 characters, including uppercase,
                         lowercase, numbers and symbols. Never share your
@@ -882,11 +863,25 @@ const UserProfile = () => {
                         label="Confirm New Password"
                         name="ConfirmPassword"
                         placeholder="Re-enter new password"
+                        dependencies={["NewPassword"]}
                         rules={[
                           {
                             required: true,
-                            message: "Please confirm your password",
+                            message: "Please confirm your new password",
                           },
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              if (
+                                !value ||
+                                getFieldValue("NewPassword") === value
+                              ) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error("Passwords do not match!"),
+                              );
+                            },
+                          }),
                         ]}
                       />
                     </div>
@@ -982,7 +977,7 @@ const UserProfile = () => {
 
                     {/* Soft disclaimer */}
                     <div className="flex items-start gap-x-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl mt-4">
-                      <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+                      <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                       <p className="text-xs text-slate-500 leading-relaxed">
                         Account information is managed by your institution
                         administrator. Contact them to update your role, staff
