@@ -427,7 +427,7 @@ const ViewMonthlyAttendance = () => {
 
   // ── Render ───────────────────────────────────────────
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-2">
       {/* ── Page header ─────────────────────────────── */}
       <MotionDiv
         initial={{ opacity: 0, y: -8 }}
@@ -667,7 +667,7 @@ const ViewMonthlyAttendance = () => {
               style={{
                 borderCollapse: "separate",
                 borderSpacing: 0,
-                minWidth: `${180 + monthDays.length * 34 + 120}px`,
+                minWidth: `${180 + monthDays.length * 30 + 120}px`,
                 width: "100%",
                 fontSize: "12px",
                 fontFamily: "'DM Sans', sans-serif",

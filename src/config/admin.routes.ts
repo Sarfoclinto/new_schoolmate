@@ -112,7 +112,7 @@ const adminPaths = {
   },
 
   // finance
-  finance: { label: "Finance Setup", href: "/admin/finance" },
+  finance: { label: "Finance", href: "/admin/finance" },
   fees: { label: "Fees", href: "/admin/finance/fees" },
 
   // events & notice

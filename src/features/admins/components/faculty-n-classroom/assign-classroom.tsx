@@ -38,14 +38,16 @@ const AssignClassroom = () => {
   // memoized values
   const classroomOptions = useMemo(() => {
     if (!classrooms) return [];
-    return classrooms.map((c) => ({
-      label: c.classRoomName,
-      value: c.classRoomId,
-    }));
+    return classrooms
+      .filter((cr) => cr.subLevelId === undefined)
+      .map((c) => ({
+        label: c.classRoomName,
+        value: c.classRoomId,
+      }));
   }, [classrooms]);
   const dataSource = useMemo(() => {
     if (!classrooms) return [];
-    return classrooms.filter((cr) => cr.subLevelId === undefined);
+    return classrooms;
   }, [classrooms]);
   const subLevelOptions = useMemo(() => {
     if (!allSubLevels) return [];

@@ -1,5 +1,5 @@
 import type { ClassesnSubjects } from "@/types/ui";
-import { ChevronRight, ClockFading, ClockIcon } from "lucide-react";
+import { BookOpen, Building2Icon, ChevronRight, Layers } from "lucide-react";
 import Classes from "../../components/classes-n-subjects/classes";
 import Subjects from "../../components/classes-n-subjects/subjects";
 import { useMemo, useState } from "react";
@@ -10,6 +10,7 @@ import useFetch from "@/hooks/api/use-fetch";
 import { getTeacherMappingFn } from "@/services/staff";
 import { subjectKeys } from "@/config/query-keys";
 import { useSearchParams } from "react-router-dom";
+import SubLevelSubjects from "../../components/classes-n-subjects/sublevel-subjects";
 
 interface Tab {
   key: ClassesnSubjects;
@@ -46,15 +47,24 @@ const ClassesnSubjects = () => {
       key: "classes",
       shortLabel: "Classes",
       label: "Classes",
-      icon: <ClockIcon className="w-3.5 h-3.5" />,
+      icon: <Building2Icon className="w-3.5 h-3.5" />,
       component: <Classes loading={isLoading} subLevels={subLevels} />,
     },
     {
       key: "subjects",
       shortLabel: "Subjects",
       label: "Subjects",
-      icon: <ClockFading className="w-3.5 h-3.5" />,
+      icon: <BookOpen className="w-3.5 h-3.5" />,
       component: <Subjects loading={isLoading} subjects={subjects} />,
+    },
+    {
+      key: "sublevel-subject",
+      shortLabel: "Sublevel Subjects",
+      label: "Sublevel Subjects",
+      icon: <Layers className="w-3.5 h-3.5" />,
+      component: (
+        <SubLevelSubjects subLevels={subLevels} teacherId={teacherId} />
+      ),
     },
   ];
 
@@ -93,7 +103,9 @@ const ClassesnSubjects = () => {
         className="mb-5 bg-white rounded-2xl border border-slate-100 p-1.5"
         style={{ boxShadow: "0 2px 12px rgba(13,27,46,0.06)" }}
       >
-        <div className="grid grid-cols-2 items-center gap-x-1 overflow-x-auto scrollbar-none">
+        <div
+          className={`grid grid-cols-${tabs.length} items-center gap-x-1 overflow-x-auto scrollbar-none`}
+        >
           {tabs.map((tab) => {
             const isActive = tab.key === active;
             return (

@@ -31,3 +31,9 @@ export interface SubLevelFormValues {
   hasNoSubLevel?: boolean;
   useAlias: boolean;
 }
+
+export interface SublevelLite {
+  subLevelId: string;
+  subLevelName: string;
+  educationalLevelId: string;
+}

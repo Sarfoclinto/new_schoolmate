@@ -251,7 +251,7 @@ const endpoints = {
     ) =>
       `/GetStudentAttendancePreviews/SubLevel/${sublevelId}/AttendanceDate/${date}`,
     monthly: (subId: string, date: string) =>
-      `/GetStudentAttendancePreviews/SubLevel/${subId}/AttendanceDate/${date}`,
+      `/GetMonthlyStudentAttendances/SubLevel/${subId}/Month/${date}`,
   },
 };
 

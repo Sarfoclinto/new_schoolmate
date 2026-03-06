@@ -53,7 +53,7 @@ const LogoSection = ({ collapsed }: { collapsed: boolean }) => (
               fontWeight: 500,
             }}
           >
-            Admin Console
+            Staff Console
           </span>
         </div>
       )}

@@ -10,7 +10,7 @@ export const isProduction = import.meta.env.PROD;
 export const isDeveloplement = import.meta.env.DEV;
 
 export const DEFAULT_ROLES = {
-  ADMIN: ["admin", "super-admin", "administrator"],
+  ADMIN: ["admin", "super-admin", "administrator", "principal"],
   STAFF: ["staff", "lecturer", "teacher"],
 };
 

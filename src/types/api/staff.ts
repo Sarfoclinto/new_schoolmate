@@ -1,5 +1,5 @@
 import type { SubjectGet, SubjectLite } from "./setup/study-modules";
-import type { SubLevelGet } from "./setup/sublevel";
+import type { SubLevelGet, SublevelLite } from "./setup/sublevel";
 
 export interface StaffGet {
   staffId: string;
@@ -65,7 +65,7 @@ export interface TeachersMapping {
 export interface TeacherSubLevelsGet {
   teacherId: string;
   teacherName: string;
-  subLevels: SubLevelGet[];
+  subLevels: SublevelLite[];
 }
 
 export interface TeacherSubjectsGet {

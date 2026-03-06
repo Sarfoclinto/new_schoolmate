@@ -14,7 +14,6 @@ export interface SubLevelAttendanceGet {
   status: "Present" | "Absent";
 }
 
-
 interface attendanceRecord {
   attendanceDate: string;
   status: string;
@@ -25,3 +24,4 @@ export interface StudentsMonthlyAttendance {
   studentName: string;
   attendance: attendanceRecord[];
 }
+

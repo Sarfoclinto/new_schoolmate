@@ -208,10 +208,16 @@ const StaffAssignment = () => {
     }
     const payload = {
       TeacherId: selectedTeacher.value,
-      SubLevelIds: values.SubLevelIds ? [values.SubLevelIds] : [],
+      SubLevelIds: values.SubLevelIds
+        ? Array.isArray(values.SubLevelIds)
+          ? values.SubLevelIds
+          : [values.SubLevelIds]
+        : [],
       ProgramId: preference === "ProgramId" ? values.ProgramId : undefined,
       SubjectIds: preference === "SubjectIds" ? (values.SubjectIds ?? []) : [],
     };
+    // console.log("payload: ", payload);
+
     mapTeacher(payload);
   };
 
@@ -485,6 +491,7 @@ const StaffAssignment = () => {
               >
                 <Select
                   size="large"
+                  mode="multiple"
                   showSearch={{
                     filterOption: (input, opt) =>
                       String(opt?.label ?? "")
@@ -553,7 +560,12 @@ const StaffAssignment = () => {
                     >
                       <Select
                         size="large"
-                        showSearch
+                        showSearch={{
+                          filterOption: (input, opt) =>
+                            String(opt?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
                         placeholder={
                           selectedTeacher
                             ? "Select a program"
@@ -562,11 +574,6 @@ const StaffAssignment = () => {
                         options={programOptions}
                         loading={loadingPrograms}
                         disabled={loadingPrograms || !selectedTeacher}
-                        filterOption={(input, opt) =>
-                          String(opt?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
                       />
                     </Form.Item>
                   </MotionDiv>

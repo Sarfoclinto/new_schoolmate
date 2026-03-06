@@ -138,6 +138,7 @@ const StaffDetail = () => {
   const fullName =
     `${staff?.firstName ?? ""} ${staff?.lastName ?? ""}`.trim() || "Staff";
   const initials = getInitials(fullName);
+
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-2">
       {/* ── Page header ──────────────────────────────── */}
@@ -306,8 +307,8 @@ const StaffDetail = () => {
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
                   Note
                 </span>
-                <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 rounded-xl p-3 border border-slate-100">
-                  {staff.note}
+                <p className="text-xs  text-slate-600 leading-relaxed bg-slate-50 rounded-xl p-3 border border-slate-100">
+                  {staff.note ?? "No info"}
                 </p>
               </div>
             )}

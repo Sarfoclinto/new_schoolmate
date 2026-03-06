@@ -21,7 +21,7 @@ export type AssessmentNGradingTabKey = "assessment" | "grading";
 export type YearsNTerms = "years" | "terms";
 
 // staff
-export type ClassesnSubjects = "classes" | "subjects";
+export type ClassesnSubjects = "classes" | "subjects" | "sublevel-subject";
 
 export interface ReportPaths {
   studentId: string;

@@ -35,6 +35,9 @@ const StaffLayoutHeader = () => {
       openSidebar: s.openSidebar,
     })),
   );
+  console.log("terms: ",terms);
+  console.log("year: ",year);
+  
 
   const handleCollapseToggle = () => {
     if (!isOpen) {

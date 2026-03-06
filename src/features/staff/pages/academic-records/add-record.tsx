@@ -1,3 +1,4 @@
+import ActiveTermBadge from "@/components/custom/active-term-badge";
 import {
   academicRecordsKeys,
   educationKeys,
@@ -7,6 +8,7 @@ import {
 import { SetupPage } from "@/features/admins/components/setup-page";
 import useFetch from "@/hooks/api/use-fetch";
 import usePost from "@/hooks/api/use-post";
+import { useActiveTerm } from "@/hooks/use-active-term";
 import {
   addRecordFn,
   getSublvelSubjectRecordsFn,
@@ -135,6 +137,12 @@ const AddRecords = () => {
     return records;
   }, [records]);
 
+  const sub = useMemo(
+    () => sublevelData?.subLevels.find((s) => s.subLevelId === sublevelId),
+    [sublevelData?.subLevels, sublevelId],
+  );
+  const activeTerm = useActiveTerm(sub?.educationalLevelId);
+
   // useEffect to check if academic records exist and set the MarkedOver value.
   useEffect(() => {
     if (records && records.length > 0) {
@@ -223,6 +231,14 @@ const AddRecords = () => {
         rowKey: "academicRecordId",
         // showHeader: false,
       }}
+      headerNode={
+        sublevelId && (
+          <ActiveTermBadge
+            active={!!activeTerm}
+            name={activeTerm?.academicTermName}
+          />
+        )
+      }
       formContent={
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -352,7 +368,7 @@ const AddRecords = () => {
           </Form.Item>
 
           <Form.Item
-            label={`Marks(${markedOver})`}
+            label={`Marks ${markedOver > 0 ? `(/${markedOver})` : ""}`}
             name="Marks"
             dependencies={["MarkedOver"]}
             rules={[

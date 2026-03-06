@@ -146,7 +146,7 @@ const AddClassroom = () => {
             dataIndex: "facultyName",
             render: (v: string) => (
               <span className="font-semibold capitalize text-[#0D1B2E]">
-                {v}
+                {v ?? "No Block"}
               </span>
             ),
           },
@@ -206,7 +206,7 @@ const AddClassroom = () => {
         dataSource,
         loading: loadingClassrooms,
         rowKey: "classRoomId",
-        showHeader: false,
+        // showHeader: false,
       }}
       formContent={
         <>

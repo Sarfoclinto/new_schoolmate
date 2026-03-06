@@ -19,6 +19,9 @@ interface SetupPageProps<T extends object> {
   showClock?: boolean;
   clockProps?: React.ComponentProps<typeof LiveClock>;
 
+  // node to place between header and body
+  headerNode?: React.ReactNode;
+
   /** Currently selected record for editing */
   record?: object | null;
   onClearRecord?: () => void;
@@ -88,9 +91,10 @@ export function SetupPage<T extends object>({
   tableProps,
   showClock = true,
   clockProps,
+  headerNode,
 }: SetupPageProps<T>) {
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-2">
+    <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-3">
       {/* ── Page header ── */}
       <MotionDiv
         initial={{ opacity: 0, y: -8 }}
@@ -122,6 +126,8 @@ export function SetupPage<T extends object>({
         </div>
         {showClock && <LiveClock {...clockProps} />}
       </MotionDiv>
+
+      {headerNode && headerNode}
 
       {/* ── Two-column grid ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">

@@ -1,3 +1,4 @@
+import ActiveTermBadge from "@/components/custom/active-term-badge";
 import {
   academicRecordsKeys,
   educationKeys,
@@ -8,6 +9,7 @@ import { TableActions } from "@/features/admins/components/table-action";
 import useFetch from "@/hooks/api/use-fetch";
 import usePost from "@/hooks/api/use-post";
 import useUpdate from "@/hooks/api/use-update";
+import { useActiveTerm } from "@/hooks/use-active-term";
 import {
   addPassmarkFn,
   deletePassmarkFn,
@@ -70,6 +72,7 @@ const PassMark = () => {
     queryKeys: educationKeys.custom("teacher-sublevels", { teacherId }),
     enabled: !!teacherId,
   });
+
   const { data: subjectsData, isLoading: loadingSubjects } = useFetch({
     queryFn: () => getTeacherSublevelSubjectsFn(teacherId!, sublevelId!),
     queryKeys: subjectKeys.custom("teacher-sublevel", {
@@ -100,6 +103,12 @@ const PassMark = () => {
       value: s.subLevelId,
     }));
   }, [sublevelData?.subLevels]);
+
+  const sub = useMemo(
+    () => sublevelData?.subLevels.find((s) => s.subLevelId === sublevelId),
+    [sublevelData?.subLevels, sublevelId],
+  );
+  const activeTerm = useActiveTerm(sub?.educationalLevelId);
 
   // mutations
   const { mutate: addPassmark, isPending: addingPassmark } = usePost({
@@ -260,6 +269,14 @@ const PassMark = () => {
         rowKey: "passMarkId",
         // showHeader: false,
       }}
+      headerNode={
+        sublevelId && (
+          <ActiveTermBadge
+            active={!!activeTerm}
+            name={activeTerm?.academicTermName}
+          />
+        )
+      }
       formContent={
         <>
           <Form.Item
@@ -281,6 +298,7 @@ const PassMark = () => {
               loading={loadingSublevelData}
               disabled={loadingSublevelData}
               options={sublevelOptions}
+              allowClear
             />
           </Form.Item>
           <Form.Item
