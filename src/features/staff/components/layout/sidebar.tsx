@@ -1,13 +1,15 @@
-import { menuStyle } from "@/features/admins/data/menu-items";
 import { getInitials, getUserDashboardRoute } from "@/utils/string";
 import { Drawer, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import menu from "../../data/menu-items";
 import { useAuth } from "@/store/auth.store";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUIStore } from "@/store/ui.store";
 import { useShallow } from "zustand/react/shallow";
 import Sider from "antd/es/layout/Sider";
+import { menuStyle } from "@/config/constants";
+import staffMenu from "../../data/staff-menu-items";
+import type { ItemType } from "antd/es/menu/interface";
+import { useFilteredMenu } from "@/hooks/use-filtered-menu";
 
 const SIDEBAR_BG = "#0D1B2E";
 const SIDEBAR_WIDTH = 260;
@@ -64,6 +66,7 @@ const LogoSection = ({ collapsed }: { collapsed: boolean }) => (
 const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
   const { pathname } = useLocation();
   const user = useAuth((s) => s.user);
+  const filteredMenu = useFilteredMenu(staffMenu) as ItemType[];
   return (
     <div className="flex flex-col h-full" style={{ background: SIDEBAR_BG }}>
       <LogoSection collapsed={collapsed} />
@@ -83,7 +86,7 @@ const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
           selectedKeys={[pathname]}
           defaultSelectedKeys={[pathname]}
           className="cms-sider"
-          items={menu}
+          items={filteredMenu}
           style={{ background: "transparent", border: "none" }}
           styles={menuStyle}
         />

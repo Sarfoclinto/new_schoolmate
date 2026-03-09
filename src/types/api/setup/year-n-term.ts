@@ -1,3 +1,4 @@
+import type { Permission } from "@/config/permissions";
 import type { EventGet } from "../event";
 import type { InstitutionGet } from "./institution";
 import type { NoticeGet } from "./notice";
@@ -60,8 +61,9 @@ export interface CalendarItem {
   extendedProps: EventGet | NoticeGet;
 }
 
-export interface ActivePeriods {
+export interface Others {
   academicYear: AcademicYearGet;
   academicTerm: AcademicTermGet[];
   institution: InstitutionGet;
+  permissions: { permission: Permission; createdOn: string }[];
 }

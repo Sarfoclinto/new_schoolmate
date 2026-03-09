@@ -1,3 +1,4 @@
+import type { Permission } from "@/config/permissions";
 import type { SubjectGet, SubjectLite } from "./setup/study-modules";
 import type { SubLevelGet, SublevelLite } from "./setup/sublevel";
 
@@ -92,4 +93,9 @@ export interface AdminUpdateStaffType {
     staffMode: string;
     roleId: string;
   };
+}
+
+export interface AssignPermissionsPayload {
+  userId: string;
+  permissions: Permission[];
 }

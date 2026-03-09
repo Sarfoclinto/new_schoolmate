@@ -16,7 +16,7 @@ const useFetch = <TData, TError>({
 }: FetchProps<TData, TError>): UseQueryResult<TData, TError> => {
   const qr = useQuery<TData, TError>({
     queryKey: queryKeys,
-    queryFn: ({ signal }) => queryFn({ signal }),
+    queryFn: ({ signal }) => queryFn({ signal }),    
     enabled,
     ...queryOptions,
   });

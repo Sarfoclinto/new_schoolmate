@@ -1,7 +1,6 @@
 import SidebarLabel from "@/components/custom/sidebar-label";
+import { PERMISSIONS, type Permission } from "@/config/permissions";
 import paths from "@/config/routes";
-import type { MenuProps } from "antd";
-import type { MenuStylesType } from "antd/es/menu/menu";
 import {
   HomeIcon,
   SettingsIcon,
@@ -20,7 +19,6 @@ import {
   UsersRoundIcon,
   Clock10,
   BriefcaseIcon,
-  // Contact2Icon,
   UserCogIcon,
   ShieldCheckIcon,
   FileTextIcon,
@@ -31,20 +29,77 @@ import {
   CalendarPlusIcon,
   CalendarCheck2Icon,
   AlertOctagon,
+  ShieldCheck,
 } from "lucide-react";
 
 const { admin } = paths;
-const { index } = admin;
+const { index, permissions } = admin;
 
-const menu: MenuProps["items"] = [
-  // dashboard
-  {
-    key: admin.index.href,
+// ── Extended menu item type ───────────────────────────────────────────────────
+// Ant Design's ItemType doesn't have a permission field, so we extend it.
+// The filter utility reads this before passing items to <Menu />.
+export type AppMenuItem = {
+  key: string;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+  /** If set, the item is hidden unless the user holds this permission. */
+  permission?: Permission;
+  type?: "submenu" | "group" | "divider";
+  children?: AppMenuItem[];
+};
+
+// Cast helper — keeps JSX clean below
+const item = (i: AppMenuItem): AppMenuItem => i;
+
+const adminMenu: AppMenuItem[] = [
+  // ── Dashboard ──────────────────────────────────────────────────────────────
+  // No permission guard — every admin-dashboard user always sees this.
+  item({
+    key: index.href,
     label: <SidebarLabel to={index.href}>{index.label}</SidebarLabel>,
     icon: <HomeIcon className="size-3.75" />,
-  },
-  // setup
-  {
+  }),
+  // ── Permission ──────────────────────────────────────────────────────────────
+  // Parent guarded by PERMISSIONS_READ; children can be individually tightened
+  // with PERMISSIONS_WRITE once you want write-only pages to disappear for viewers.
+  item({
+    key: permissions.href,
+    label: (
+      <SidebarLabel to={permissions.href} type="span">
+        {permissions.label}
+      </SidebarLabel>
+    ),
+    icon: <ShieldCheck className="size-3.75" />,
+    permission: PERMISSIONS.PERMISSIONS_READ,
+    type: "submenu",
+    children: [
+      item({
+        key: admin.admin_permissions.href,
+        icon: <ShieldCheckIcon className="size-3.5" />,
+        label: (
+          <SidebarLabel type="link" to={admin.admin_permissions.href}>
+            {admin.admin_permissions.label}
+          </SidebarLabel>
+        ),
+        permission: PERMISSIONS.PERMISSIONS_WRITE,
+      }),
+      item({
+        key: admin.staff_permissions.href,
+        icon: <UserCogIcon className="size-3.5" />,
+        label: (
+          <SidebarLabel type="link" to={admin.staff_permissions.href}>
+            {admin.staff_permissions.label}
+          </SidebarLabel>
+        ),
+        permission: PERMISSIONS.PERMISSIONS_WRITE,
+      }),
+    ],
+  }),
+
+  // ── Setup ──────────────────────────────────────────────────────────────────
+  // Parent guarded by SETUP_READ; children can be individually tightened
+  // with SETUP_WRITE once you want write-only pages to disappear for viewers.
+  item({
     key: admin.setup.href,
     label: (
       <SidebarLabel to={admin.setup.href} type="span">
@@ -52,9 +107,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <SettingsIcon className="size-3.75" />,
+    permission: PERMISSIONS.SETUP_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: admin.profile.href,
         label: (
           <SidebarLabel type="link" to={admin.profile.href}>
@@ -62,8 +118,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <UserCircleIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_READ,
+      }),
+      item({
         key: admin.roles.href,
         label: (
           <SidebarLabel type="link" to={admin.roles.href}>
@@ -71,8 +128,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ShieldIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.educationalLevel.href,
         label: (
           <SidebarLabel type="link" to={admin.educationalLevel.href}>
@@ -80,8 +138,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <GraduationCapIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.academicLevel.href,
         label: (
           <SidebarLabel type="link" to={admin.academicLevel.href}>
@@ -89,8 +148,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <LayoutGridIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.promotionPath.href,
         label: (
           <SidebarLabel type="link" to={admin.promotionPath.href}>
@@ -98,8 +158,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <DoorOpenIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.subLevel.href,
         label: (
           <SidebarLabel type="link" to={admin.subLevel.href}>
@@ -107,8 +168,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <Building className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.facultyNClassroom.href,
         label: (
           <SidebarLabel type="link" to={admin.facultyNClassroom.href}>
@@ -116,8 +178,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <LibraryIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.studyModules.href,
         label: (
           <SidebarLabel type="link" to={admin.studyModules.href}>
@@ -125,8 +188,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <BookOpenIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.assessmentNGrading.href,
         label: (
           <SidebarLabel type="link" to={admin.assessmentNGrading.href}>
@@ -134,8 +198,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ClipboardCheckIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.facilities.href,
         label: (
           <SidebarLabel type="link" to={admin.facilities.href}>
@@ -143,8 +208,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <Building2Icon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
+      item({
         key: admin.yearsNTerms.href,
         label: (
           <SidebarLabel type="link" to={admin.yearsNTerms.href}>
@@ -152,11 +218,13 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <Clock10 className="size-3.5" />,
-      },
+        permission: PERMISSIONS.SETUP_WRITE,
+      }),
     ],
-  },
-  // students
-  {
+  }),
+
+  // ── Students ───────────────────────────────────────────────────────────────
+  item({
     key: admin.students.href,
     label: (
       <SidebarLabel to={admin.students.href} type="span">
@@ -164,9 +232,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <UsersIcon className="size-3.75" />,
+    permission: PERMISSIONS.STUDENTS_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: admin.registerStudent.href,
         label: (
           <SidebarLabel type="link" to={admin.registerStudent.href}>
@@ -174,8 +243,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <UserPlusIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STUDENTS_WRITE,
+      }),
+      item({
         key: admin.viewAll.href,
         label: (
           <SidebarLabel type="link" to={admin.viewAll.href}>
@@ -183,8 +253,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <UsersRoundIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STUDENTS_READ,
+      }),
+      item({
         key: admin.viewBySub.href,
         label: (
           <SidebarLabel type="link" to={admin.viewBySub.href}>
@@ -192,8 +263,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <Building className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STUDENTS_READ,
+      }),
+      item({
         key: admin.viewByAca.href,
         label: (
           <SidebarLabel type="link" to={admin.viewByAca.href}>
@@ -201,8 +273,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <LayoutGridIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STUDENTS_READ,
+      }),
+      item({
         key: admin.viewByEdu.href,
         label: (
           <SidebarLabel type="link" to={admin.viewByEdu.href}>
@@ -210,11 +283,13 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <GraduationCapIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.STUDENTS_READ,
+      }),
     ],
-  },
-  // staff
-  {
+  }),
+
+  // ── Staff ──────────────────────────────────────────────────────────────────
+  item({
     key: admin.staff.href,
     label: (
       <SidebarLabel to={admin.staff.href} type="span">
@@ -222,9 +297,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <BriefcaseIcon className="size-3.75" />,
+    permission: PERMISSIONS.STAFF_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: admin.createStaff.href,
         label: (
           <SidebarLabel type="link" to={admin.createStaff.href}>
@@ -232,8 +308,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <UserPlusIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STAFF_WRITE,
+      }),
+      item({
         key: admin.staffAssignment.href,
         label: (
           <SidebarLabel type="link" to={admin.staffAssignment.href}>
@@ -241,17 +318,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ClipboardCheckIcon className="size-3.5" />,
-      },
-      // {
-      //   key: admin.staffDetails.href,
-      //   label: (
-      //     <SidebarLabel type="link" to={admin.staffDetails.href}>
-      //       {admin.staffDetails.label}
-      //     </SidebarLabel>
-      //   ),
-      //   icon: <Contact2Icon className="size-3.5" />,
-      // },
-      {
+        permission: PERMISSIONS.STAFF_WRITE,
+      }),
+      item({
         key: admin.allStaff.href,
         label: (
           <SidebarLabel type="link" to={admin.allStaff.href}>
@@ -259,8 +328,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <UsersRoundIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STAFF_READ,
+      }),
+      item({
         key: admin.staffByMode.href,
         label: (
           <SidebarLabel type="link" to={admin.staffByMode.href}>
@@ -268,8 +338,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <UserCogIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STAFF_READ,
+      }),
+      item({
         key: admin.staffByRole.href,
         label: (
           <SidebarLabel type="link" to={admin.staffByRole.href}>
@@ -277,11 +348,13 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ShieldCheckIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.STAFF_READ,
+      }),
     ],
-  },
-  // reports
-  {
+  }),
+
+  // ── Reports ────────────────────────────────────────────────────────────────
+  item({
     key: admin.reports.href,
     label: (
       <SidebarLabel to={admin.reports.href} type="span">
@@ -289,9 +362,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <FileTextIcon className="size-3.75" />,
+    permission: PERMISSIONS.REPORTS_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: admin.stuTermReport.href,
         label: (
           <SidebarLabel type="link" to={admin.stuTermReport.href}>
@@ -299,8 +373,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <FileTextIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.REPORTS_READ,
+      }),
+      item({
         key: admin.stuAttReport.href,
         label: (
           <SidebarLabel type="link" to={admin.stuAttReport.href}>
@@ -308,11 +383,13 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <CalendarCheckIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.REPORTS_READ,
+      }),
     ],
-  },
-  // finance
-  {
+  }),
+
+  // ── Finance ────────────────────────────────────────────────────────────────
+  item({
     key: admin.finance.href,
     label: (
       <SidebarLabel to={admin.finance.href} type="span">
@@ -320,9 +397,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <WalletIcon className="size-3.75" />,
+    permission: PERMISSIONS.FINANCE_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: admin.fees.href,
         label: (
           <SidebarLabel type="link" to={admin.fees.href}>
@@ -330,11 +408,13 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ReceiptIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.FINANCE_READ,
+      }),
     ],
-  },
-  // events
-  {
+  }),
+
+  // ── Events & Notices ───────────────────────────────────────────────────────
+  item({
     key: admin.events.href,
     label: (
       <SidebarLabel to={admin.events.href} type="span">
@@ -342,9 +422,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <CalendarCheck2Icon className="size-3.75" />,
+    permission: PERMISSIONS.EVENTS_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: admin.notice.href,
         label: (
           <SidebarLabel type="link" to={admin.notice.href}>
@@ -352,8 +433,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <AlertOctagon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.EVENTS_READ,
+      }),
+      item({
         key: admin.allEvents.href,
         label: (
           <SidebarLabel type="link" to={admin.allEvents.href}>
@@ -361,8 +443,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <CalendarDaysIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.EVENTS_READ,
+      }),
+      item({
         key: admin.createEvent.href,
         label: (
           <SidebarLabel type="link" to={admin.createEvent.href}>
@@ -370,21 +453,10 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <CalendarPlusIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.EVENTS_WRITE,
+      }),
     ],
-  },
+  }),
 ];
 
-export default menu;
-
-export const menuStyle: MenuStylesType = {
-  item: {
-    borderRadius: "8px",
-    margin: "1px 8px",
-    width: "calc(100% - 16px)",
-  },
-};
-
-export const parentMenuItems = {
-  setup: admin.setup,
-};
+export default adminMenu;

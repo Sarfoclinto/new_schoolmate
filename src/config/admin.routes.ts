@@ -130,6 +130,17 @@ const adminPaths = {
     label: "Events",
     href: "/admin/events/view/all",
   },
+
+  // permisions
+  permissions: { label: "Permissions", href: "/admin/permissions" },
+  admin_permissions: {
+    label: "Admins. Permissions",
+    href: "/admin/administrative_permissions",
+  },
+  staff_permissions: {
+    label: "Staff Permissions",
+    href: "/admin/staff_permissions",
+  },
 };
 
 export default adminPaths;

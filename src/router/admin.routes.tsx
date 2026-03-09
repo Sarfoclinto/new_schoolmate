@@ -49,6 +49,10 @@ const {
   notice,
   allEvents,
   createEvent,
+
+  // permissions
+  admin_permissions,
+  staff_permissions,
 } = paths.admin;
 
 // admin pages component
@@ -139,6 +143,15 @@ const CreateEvent = lazy(() => import("@/features/admins/pages/events/create"));
 
 // progile
 const Profile = lazy(() => import("@/features/auth/pages/profile"));
+
+// permission
+const AdministrativePermissions = lazy(
+  () => import("@/features/admins/pages/permissions/admin_permissions"),
+);
+const StaffPermissions = lazy(
+  () => import("@/features/admins/pages/permissions/staff_permissions"),
+);
+
 const adminRoutes: RouteObject[] = [
   {
     path: index.href,
@@ -290,6 +303,16 @@ const adminRoutes: RouteObject[] = [
       {
         path: adminProfile.href,
         element: <Profile />,
+      },
+
+      // permission
+      {
+        path: admin_permissions.href,
+        element: <AdministrativePermissions />,
+      },
+      {
+        path: staff_permissions.href,
+        element: <StaffPermissions />,
       },
     ],
   },

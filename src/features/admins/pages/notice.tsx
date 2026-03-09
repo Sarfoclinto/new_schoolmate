@@ -682,8 +682,7 @@ const Notice = () => {
   });
   const { data: roles, isLoading: roLoading } = useFetch({
     queryFn: getAllRolesFn,
-    // TODO: change all roles fetch key to .list()
-    queryKeys: roleKeys.custom("list"),
+    queryKeys: roleKeys.list(),
   });
   const { data: staffList, isLoading: stLoading } = useFetch({
     queryFn: getAllStaffUnPnFn,

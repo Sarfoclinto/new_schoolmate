@@ -188,6 +188,7 @@ const endpoints = {
   },
   staffMn: {
     create: "/CreateStaff",
+    syncPermissions: "/AssignStaffPermissions",
     updateProfile: (id: string) => `/UpdateStaff/${id}`,
     updatePassword: (id: string) => `/UpdateStaffPassword/${id}`,
     updateStaff: (id: string) => `/StaffUpdatedByAdmin/${id}`,
@@ -205,6 +206,9 @@ const endpoints = {
     delTeacherSublevel: (teachId: string, sublevelId: string) =>
       `/DeleteTeacherSubLevel/Teacher/${teachId}/SubLevel/${sublevelId}`,
     getById: (id: string) => `/GetStaffById/${id}`,
+    getStaffPermissions: `/GetStaffPermissionsById`,
+    getAllByDashboardType: (dashboardType: string) =>
+      `/GetStaffByDashboardType/${dashboardType}`,
   },
   finance: {
     ledgers: {

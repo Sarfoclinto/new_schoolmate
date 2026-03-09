@@ -57,7 +57,7 @@ const CreateStaff = () => {
   // queries
   const { data: roles, isLoading: loadingRoles } = useFetch({
     queryFn: getAllRolesFn,
-    queryKeys: roleKeys.custom("list"),
+    queryKeys: roleKeys.list(),
   });
 
   // memoized values

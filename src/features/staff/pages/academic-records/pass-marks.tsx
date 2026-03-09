@@ -75,7 +75,7 @@ const PassMark = () => {
 
   const { data: subjectsData, isLoading: loadingSubjects } = useFetch({
     queryFn: () => getTeacherSublevelSubjectsFn(teacherId!, sublevelId!),
-    queryKeys: subjectKeys.custom("teacher-sublevel", {
+    queryKeys: subjectKeys.custom("teacher-subjects", {
       sublevelId,
       teacherId,
     }),

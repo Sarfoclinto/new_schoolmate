@@ -1,9 +1,13 @@
 import { MotionDiv } from "@/components/custom/motion";
-import { subjectKeys } from "@/config/query-keys";
+import { educationKeys, subjectKeys } from "@/config/query-keys";
 import useFetch from "@/hooks/api/use-fetch";
-import { getTeacherMappingFn } from "@/services/staff";
+import {
+  getTeachersSublevelsFn,
+  getTeacherSublevelSubjectsFn,
+} from "@/services/staff";
 import type { SelectTypes } from "@/types/ui";
-import { BookOpen } from "lucide-react";
+import { Select } from "antd";
+import { BookOpen, Filter } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface Props {
@@ -12,28 +16,39 @@ interface Props {
 }
 
 const StaffSubjects = ({ teacherId, isATeacher }: Props) => {
+  const [sublevel, setSublevel] = useState<SelectTypes | null>(null);
+  const sublevelId = sublevel?.value;
+
   const { data: teachersData, isLoading: loadingTeacherData } = useFetch({
-    queryFn: () => getTeacherMappingFn(teacherId!),
-    queryKeys: subjectKeys.custom("teacher", { teacherId }),
-    enabled: !!isATeacher && !!teacherId,
+    queryFn: () => getTeacherSublevelSubjectsFn(teacherId!, sublevelId!),
+    queryKeys: subjectKeys.custom("teacher-subjects", {
+      sublevelId,
+      teacherId,
+    }),
+    enabled: !!isATeacher && !!teacherId && !!sublevelId,
   });
-  const [sublevel] = useState<SelectTypes | null>(null);
+
+  const { data: sublevelData, isLoading: loadingSubs } = useFetch({
+    queryFn: () => getTeachersSublevelsFn(teacherId!),
+    queryKeys: educationKeys.custom("teacher-sublevels", { teacherId }),
+    enabled: !!teacherId,
+  });
 
   //   TODO: filter subjects by subleves and render
   // memoized
   // ── Derived ──────────────────────────────────────────────
-  //   const sublevels = useMemo(() => {
-  //     if (!teachersData) return [];
-  //     return teachersData.subLevels;
-  //   }, [teachersData]);
+  const sublevels = useMemo(() => {
+    if (!sublevelData) return [];
+    return sublevelData.subLevels.map((s) => ({
+      label: s.subLevelName,
+      value: s.subLevelId,
+    }));
+  }, [sublevelData]);
 
   const filteredSubjects = useMemo(() => {
     if (!teachersData) return [];
-    return teachersData.subjects.filter(() => {
-      if (!sublevel || !sublevel.value) return true;
-      return true;
-    });
-  }, [sublevel, teachersData]);
+    return teachersData.subjects;
+  }, [teachersData]);
 
   if (loadingTeacherData) {
     return (
@@ -62,34 +77,46 @@ const StaffSubjects = ({ teacherId, isATeacher }: Props) => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {filteredSubjects.map((subject, i) => (
-        <MotionDiv
-          key={subject.subjectId}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.04, duration: 0.25 }}
-          className="flex items-center gap-x-3 p-3.5 bg-slate-50 border border-slate-100 rounded-xl hover:border-[#D0DCF0] hover:bg-[#F4F8FF] transition-all"
-        >
-          <div className="w-8 h-8 rounded-lg bg-[#EEF2F8] flex items-center justify-center shrink-0">
-            <BookOpen className="w-3.5 h-3.5 text-[#C9A84C]" />
-          </div>
-          <div className="min-w-0">
-            <p
-              className="text-sm font-semibold text-[#0D1B2E] capitalize truncate leading-tight"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              {subject.subjectName}
-            </p>
-            {/* {subject.teacherName && (
+    <div className="w-full flex flex-col gap-1">
+      <div className="flex items-center gap-1">
+        <Filter className="size-3.5" />
+        <Select
+          placeholder="Select a sublevel"
+          options={sublevels}
+          loading={loadingSubs}
+          disabled={loadingSubs}
+          onChange={(opt) => setSublevel(opt)}
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {filteredSubjects.map((subject, i) => (
+          <MotionDiv
+            key={subject.subjectId}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.04, duration: 0.25 }}
+            className="flex items-center gap-x-3 p-3.5 bg-slate-50 border border-slate-100 rounded-xl hover:border-[#D0DCF0] hover:bg-[#F4F8FF] transition-all"
+          >
+            <div className="w-8 h-8 rounded-lg bg-[#EEF2F8] flex items-center justify-center shrink-0">
+              <BookOpen className="w-3.5 h-3.5 text-[#C9A84C]" />
+            </div>
+            <div className="min-w-0">
+              <p
+                className="text-sm font-semibold text-[#0D1B2E] capitalize truncate leading-tight"
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
+              >
+                {subject.subjectName}
+              </p>
+              {/* {subject.teacherName && (
                 <p className="text-[11px] text-slate-400 truncate mt-0.5 flex items-center gap-x-1">
                   <User className="w-3 h-3 shrink-0" />
                   {subject.teacherName}
                 </p>
               )} */}
-          </div>
-        </MotionDiv>
-      ))}
+            </div>
+          </MotionDiv>
+        ))}
+      </div>
     </div>
   );
 };

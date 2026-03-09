@@ -40,7 +40,7 @@ const ViewAllStaff = () => {
   });
   const { data: roles } = useFetch({
     queryFn: getAllRolesFn,
-    queryKeys: roleKeys.custom("list"),
+    queryKeys: roleKeys.list(),
   });
 
   // memoized values

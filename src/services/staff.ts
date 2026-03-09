@@ -8,10 +8,12 @@ import {
 } from "@/api/crud";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/config/constants";
 import endpoints from "@/config/endpoints";
+import type { Permission } from "@/config/permissions";
 import type { RegisterResponse } from "@/types/api";
 import type { UpdateReturn } from "@/types/api/setup/auth-n-user";
 import type {
   AdminUpdateStaffType,
+  AssignPermissionsPayload,
   DeleteMapping,
   StaffGet,
   StaffGetResponse,
@@ -88,4 +90,20 @@ export const deleteTeachersSublevelFn = async (
   return deleteHelper(
     staffMn.delTeacherSublevel(ids.teacherId, ids.subLevelId),
   );
+};
+
+export const getStaffByDashboardTypeFn = async (
+  dashboardType: "admin" | "staff",
+) => {
+  return getHelper<StaffGet[]>(staffMn.getAllByDashboardType(dashboardType));
+};
+
+export const getUserPermissionsFn = async (_id: string) => {
+  return getHelper<{ permission: Permission }[]>(staffMn.getStaffPermissions, {
+    staffId: _id,
+  });
+};
+
+export const syncPermissionsFn = async (_d: AssignPermissionsPayload) => {
+  return postHelper(staffMn.syncPermissions, _d);
 };

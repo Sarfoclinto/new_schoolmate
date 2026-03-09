@@ -33,7 +33,7 @@ const AdminUpdateStaff = ({ data, invalidate, staffId }: Props) => {
   // queries
   const { data: roles, isLoading: loadingRoles } = useFetch({
     queryFn: getAllRolesFn,
-    queryKeys: roleKeys.custom("list"),
+    queryKeys: roleKeys.list(),
   });
 
   // effects

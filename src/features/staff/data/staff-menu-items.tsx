@@ -1,6 +1,6 @@
 import SidebarLabel from "@/components/custom/sidebar-label";
 import paths from "@/config/routes";
-import type { MenuProps } from "antd";
+import { STAFF_PERMISSIONS as PERMISSIONS } from "@/config/permissions";
 import {
   HomeIcon,
   BookOpenIcon,
@@ -13,19 +13,25 @@ import {
   UserCheckIcon,
   AlertOctagon,
 } from "lucide-react";
+import type { AppMenuItem } from "@/features/admins/data/admin-menu-items";
 
 const { staff } = paths;
 const { index } = staff;
 
-const menu: MenuProps["items"] = [
-  // dashboard
-  {
+// Cast helper
+const item = (i: AppMenuItem): AppMenuItem => i;
+
+const staffMenu: AppMenuItem[] = [
+  // ── Dashboard ──────────────────────────────────────────────────────────────
+  item({
     key: staff.index.href,
     label: <SidebarLabel to={index.href}>{index.label}</SidebarLabel>,
     icon: <HomeIcon className="size-3.75" />,
-  },
-  //   assignments
-  {
+    // No guard — visible to all staff dashboard users
+  }),
+
+  // ── My Work (Assignments) ──────────────────────────────────────────────────
+  item({
     key: staff.myWork.href,
     label: (
       <SidebarLabel to={staff.myWork.href} type="span">
@@ -33,9 +39,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <BriefcaseIcon className="size-3.75" />,
+    permission: PERMISSIONS.STAFF_ASSIGNMENTS_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: staff.classesnSubjects.href,
         label: (
           <SidebarLabel type="link" to={staff.classesnSubjects.href}>
@@ -43,8 +50,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <BookOpenIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STAFF_ASSIGNMENTS_READ,
+      }),
+      item({
         key: staff.students.href,
         label: (
           <SidebarLabel type="link" to={staff.students.href}>
@@ -52,10 +60,13 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <GraduationCapIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.STAFF_ASSIGNMENTS_READ,
+      }),
     ],
-  },
-  {
+  }),
+
+  // ── Academic Records ───────────────────────────────────────────────────────
+  item({
     key: staff.academicRecords.href,
     label: (
       <SidebarLabel to={staff.academicRecords.href} type="span">
@@ -63,9 +74,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <BookOpenIcon className="size-3.75" />,
+    permission: PERMISSIONS.STAFF_RECORDS_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: staff.passMark.href,
         label: (
           <SidebarLabel type="link" to={staff.passMark.href}>
@@ -73,8 +85,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <TargetIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STAFF_RECORDS_WRITE,
+      }),
+      item({
         key: staff.addRecord.href,
         label: (
           <SidebarLabel type="link" to={staff.addRecord.href}>
@@ -82,8 +95,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <PlusCircleIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STAFF_RECORDS_WRITE,
+      }),
+      item({
         key: staff.viewRecords.href,
         label: (
           <SidebarLabel type="link" to={staff.viewRecords.href}>
@@ -91,10 +105,13 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ClipboardListIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.STAFF_RECORDS_READ,
+      }),
     ],
-  },
-  {
+  }),
+
+  // ── Attendance ─────────────────────────────────────────────────────────────
+  item({
     key: staff.attendance.href,
     label: (
       <SidebarLabel to={staff.attendance.href} type="span">
@@ -102,9 +119,10 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <CalendarCheckIcon className="size-3.75" />,
+    permission: PERMISSIONS.STAFF_ATTENDANCE_READ,
     type: "submenu",
     children: [
-      {
+      item({
         key: staff.markAttendance.href,
         label: (
           <SidebarLabel type="link" to={staff.markAttendance.href}>
@@ -112,8 +130,9 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <UserCheckIcon className="size-3.5" />,
-      },
-      {
+        permission: PERMISSIONS.STAFF_ATTENDANCE_WRITE,
+      }),
+      item({
         key: staff.viewAttendance.href,
         label: (
           <SidebarLabel type="link" to={staff.viewAttendance.href}>
@@ -121,10 +140,14 @@ const menu: MenuProps["items"] = [
           </SidebarLabel>
         ),
         icon: <ClipboardListIcon className="size-3.5" />,
-      },
+        permission: PERMISSIONS.STAFF_ATTENDANCE_READ,
+      }),
     ],
-  },
-  {
+  }),
+
+  // ── Notices ────────────────────────────────────────────────────────────────
+  // Notices are read-only for staff — no write permission needed
+  item({
     key: staff.notice.href,
     label: (
       <SidebarLabel type="link" to={staff.notice.href}>
@@ -132,7 +155,8 @@ const menu: MenuProps["items"] = [
       </SidebarLabel>
     ),
     icon: <AlertOctagon className="size-3.5" />,
-  },
+    permission: PERMISSIONS.STAFF_NOTICES_WRITE,
+  }),
 ];
 
-export default menu;
+export default staffMenu;

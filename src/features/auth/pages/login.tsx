@@ -8,7 +8,8 @@ import { LockIcon, User2Icon } from "lucide-react";
 import type { LoginPayload } from "@/types/api/setup/auth-n-user";
 import { loginFn } from "@/services/auth";
 import { useShallow } from "zustand/react/shallow";
-import { getUserDashboardRoute } from "@/utils/string";
+import { getUserDashboardRoute } from "@/utils/auth";
+// import { getUserDashboardRoute } from "@/utils/string";
 
 const LoginPage = () => {
   const [form] = Form.useForm<LoginPayload>();
@@ -24,6 +25,8 @@ const LoginPage = () => {
   const { mutate, isPending } = usePost({
     postFn: loginFn,
     onSuccess: (res) => {
+      console.log("response: ", res);
+
       if (res.responseCode === 1 && res.isAuth) {
         login(res);
         navigate(getUserDashboardRoute(), { replace: true });

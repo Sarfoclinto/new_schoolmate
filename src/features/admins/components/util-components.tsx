@@ -1,4 +1,5 @@
 import { MotionDiv } from "@/components/custom/motion";
+import { cn } from "@/lib/utils";
 import {
   Button,
   Form,
@@ -25,6 +26,8 @@ export const Section = ({
   children,
   delay = 0,
   cols = 3,
+  childrenClassName = "",
+  showStep = true,
 }: {
   step: number;
   title: string;
@@ -32,6 +35,8 @@ export const Section = ({
   children: React.ReactNode;
   delay?: number;
   cols?: 1 | 2 | 3;
+  childrenClassName?: string;
+  showStep?: boolean;
 }) => (
   <MotionDiv
     initial={{ opacity: 0, y: 14 }}
@@ -50,12 +55,14 @@ export const Section = ({
         {icon}
       </div>
       <div className="flex items-center gap-x-2">
-        <span
-          className="text-[10px] font-bold tracking-widest text-[#C9A84C] bg-white/10 px-2 py-0.5 rounded-full"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          {String(step).padStart(2, "0")}
-        </span>
+        {showStep && (
+          <span
+            className="text-[10px] font-bold tracking-widest text-[#C9A84C] bg-white/10 px-2 py-0.5 rounded-full"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
+            {String(step).padStart(2, "0")}
+          </span>
+        )}
         <span
           className="text-white font-semibold text-sm"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
@@ -65,13 +72,16 @@ export const Section = ({
       </div>
     </div>
     <div
-      className={`p-6 grid grid-cols-1 gap-x-5 gap-y-1 ${
-        cols === 3
-          ? "sm:grid-cols-2 lg:grid-cols-3"
-          : cols === 2
-            ? "sm:grid-cols-2"
-            : ""
-      }`}
+      className={cn(
+        `p-6 grid grid-cols-1 gap-x-5 gap-y-1 ${
+          cols === 3
+            ? "sm:grid-cols-2 lg:grid-cols-3"
+            : cols === 2
+              ? "sm:grid-cols-2"
+              : ""
+        }`,
+        childrenClassName,
+      )}
     >
       {children}
     </div>
