@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useAuth } from "@/store/auth.store";
-import { useShallow } from "zustand/react/shallow";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 /**
  * Custom hook to find the active academic term for a specific educational level.
@@ -10,11 +9,7 @@ import { useShallow } from "zustand/react/shallow";
  */
 export const useActiveTerm = (educationalLevelId?: string | null) => {
   // Extract terms from the auth store using shallow comparison for performance
-  const { terms } = useAuth(
-    useShallow((s) => ({
-      terms: s.other.academicTerm,
-    })),
-  );
+  const terms = useSignalRStore(signalRSelectors.academicTerms);
 
   const activeTerm = useMemo(() => {
     // Early return if no ID is provided or if terms list is empty/undefined

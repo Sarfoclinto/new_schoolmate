@@ -84,7 +84,7 @@ export interface Others {
   academicYear: AcademicYearGet;
   academicTerm: AcademicTermGet[];
   institution: InstitutionGet;
-  permissions: { permission: Permission; createdOn: string }[];
+  permissions:Permission[];
 }
 
 export interface CloseTermPayload {

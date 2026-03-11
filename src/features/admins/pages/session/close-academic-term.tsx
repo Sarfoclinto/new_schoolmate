@@ -20,7 +20,6 @@ import {
   Lock,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useShallow } from "zustand/react/shallow";
 import { useMemo, useState } from "react";
 import { useActiveTerm } from "@/hooks/use-active-term";
 import useFetch from "@/hooks/api/use-fetch";
@@ -34,6 +33,7 @@ import { Select } from "antd";
 import { AnimatePresence } from "motion/react";
 import type { CloseTermPayload } from "@/types/api/setup/year-n-term";
 import usePost from "@/hooks/api/use-post";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // PRIMITIVES
@@ -338,13 +338,10 @@ const ReviewPill = ({
 );
 
 const CloseAcademicTerm = () => {
-  // ── Auth store ─────────────────────────────────────────────────────────────
-  const { academicYearId, userId } = useAuth(
-    useShallow((s) => ({
-      academicYearId: s.other?.academicYear?.academicYearId,
-      userId: s.user?.userId,
-    })),
-  );
+  const academicYearId = useSignalRStore(
+    signalRSelectors.academicYear,
+  )?.academicYearId;
+  const userId = useAuth((s) => s.user?.userId);
 
   // ── Form state ─────────────────────────────────────────────────────────────
   const [selectedEduLevelId, setSelectedEduLevelId] = useState<string | null>(
@@ -362,6 +359,17 @@ const CloseAcademicTerm = () => {
 
   // ── Active term (auto-detected) ────────────────────────────────────────────
   const activeTerm = useActiveTerm(selectedEduLevelId);
+
+  const reset = () => {
+    setVacationName("");
+    setReOpeningTermId(null);
+    setRemarks("");
+    setNotice("");
+    setSettings({
+      publishReport: true,
+      billStudents: false,
+    });
+  };
 
   // ── Queries ────────────────────────────────────────────────────────────────
   const { data: eduLevels = [], isLoading: loadingEdu } = useFetch({
@@ -416,6 +424,7 @@ const CloseAcademicTerm = () => {
     onSuccess: ({ responseCode, responseMessage }) => {
       if (responseCode === 1) {
         toast.success(responseMessage);
+        reset();
       } else {
         toast.warning(responseMessage);
       }

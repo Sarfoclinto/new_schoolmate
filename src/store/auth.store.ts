@@ -1,11 +1,13 @@
 import type { LoginReturn, User } from "@/types/api/setup/auth-n-user";
-import type { InstitutionGet } from "@/types/api/setup/institution";
+// import type { InstitutionGet } from "@/types/api/setup/institution";
 import { create } from "zustand";
 import { persist, createJSONStorage, devtools } from "zustand/middleware";
 
+type WithoutOther = Omit<LoginReturn, "other">;
+
 type AuthActions = {
-  login: (payload: LoginReturn) => void;
-  updateInstitution: (institution: InstitutionGet) => void;
+  login: (payload: WithoutOther) => void;
+  // updateInstitution: (institution: InstitutionGet) => void;
   logout: () => void;
   updateUser: (user: User) => void;
   refreshTokenSuccess: (token: string) => void;
@@ -18,7 +20,7 @@ type AuthActions = {
   setLoading: (loading: boolean) => void;
 };
 
-type States = LoginReturn & {
+type States = WithoutOther & {
   expiresAt: number | null;
   /**
    * True only while auth state is being resolved asynchronously —
@@ -36,7 +38,7 @@ const initialAuthState: States = {
   user: null,
   token: null,
   isAuth: false,
-  other: {} as LoginReturn["other"],
+  // other: {} as LoginReturn["other"],
   responseCode: 0,
   responseMessage: "",
   expiresAt: null,
@@ -62,7 +64,6 @@ export const useAuth = create<States & AuthActions>()(
             return {
               user: payload.user,
               token: payload.token,
-              other: payload.other,
               isAuth: true,
               responseCode: payload.responseCode,
               responseMessage: payload.responseMessage,
@@ -85,14 +86,14 @@ export const useAuth = create<States & AuthActions>()(
           })),
 
         // ── updateInstitution ─────────────────────────────────────────────────
-        updateInstitution: (institution) =>
-          set((state) => ({
-            ...state,
-            other: {
-              ...state.other,
-              institution,
-            },
-          })),
+        // updateInstitution: (institution) =>
+        //   set((state) => ({
+        //     ...state,
+        //     other: {
+        //       ...state.other,
+        //       institution,
+        //     },
+        //   })),
 
         // ── refreshTokenSuccess ───────────────────────────────────────────────
         // Called by your token-refresh interceptor.
@@ -118,7 +119,7 @@ export const useAuth = create<States & AuthActions>()(
         partialize: (state) => ({
           user: state.user,
           token: state.token,
-          other: state.other,
+          // other: state.other,
           isAuth: state.isAuth,
           expiresAt: state.expiresAt,
           // isLoading is intentionally NOT persisted — always recomputed

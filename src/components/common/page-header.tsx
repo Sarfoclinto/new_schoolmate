@@ -16,8 +16,8 @@ import {
 import React from "react";
 import { cn } from "@/lib/utils";
 import PrimaryButton from "../custom/primary-button";
-import { getUserDashboardRoute } from "@/utils/string";
 import { LiveClock } from "../custom/live-clock";
+import { getUserDashboardRoute } from "@/utils/auth";
 
 export type Crumb = {
   label: string;

@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/store/auth.store";
-import { getUserDashboardRoute } from "@/utils/string";
+import { getUserDashboardRoute } from "@/utils/auth";
 import paths from "@/config/routes";
 
 interface ProtectedRouteProps {

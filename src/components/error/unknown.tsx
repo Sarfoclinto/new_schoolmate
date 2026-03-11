@@ -3,7 +3,7 @@ import Section from "../custom/section";
 import { AlertOctagonIcon } from "lucide-react";
 import { useAuth } from "@/store/auth.store";
 import { DEFAULT_ROLES } from "@/config/constants";
-import { getUserDashboardRoute } from "@/utils/string";
+import { getUserDashboardRoute } from "@/utils/auth";
 import { LogOutIcon } from "lucide-react";
 import { Button } from "antd";
 import { useShallow } from "zustand/react/shallow";

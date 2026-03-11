@@ -22,6 +22,7 @@ import { TableActions } from "../../components/table-action";
 import dayjs from "@/lib/dayjs";
 import type { SelectTypes } from "@/types/ui";
 import { getAllEduLevelsFn } from "@/services/setup/educational-level";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 const { RangePicker } = DatePicker;
 type FormValues = {
@@ -39,7 +40,7 @@ const CreateEvent = () => {
   // states
   const [form] = Form.useForm<FormValues>();
   const user = useAuth((s) => s.user);
-  const terms = useAuth((s) => s.other.academicTerm);
+  const terms = useSignalRStore(signalRSelectors.academicTerms);
   const [record, setRecord] = useState<EventGet | null>(null);
   const [selectedEdu, setSelectedEdu] = useState<SelectTypes | null>(null);
 

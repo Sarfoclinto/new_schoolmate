@@ -53,24 +53,6 @@ export function getOrdinal(position: number): string {
   return `${position}${suffix}`;
 }
 
-
-export const getUserDashboardRoute = () => {
-  const user = useAuth.getState().user;
-
-  if (!user || !user.role) {
-    return paths.auth.login.href;
-  }
-
-  const normalizedRole = user.role.toLowerCase();
-  if (DEFAULT_ROLES.ADMIN.includes(normalizedRole))
-    return paths.admin.index.href;
-  if (DEFAULT_ROLES.STAFF.includes(normalizedRole))
-    return paths.staff.index.href;
-
-  return paths.public.unknown.redirect(
-    `Invalid role for dashboard: ${user.role}`,
-  );
-};
 export const getUserProfileRoute = () => {
   const user = useAuth.getState().user;
 

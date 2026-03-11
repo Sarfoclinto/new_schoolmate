@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "antd";
 import { MoveLeft, Home } from "lucide-react";
-import { getUserDashboardRoute } from "@/utils/string";
+import { getUserDashboardRoute } from "@/utils/auth";
 
 const Page404 = () => {
   const { pathname } = useLocation();

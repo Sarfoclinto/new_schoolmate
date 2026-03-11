@@ -2,7 +2,6 @@ import { useUIStore } from "@/store/ui.store";
 import { Search, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 import UserMenu from "../user-dropdown-menu";
-import { useAuth } from "@/store/auth.store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 const AdminLayoutHeader = () => {
   const { collapsed, toggleCollapsed, isOpen, openSidebar } = useUIStore(
@@ -23,13 +23,8 @@ const AdminLayoutHeader = () => {
     })),
   );
   const isMobile = useIsMobile();
-  const { terms, year } = useAuth(
-    useShallow((s) => ({
-      user: s.user,
-      terms: s.other.academicTerm,
-      year: s.other.academicYear,
-    })),
-  );
+  const terms = useSignalRStore(signalRSelectors.academicTerms);
+  const year = useSignalRStore(signalRSelectors.academicYear);
 
   const handleCollapseToggle = () => {
     if (!isOpen) {

@@ -37,7 +37,6 @@ import {
   isReadPermission,
   toggleGroupAll,
 } from "../../util-fns";
-// import { useAuth } from "@/store/auth.store";
 import { useQueryClient } from "@tanstack/react-query";
 import useFetch from "@/hooks/api/use-fetch";
 import usePost from "@/hooks/api/use-post";
@@ -47,7 +46,7 @@ import { buildMediaUrl } from "@/utils/media";
 import { getInitials } from "@/utils/string";
 import { Section } from "../../components/util-components";
 import {
-  getAllStaffUnPnFn,
+  getStaffByDashboardTypeFn,
   getUserPermissionsFn,
   syncPermissionsFn,
 } from "@/services/staff";
@@ -458,27 +457,26 @@ const StaffPermissions = () => {
   // ── Staff list ─────────────────────────────────────────────────────────────
   // TODO: Fetch staffs whose dashboard type is staff
   const { data: staffList = [], isLoading: loadingStaff } = useFetch({
-    queryKeys: staffKeys.lists(),
-    queryFn: getAllStaffUnPnFn,
+    queryKeys: staffKeys.custom("staff"),
+    queryFn: () => getStaffByDashboardTypeFn("staff"),
   });
 
   // ── Selected user's permissions ────────────────────────────────────────────
-  const { data: userPermData, isLoading: loadingPerms } = useFetch({
+  const { data: permissions, isLoading: loadingPerms } = useFetch({
     queryFn: () => getUserPermissionsFn(selectedUserId!),
     queryKeys: staffKeys.custom("permissions", { selectedUserId }),
     enabled: !!selectedUserId,
   });
 
   useEffect(() => {
-    if (userPermData && userPermData.length > 0) {
-      const perms = userPermData.map((s) => s.permission as Permission);
-      const s = new Set(perms);
+    if (permissions && permissions.length > 0) {
+      const s = new Set(permissions);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setServerPerms(s);
       setLocalPerms(new Set(s));
       setIsDirty(false);
     }
-  }, [userPermData]);
+  }, [permissions]);
 
   // ── Sync mutation ──────────────────────────────────────────────────────────
   const syncPerms = usePost({
@@ -652,6 +650,7 @@ const StaffPermissions = () => {
               className="w-full"
               placeholder="Search by name…"
               loading={loadingStaff}
+              disabled={loadingStaff}
               options={staffOptions}
               notFoundContent={
                 <div className="flex flex-col items-center py-5 gap-1.5">

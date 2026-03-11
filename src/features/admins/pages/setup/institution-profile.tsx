@@ -18,14 +18,14 @@ import {
   getInstitutionProfile,
   updateInstitution,
 } from "@/services/setup/institution";
-import { useAuth } from "@/store/auth.store";
 import { institutionKeys } from "@/config/query-keys";
 import { buildMediaUrl } from "@/utils/media";
 import { useUnsavedChangesWarning } from "@/hooks/useUsavedChangesWarning";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 const InstitutionProfile = () => {
   const [form] = Form.useForm();
-  const updateInst = useAuth((s) => s.updateInstitution);
+  const updateInst = useSignalRStore(signalRSelectors.setInstitution);
   const [avatarFile, setAvatarFile] = useState<UploadFile[]>([]);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [cityList, setCityList] = useState<string[]>([]);

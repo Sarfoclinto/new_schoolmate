@@ -6,9 +6,12 @@ import {
   type Permission,
 } from "@/config/permissions";
 import { useAuth } from "@/store/auth.store";
-import { getUserDashboardRoute } from "@/utils/string";
+import { getUserDashboardRoute } from "@/utils/auth";
 import type { PropsWithChildren } from "react";
 import { Navigate } from "react-router-dom";
+import { useSignalRStore } from "@/store/signalr.store";
+import { useShallow } from "zustand/react/shallow";
+import PageLoad from "./page-load";
 
 // =============================================================================
 // Shared guard logic
@@ -33,10 +36,18 @@ const RouteGuard = ({
   requiredDashboard,
   requiredPermission,
 }: GuardProps) => {
-  const { user, isAuth } = useAuth();
+  const { user, isAuth, isLoading } = useAuth(
+    useShallow((s) => ({
+      login: s.login,
+      isAuth: s.isAuth,
+      user: s.user,
+      isLoading: s.isLoading,
+    })),
+  );
+  const permissions = useSignalRStore((s) => s.permissions);
 
   // ── 1. Auth is still resolving (e.g. token refresh on first load) ──────────
-  //   if (isLoading) return <PageLoad />;
+  if (isLoading) return <PageLoad />;
 
   // ── 2. Not authenticated at all ────────────────────────────────────────────
   if (!isAuth || !user) {
@@ -52,7 +63,7 @@ const RouteGuard = ({
 
   // ── 4. Right dashboard but missing a specific permission ───────────────────
   // Redirect to their dashboard root; you could also render a 403 page here.
-  if (requiredPermission && !user.permissions?.includes(requiredPermission)) {
+  if (requiredPermission && !permissions?.includes(requiredPermission)) {
     return <Navigate to={getUserDashboardRoute()} replace />;
   }
 
@@ -105,14 +116,22 @@ export const ProtectRoute = ({
   children,
   requiredPermission,
 }: ProtectRouteProps) => {
-  const { user, isAuth } = useAuth();
+  const { user, isAuth, isLoading } = useAuth(
+    useShallow((s) => ({
+      login: s.login,
+      isAuth: s.isAuth,
+      user: s.user,
+      isLoading: s.isLoading,
+    })),
+  );
+  const permissions = useSignalRStore((s) => s.permissions);
 
-  //   if (isLoading) return <PageLoad />;
+  if (isLoading) return <PageLoad />;
   if (!isAuth || !user) {
     return <Navigate to={paths.auth.login.href} replace />;
   }
 
-  if (!user.permissions?.includes(requiredPermission)) {
+  if (!permissions?.includes(requiredPermission)) {
     // Redirect to their dashboard root; swap for a <Forbidden /> page if you
     // want to show an explicit "you don't have access" message.
     return <Navigate to={getUserDashboardRoute()} replace />;

@@ -61,6 +61,7 @@ import type { StaffUpdateWithFile, UpdateSecurity } from "@/types/api/staff";
 import { MotionDiv } from "@/components/custom/motion";
 import type { Rule } from "antd/es/form";
 import { buildMediaUrl } from "@/utils/media";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 // ═══════════════════════════════════════════════════════════════════
 // PRIMITIVES
@@ -387,11 +388,11 @@ type TabKey = "personal" | "security" | "account";
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════
 const UserProfile = () => {
-  const { user, updateUser, institutionName } = useAuth(
+  const institutionName = useSignalRStore(signalRSelectors.institution)?.name;
+  const { user, updateUser } = useAuth(
     useShallow((s) => ({
       user: s.user,
       updateUser: s.updateUser,
-      institutionName: s.other.institution.name,
     })),
   );
   const userId = user?.userId;

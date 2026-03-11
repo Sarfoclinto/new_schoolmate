@@ -15,15 +15,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 const StaffLayoutHeader = () => {
-  const { user, terms, year } = useAuth(
-    useShallow((s) => ({
-      user: s.user,
-      terms: s.other.academicTerm,
-      year: s.other.academicYear,
-    })),
-  );
+  const terms = useSignalRStore(signalRSelectors.academicTerms);
+  const year = useSignalRStore(signalRSelectors.academicYear);
+  const user = useAuth((s) => s.user);
   const { data: unreadCount = 0 } = useUnreadStaffNoticeCount(
     user?.userId ?? "",
   );

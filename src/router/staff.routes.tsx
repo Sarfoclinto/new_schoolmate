@@ -1,6 +1,6 @@
+import { ProtectStaffRoutes } from "@/components/custom/protect-routes";
 import paths from "@/config/routes";
 import StaffLayout from "@/features/staff/components/layout";
-import ProtectStaffRoutes from "@/features/staff/components/protect-layout";
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 

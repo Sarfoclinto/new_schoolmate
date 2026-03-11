@@ -1,4 +1,4 @@
-import { getInitials, getUserDashboardRoute } from "@/utils/string";
+import { getInitials } from "@/utils/string";
 import { Drawer, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/store/auth.store";
@@ -10,6 +10,7 @@ import { menuStyle } from "@/config/constants";
 import staffMenu from "../../data/staff-menu-items";
 import type { ItemType } from "antd/es/menu/interface";
 import { useFilteredMenu } from "@/hooks/use-filtered-menu";
+import { getUserDashboardRoute } from "@/utils/auth";
 
 const SIDEBAR_BG = "#0D1B2E";
 const SIDEBAR_WIDTH = 260;

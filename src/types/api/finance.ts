@@ -31,10 +31,7 @@ export type TuitionGet = {
   academicLevelName: string;
 
   academicYear: AcademicYearGet;
-  academicTerm: Pick<
-    AcademicTermGet,
-    "academicTermId" | "status" | "academicTermName"
-  >;
+  academicTerm: Pick<AcademicTermGet, "academicTermId" | "academicTermName">;
 
   amount: number;
 };

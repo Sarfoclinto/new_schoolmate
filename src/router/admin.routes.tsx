@@ -1,6 +1,6 @@
+import { ProtectAdminRoutes } from "@/components/custom/protect-routes";
 import paths from "@/config/routes";
 import AdminLayout from "@/features/admins/components/layout";
-import ProtectAdminRoutes from "@/features/admins/components/protect-layout";
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 

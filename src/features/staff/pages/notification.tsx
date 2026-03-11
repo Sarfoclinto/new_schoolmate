@@ -78,7 +78,7 @@ const Avatar = ({
       .join("") || "?";
   return (
     <div
-      className="rounded-xl overflow-hidden flex items-center justify-center font-bold text-[#C9A84C] flex-shrink-0"
+      className="rounded-xl overflow-hidden flex items-center justify-center font-bold text-[#C9A84C] shrink-0"
       style={{
         width: size,
         height: size,
@@ -177,7 +177,7 @@ const NotifSkeleton = () => (
         key={i}
         className="flex gap-x-3 p-4 rounded-2xl border border-slate-100"
       >
-        <div className="w-9 h-9 rounded-xl bg-slate-100 animate-pulse flex-shrink-0" />
+        <div className="w-9 h-9 rounded-xl bg-slate-100 animate-pulse shrink-0" />
         <div className="flex-1 flex flex-col gap-y-2">
           <div
             className="h-4 bg-slate-100 rounded-lg animate-pulse w-2/3"
@@ -260,7 +260,7 @@ const NotifCard = ({
 
               {/* Read status icon */}
               <div
-                className={`flex-shrink-0 ${isUnread ? "text-[#1E3A5F]" : "text-slate-300"}`}
+                className={`shrink-0 ${isUnread ? "text-[#1E3A5F]" : "text-slate-300"}`}
               >
                 {isUnread ? (
                   <Mail className="w-4 h-4" />
@@ -552,7 +552,7 @@ const Notifications = () => {
             background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
           }}
         >
-          <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] flex-shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
             <Bell className="w-4 h-4" />
           </div>
           <span className="text-white font-semibold text-sm flex-1">
@@ -617,7 +617,7 @@ const Notifications = () => {
             }}
             allowClear
             size="middle"
-            className="!rounded-xl w-1/2!"
+            className="rounded-xl! w-1/2!"
           />
           {search && (
             <button
@@ -631,7 +631,7 @@ const Notifications = () => {
         </div>
 
         {/* Notification list */}
-        <div className="p-4 flex flex-col gap-y-3 min-h-[240px]">
+        <div className="p-4 flex flex-col gap-y-3 min-h-60">
           {noticesLoading && <NotifSkeleton />}
 
           {!noticesLoading && filtered.length === 0 && (

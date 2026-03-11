@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { DASHBOARD_TYPES, PERMISSIONS } from "./config/permissions";
+import {
+  DASHBOARD_TYPES,
+  // PERMISSIONS
+} from "./config/permissions";
 
 export const LoginPayloadSchema = z.object({
   UserId: z
@@ -14,8 +17,8 @@ export const LoginPayloadSchema = z.object({
 
 // ── Permission value union ─────────────────────────────────────────────────────
 // Derived from your PERMISSIONS const so schema and types are always in sync.
-const permissionValues = Object.values(PERMISSIONS) as [string, ...string[]];
-const PermissionSchema = z.enum(permissionValues);
+// const permissionValues = Object.values(PERMISSIONS) as [string, ...string[]];
+// const PermissionSchema = z.enum(permissionValues);
 
 // ── DashboardType union ────────────────────────────────────────────────────────
 const dashboardTypeValues = Object.values(DASHBOARD_TYPES) as [
@@ -47,7 +50,7 @@ export const UserSchema = z.object({
    * Derived server-side from the role's saved permissions.
    * Empty array means the user can log in but sees almost nothing.
    */
-  permissions: z.array(PermissionSchema).default([]),
+  // permissions: z.array(PermissionSchema).default([]),
 });
 
 export const EnvSchema = z.object({

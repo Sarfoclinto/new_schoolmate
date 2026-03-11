@@ -55,6 +55,11 @@ export const getTeacherSublevelSubjectsFn = async (
     staffMn.subLevelSubjects(teacherId, sublevelId),
   );
 };
+export const getStaffByDashboardTypeFn = async (
+  dashboardType: "admin" | "staff",
+) => {
+  return getHelper<StaffGet[]>(staffMn.getByDashboardType, { dashboardType });
+};
 export const getTeachersSublevelsFn = async (id: string) => {
   return getHelper<TeacherSubLevelsGet>(staffMn.teacherSublevels(id));
 };
@@ -92,14 +97,8 @@ export const deleteTeachersSublevelFn = async (
   );
 };
 
-export const getStaffByDashboardTypeFn = async (
-  dashboardType: "admin" | "staff",
-) => {
-  return getHelper<StaffGet[]>(staffMn.getAllByDashboardType(dashboardType));
-};
-
 export const getUserPermissionsFn = async (_id: string) => {
-  return getHelper<{ permission: Permission }[]>(staffMn.getStaffPermissions, {
+  return getHelper<Permission[]>(staffMn.getStaffPermissions, {
     staffId: _id,
   });
 };

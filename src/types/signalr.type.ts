@@ -1,3 +1,6 @@
+import type { Permission } from "@/config/permissions";
+import type { AcademicTermGet, AcademicYearGet } from "./api/setup/year-n-term";
+
 /**
  * SignalR Event Map - Strongly typed event handlers
  */
@@ -9,6 +12,13 @@ export interface SignalREventMap {
   reconnected: () => void;
   // errors
   error: (error: string) => void;
+
+  // permission
+  receivePermissions: (permission: Permission[]) => void;
+
+  // sessions (years and terms)
+  receiveActiveYear: (year: AcademicYearGet) => void;
+  receiveActiveTerms: (terms: AcademicTermGet[]) => void;
 }
 /**
  * SignalR Connection State

@@ -1,3 +1,4 @@
+import type { Permission } from "@/config/permissions";
 import type {
   EventSubscriber,
   SignalRConfig,
@@ -6,12 +7,19 @@ import type {
 } from "@/types/signalr.type";
 import * as signalR from "@microsoft/signalr";
 
+type Connection = signalR.HubConnection & {
+  on<T extends SignalREventName>(
+    methodName: T,
+    handler: SignalREventHandler<T>,
+  ): void;
+};
+
 /**
  * Core SignalR Client Manager
  * Handles connection lifecycle and event subscriptions
  */
 export class SignalRClient {
-  private connection: signalR.HubConnection | null = null;
+  private connection: Connection | null = null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private subscribers: Map<string, EventSubscriber<any>> = new Map();
@@ -139,11 +147,21 @@ export class SignalRClient {
   private setupEventHandlers(): void {
     if (!this.connection) return;
 
-    // use this.on to subscribe to server events
-    // eg
-    // this.connection.on("ReceiveMessage", (message: MdMessage) => {
-    //   this.emit("receiveMessage", message);
-    // });
+    // use this.connection.on to subscribe to server events
+    this.connection.on("receivePermissions", (permissions: Permission[]) => {
+      this.emit("receivePermissions", permissions);
+    });
+
+    //
+    this.connection.on("receiveActiveTerms", (terms) => {
+      this.emit("receiveActiveTerms", terms);
+    });
+
+    this.connection.on("receiveActiveYear", (year) => {
+      this.emit("receiveActiveYear", year);
+    });
+
+    this.connection.on("error", (err) => this.emit("error", err));
   }
 
   /**

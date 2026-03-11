@@ -1,14 +1,14 @@
 import { useMemo } from "react";
-import { useAuth } from "@/store/auth.store";
 import type { Permission } from "@/config/permissions";
 import type { AppMenuItem } from "@/features/admins/data/admin-menu-items";
+import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 
 const EMPTY_PERMISSIONS: Permission[] = [];
 
 // =============================================================================
 // filterMenuByPermissions
 // =============================================================================
-// Pure function — no React, easy to unit test.
+// Pure function — easy to unit test.
 //
 // Rules:
 //  1. If an item has no `permission` key → always include it.
@@ -16,37 +16,7 @@ const EMPTY_PERMISSIONS: Permission[] = [];
 //     permissions array contains that key.
 //  3. For submenus: filter children first. If no children survive, drop the
 //     parent entirely (a section header with no children is just noise).
-// =============================================================================
-// export const filterMenuByPermissions = (
-//   items: AppMenuItem[],
-//   userPermissions: Permission[],
-// ): AppMenuItem[] => {
-//   return items.reduce<AppMenuItem[]>((acc, menuItem) => {
-//     // Step 1 — check parent permission
-//     const parentAllowed =
-//       !menuItem.permission || userPermissions.includes(menuItem.permission);
 
-//     if (!parentAllowed) return acc;
-
-//     // Step 2 — if it has children, recurse and filter them too
-//     if (menuItem.children && menuItem.children.length > 0) {
-//       const filteredChildren = filterMenuByPermissions(
-//         menuItem.children,
-//         userPermissions,
-//       );
-
-//       // Drop the parent if every child was filtered out
-//       if (filteredChildren.length === 0) return acc;
-
-//       return [...acc, { ...menuItem, children: filteredChildren }];
-//     }
-
-//     // Step 3 — leaf item that passed the permission check
-//     return [...acc, menuItem];
-//   }, []);
-// };
-
-// OPTIMIZED VERSION
 export const filterMenuByPermissions = (
   items: AppMenuItem[],
   userPermissions: Permission[],
@@ -88,11 +58,8 @@ export const filterMenuByPermissions = (
 // the user's permissions actually change (e.g. after a token refresh).
 // =============================================================================
 export const useFilteredMenu = (baseMenu: AppMenuItem[]): AppMenuItem[] => {
-  // const permissions = useAuth((s) => s.user?.permissions ?? []) as Permission[];
-  const permObjecArr = useAuth((s) => s.other.permissions) ?? EMPTY_PERMISSIONS;
-  const permissions = useMemo(() => {
-    return permObjecArr.map((obj) => obj.permission);
-  }, [permObjecArr]);
+  const permissions =
+    useSignalRStore(signalRSelectors.permissions) ?? EMPTY_PERMISSIONS;
 
   return useMemo(
     () => filterMenuByPermissions(baseMenu, permissions),

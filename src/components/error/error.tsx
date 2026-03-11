@@ -7,7 +7,7 @@ import {
 import { Button } from "antd";
 import Section from "@/components/custom/section";
 import { AlertOctagonIcon } from "lucide-react";
-import { getUserDashboardRoute } from "@/utils/string";
+import { getUserDashboardRoute } from "@/utils/auth";
 import paths from "@/config/routes";
 
 const PageError = () => {

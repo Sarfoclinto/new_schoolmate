@@ -9,6 +9,7 @@ import type { LoginPayload } from "@/types/api/setup/auth-n-user";
 import { loginFn } from "@/services/auth";
 import { useShallow } from "zustand/react/shallow";
 import { getUserDashboardRoute } from "@/utils/auth";
+import { useSignalRStore } from "@/store/signalr.store";
 // import { getUserDashboardRoute } from "@/utils/string";
 
 const LoginPage = () => {
@@ -20,15 +21,22 @@ const LoginPage = () => {
       user: s.user,
     })),
   );
+  const setPermissionsAndSessions = useSignalRStore(
+    useShallow((s) => s.setPermissionAndSessions),
+  );
   const navigate = useNavigate();
 
   const { mutate, isPending } = usePost({
     postFn: loginFn,
     onSuccess: (res) => {
-      console.log("response: ", res);
-
       if (res.responseCode === 1 && res.isAuth) {
-        login(res);
+        const permissionsAndSesssions = res.other;
+        if (permissionsAndSesssions) {
+          setPermissionsAndSessions(permissionsAndSesssions);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { other: __, ...rest } = res;
+        login(rest);
         navigate(getUserDashboardRoute(), { replace: true });
       } else {
         toast.error(res.responseMessage);
@@ -45,8 +53,10 @@ const LoginPage = () => {
     },
   });
 
-  if (isAuth && user)
-    return <Navigate to={getUserDashboardRoute()} replace={true} />;
+  if (isAuth && user) {
+    const route = getUserDashboardRoute();
+    return <Navigate to={route} replace />;
+  }
 
   const onFinish = (values: LoginPayload) => {
     const data = LoginPayloadSchema.safeParse(values);
@@ -54,9 +64,7 @@ const LoginPage = () => {
       mutate(data.data);
     } else {
       const error = data.error;
-      error.issues.map((issue) => {
-        toast.error(issue.message);
-      });
+      error.issues.forEach((issue) => toast.error(issue.message));
     }
   };
 

@@ -2,6 +2,9 @@ import dayjs from "@/lib/dayjs";
 import type { ReportPaths } from "@/types/ui";
 
 const endpoints = {
+  signalR: {
+    hub: "/hubs/signalR",
+  },
   auth: {
     login: "/Login",
   },
@@ -164,7 +167,7 @@ const endpoints = {
         `/GetAllAcademicTermsByEducationalLevelById/${id}`,
       delete: (id: string) => `/DeleteAcademicTerm/${id}`,
       active: `/ActivateAcademicTerm`,
-      closeTerm: "/CloseAcademicTerm"
+      closeTerm: "/CloseAcademicTerm",
     },
   },
   students: {
@@ -199,6 +202,7 @@ const endpoints = {
     getAllPn: "/GetPaginatedStaff",
     getAllUnPn: "/GetAllStaff",
     allTeachers: "/GetAllTeachers",
+    getByDashboardType: "/GetStaffByDashboardType",
     teacherSubjects: (id: string) => `/GetTeacherMappings/${id}`,
     teacherSublevels: (id: string) => `/GetTeacherSubLevels/${id}`,
     subLevelSubjects: (teacherId: string, sublevelId: string) =>
@@ -210,8 +214,6 @@ const endpoints = {
       `/DeleteTeacherSubLevel/Teacher/${teachId}/SubLevel/${sublevelId}`,
     getById: (id: string) => `/GetStaffById/${id}`,
     getStaffPermissions: `/GetStaffPermissionsById`,
-    getAllByDashboardType: (dashboardType: string) =>
-      `/GetStaffByDashboardType/${dashboardType}`,
   },
   finance: {
     ledgers: {
