@@ -15,7 +15,8 @@ export const signalRConfig: SignalRConfig = {
       if (token) {
         return token;
       } else {
-        return null;
+        throw new Error("Token not found");
+        // return null;
       }
     } catch (error) {
       console.error("Failed to get access token:", error);
