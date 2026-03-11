@@ -68,7 +68,10 @@ const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
   const user = useAuth((s) => s.user);
   const filteredMenu = useFilteredMenu(adminMenu) as ItemType[];
   return (
-    <div className="flex flex-col h-full" style={{ background: SIDEBAR_BG }}>
+    <div
+      className="flex flex-col h-full m-0!"
+      style={{ background: SIDEBAR_BG }}
+    >
       <LogoSection collapsed={collapsed} />
       {!collapsed && (
         <div className="px-5 pt-5 pb-2">
@@ -143,10 +146,16 @@ const AdminLayoutSidebar = () => {
         open={isOpen}
         onClose={closeSidebar}
         placement="left"
-        styles={{ body: { padding: 0, background: SIDEBAR_BG } }}
+        styles={{
+          wrapper: { padding: 0 },
+          body: { padding: 0, background: SIDEBAR_BG },
+          section: { padding: 0 },
+          root: { padding: 0 },
+        }}
         size={SIDEBAR_WIDTH}
         closable={false}
         mask={{ closable: true, enabled: true, blur: true }}
+        className="p-0!"
       >
         <SidebarContent collapsed={false} />
       </Drawer>

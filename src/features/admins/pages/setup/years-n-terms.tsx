@@ -2,6 +2,7 @@ import type { YearsNTerms } from "@/types/ui";
 import { ChevronRight, ClockFading, ClockIcon } from "lucide-react";
 import Years from "../../components/terms-n-years/years";
 import Terms from "../../components/terms-n-years/terms";
+import TermsUpdate from "../../components/terms-n-years/terms-update";
 import { useState } from "react";
 import { MotionDiv, MotionSpan } from "@/components/custom/motion";
 import { AnimatePresence } from "motion/react";
@@ -28,6 +29,13 @@ const tabs: Tab[] = [
     label: "Academic Terms",
     icon: <ClockFading className="w-3.5 h-3.5" />,
     component: <Terms />,
+  },
+  {
+    key: "terms_update",
+    shortLabel: "Terms Update",
+    label: "Assign Time-Range To Term",
+    icon: <ClockFading className="w-3.5 h-3.5" />,
+    component: <TermsUpdate />,
   },
 ];
 
@@ -69,7 +77,9 @@ const YearsnTerms = () => {
         className="mb-5 bg-white rounded-2xl border border-slate-100 p-1.5"
         style={{ boxShadow: "0 2px 12px rgba(13,27,46,0.06)" }}
       >
-        <div className="grid grid-cols-2 items-center gap-x-1 overflow-x-auto scrollbar-none">
+        <div
+          className={`grid grid-cols-${tabs.length} items-center gap-x-1 overflow-x-auto scrollbar-none`}
+        >
           {tabs.map((tab) => {
             const isActive = tab.key === active;
             return (

@@ -141,6 +141,21 @@ const adminPaths = {
     label: "Staff Permissions",
     href: "/admin/staff_permissions",
   },
+
+  // sessions
+  sessions: { label: "Sessions", href: "/admin/session" },
+  openAcademicTerm: {
+    label: "Open Academic Term",
+    href: "/admin/session/open-academic-term",
+  },
+  closeAcademicTerm: {
+    label: "Close Academic Term",
+    href: "/admin/session/close-academic-term",
+  },
+  closeAcademicYear: {
+    label: "Close Academic Year",
+    href: "/admin/session/close-academic-year",
+  },
 };
 
 export default adminPaths;

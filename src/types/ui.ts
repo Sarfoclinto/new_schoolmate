@@ -18,7 +18,7 @@ export type StudyModuleTabKey =
 
 export type FacultyNClassroomTabKey = "faculty" | "classroom" | "assign-class";
 export type AssessmentNGradingTabKey = "assessment" | "grading";
-export type YearsNTerms = "years" | "terms";
+export type YearsNTerms = "years" | "terms" | "terms_update";
 
 // staff
 export type ClassesnSubjects = "classes" | "subjects" | "sublevel-subject";

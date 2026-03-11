@@ -29,6 +29,8 @@ import {
   CalendarPlusIcon,
   CalendarCheck2Icon,
   AlertOctagon,
+  CalendarXIcon,
+  CalendarRangeIcon,
   ShieldCheck,
 } from "lucide-react";
 
@@ -454,6 +456,51 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <CalendarPlusIcon className="size-3.5" />,
         permission: PERMISSIONS.EVENTS_WRITE,
+      }),
+    ],
+  }),
+
+  // ── Session ──────────────────────────────────────────────────────────────
+  item({
+    key: admin.sessions.href,
+    label: (
+      <SidebarLabel to={admin.sessions.href} type="span">
+        {admin.sessions.label}
+      </SidebarLabel>
+    ),
+    icon: <Clock10 className="size-3.75" />,
+    permission: PERMISSIONS.SESSION_READ,
+    type: "submenu",
+    children: [
+      item({
+        key: admin.closeAcademicTerm.href,
+        label: (
+          <SidebarLabel type="link" to={admin.closeAcademicTerm.href}>
+            {admin.closeAcademicTerm.label}
+          </SidebarLabel>
+        ),
+        icon: <CalendarXIcon className="size-3.5" />,
+        permission: PERMISSIONS.SESSION_WRITE,
+      }),
+      item({
+        key: admin.openAcademicTerm.href,
+        label: (
+          <SidebarLabel type="link" to={admin.openAcademicTerm.href}>
+            {admin.openAcademicTerm.label}
+          </SidebarLabel>
+        ),
+        icon: <CalendarRangeIcon className="size-3.5" />,
+        permission: PERMISSIONS.SESSION_WRITE,
+      }),
+      item({
+        key: admin.closeAcademicYear.href,
+        label: (
+          <SidebarLabel type="link" to={admin.closeAcademicYear.href}>
+            {admin.closeAcademicYear.label}
+          </SidebarLabel>
+        ),
+        icon: <CalendarXIcon className="size-3.5" />,
+        permission: PERMISSIONS.SESSION_WRITE,
       }),
     ],
   }),

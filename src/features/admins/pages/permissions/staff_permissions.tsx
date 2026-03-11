@@ -556,7 +556,7 @@ const StaffPermissions = () => {
     }
     syncPerms.mutate({
       userId: selectedUserId,
-      permissions: Array.from(localPerms),
+      userPermissions: Array.from(localPerms),
     });
   };
 

@@ -556,9 +556,14 @@ const AdministrativePermissions = () => {
       toast.warning("Select a user first.");
       return;
     }
-    syncPerms.mutate({
+    console.log({
       userId: selectedUserId,
       permissions: Array.from(localPerms),
+    });
+
+    syncPerms.mutate({
+      userId: selectedUserId,
+      userPermissions: Array.from(localPerms),
     });
   };
 

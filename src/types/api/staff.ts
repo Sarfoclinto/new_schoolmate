@@ -97,5 +97,5 @@ export interface AdminUpdateStaffType {
 
 export interface AssignPermissionsPayload {
   userId: string;
-  permissions: Permission[];
+  userPermissions: Permission[];
 }

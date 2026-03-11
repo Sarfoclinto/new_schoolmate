@@ -3,11 +3,14 @@ import endpoints from "@/config/endpoints";
 import type {
   AcademicTermGet,
   AcademicTermPost,
+  AcademicTermTimeRange,
   AcademicYearGet,
   AcademicYearPost,
   AcademicYearUpdate,
   ActivateTerm,
   ActivateYear,
+  CloseTermPayload,
+  UpdateAcademicTermTimeRange,
 } from "@/types/api/setup/year-n-term";
 
 const {
@@ -32,24 +35,42 @@ export const activeYearFn = async (update: ActivateYear) => {
 };
 
 // terms
+// !NOT IN USE
 export const getAllTermsFn = async () => {
   return getHelper<AcademicTermGet[]>(term.getAll);
 };
+// !NOT IN USE
 export const getTermByIdFn = async (id: string) => {
   return getHelper<AcademicTermGet>(term.getById(id));
 };
+// !NOT IN USE
 export const getTermsBySubIdFn = async (id: string) => {
   return getHelper<AcademicTermGet[]>(term.getBySubId(id));
 };
 export const getTermsByEduIdFn = async (id: string) => {
   return getHelper<AcademicTermGet[]>(term.getByEduId(id));
 };
+export const getTermsTimeRangeFn = async (eduId: string, yearId: string) => {
+  return getHelper<AcademicTermTimeRange[]>(term.getTermTimeRange, {
+    educationalLevelId: eduId,
+    academicYearId: yearId,
+  });
+};
+export const updateTermTimeRangeFn = async (
+  data: UpdateAcademicTermTimeRange,
+) => {
+  return postHelper(term.updateTermTimeRange, data);
+};
 export const createTermFn = async (data: AcademicTermPost) => {
   return postHelper(term.create, data);
 };
 export const activeTermFn = async (update: ActivateTerm) => {
-  return updateHelper(term.active(update.id), update.data);
+  return postHelper(term.active, update);
 };
 export const deleteTermFn = async (id: string) => {
   return updateHelper(term.delete(id));
+};
+
+export const closeAcademicTermFn = async (data: CloseTermPayload) => {
+  return postHelper(term.closeTerm, data);
 };

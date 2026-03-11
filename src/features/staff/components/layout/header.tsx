@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const StaffLayoutHeader = () => {
   const { user, terms, year } = useAuth(
@@ -26,6 +27,7 @@ const StaffLayoutHeader = () => {
   const { data: unreadCount = 0 } = useUnreadStaffNoticeCount(
     user?.userId ?? "",
   );
+  const isMobile = useIsMobile();
 
   const { collapsed, toggleCollapsed, isOpen, openSidebar } = useUIStore(
     useShallow((s) => ({
@@ -35,9 +37,6 @@ const StaffLayoutHeader = () => {
       openSidebar: s.openSidebar,
     })),
   );
-  console.log("terms: ",terms);
-  console.log("year: ",year);
-  
 
   const handleCollapseToggle = () => {
     if (!isOpen) {
@@ -51,7 +50,7 @@ const StaffLayoutHeader = () => {
     <header
       className={cn(
         "fixed top-0 right-0! flex items-center justify-between px-6 bg-white border-b border-slate-200/80 z-10 shrink-0",
-        collapsed ? "left-18" : "left-65 ",
+        isMobile ? "left-0" : collapsed ? "left-18" : "left-65 ",
       )}
       style={{
         height: 64,
@@ -111,49 +110,72 @@ const StaffLayoutHeader = () => {
         {/* Divider */}
         <div className="w-px h-5 bg-slate-200 mx-1" />
         <div className="flex flex-col gap-1">
-          <button
-            className="text-[10px] px-2.5 py-0.5 rounded-md font-bold tracking-wider uppercase flex items-center justify-center"
-            style={{
-              background: "#0D1B2E",
-              color: "#C9A84C",
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
-            {year.startYear} — {year.endYear}
-          </button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="text-[10px] animate-pulse px-2.5 py-0.5 rounded-md font-bold tracking-wider uppercase border border-[#C9A84C]/30 hover:bg-[#C9A84C]/10 transition-colors cursor-pointer"
-                style={{
-                  color: "#1E3A5F",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-              >
-                {terms.length} Active {terms.length === 1 ? "Term" : "Terms"}
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-50">
-              <DropdownMenuGroup>
-                {terms.map((t, i) => (
-                  <DropdownMenuItem
-                    key={i}
-                    className="flex flex-col. items-start. justify-between gap-3"
-                  >
-                    <span className="font-bold text-[10px] text-[#0D1B2E]">
-                      {t.educationalLevelName.split(" ").slice(0, 2).join(" ")}
-                    </span>
-                    <span className="font-bold text-[10px] text-yellow-500">
-                      {t.academicTermName}
-                    </span>
-                    {/* <span className="text-[10px] text-slate-400 uppercase tracking-tighter">
+          {year && year.academicYearId ? (
+            <button
+              className="text-[10px] px-2.5 py-0.5 bg-[#0D1B2E] text-[#C9A84C] rounded-md font-bold tracking-wider uppercase flex items-center justify-center"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              {year.startYear} — {year.endYear}
+            </button>
+          ) : (
+            <button
+              className="text-[10px] px-2.5 py-0.5 animate-pulse bg-[#000914] text-[#ff0000] rounded-md font-bold tracking-wider uppercase flex items-center justify-center"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              No Active Year
+            </button>
+          )}
+          {terms.length > 0 ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="text-[10px] animate-pulse px-2.5 py-0.5 rounded-md font-bold tracking-wider uppercase border border-[#C9A84C]/30 hover:bg-[#C9A84C]/10 transition-colors cursor-pointer"
+                  style={{
+                    color: "#1E3A5F",
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  {terms.length} Active {terms.length === 1 ? "Term" : "Terms"}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-50">
+                <DropdownMenuGroup>
+                  {terms.map((t, i) => (
+                    <DropdownMenuItem
+                      key={i}
+                      className="flex flex-col. items-start. justify-between gap-3"
+                    >
+                      <span className="font-bold text-[10px] text-[#0D1B2E]">
+                        {t.educationalLevelName
+                          .split(" ")
+                          .slice(0, 2)
+                          .join(" ")}
+                      </span>
+                      <span className="font-bold text-[10px] text-yellow-500">
+                        {t.academicTermName}
+                      </span>
+                      {/* <span className="text-[10px] text-slate-400 uppercase tracking-tighter">
                       Academic Session
                     </span> */}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <button
+              className="text-[10px] px-2.5 py-0.5 animate-pulse bg-[#000914] text-[#ff0000] rounded-md font-bold tracking-wider uppercase flex items-center justify-center"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              No Active Term
+            </button>
+          )}
         </div>
         <div className="w-px h-5 bg-slate-200 mx-1" />
 

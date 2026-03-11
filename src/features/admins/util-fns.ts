@@ -75,6 +75,7 @@ const WRITE_REQUIRES_READ: Partial<Record<Permission, Permission>> = {
   "admin:records:write": "admin:records:read",
   "admin:attendance:write": "admin:attendance:read",
   "admin:permissions:write": "admin:permissions:read",
+  "admin:session:write": "admin:session:read",
 
   // staff
   "staff:assignments:write": "staff:assignments:read",

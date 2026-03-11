@@ -736,7 +736,7 @@ textarea.ant-input {
 
 .ant-drawer-body {
   font-family: "DM Sans", sans-serif !important;
-  padding: 20px !important;
+  /* padding: 20px !important; */
 }
 
 /* ══════════════════════════════════════════════════════════

@@ -93,7 +93,6 @@ export const useFilteredMenu = (baseMenu: AppMenuItem[]): AppMenuItem[] => {
   const permissions = useMemo(() => {
     return permObjecArr.map((obj) => obj.permission);
   }, [permObjecArr]);
-  console.log("user perms: ", permissions);
 
   return useMemo(
     () => filterMenuByPermissions(baseMenu, permissions),

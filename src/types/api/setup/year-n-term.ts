@@ -10,7 +10,29 @@ export interface AcademicTermGet {
   educationalLevelName: string;
   educationalLevelId: string;
   createdAt: string;
+}
+
+export type AcademicTermWithStatus = AcademicTermGet & {
   status: "Active" | "Inactive";
+};
+
+export interface AcademicTermTimeRange {
+  startDate: string;
+  endDate: string;
+  academicTermId: string;
+  academicTermName: string;
+  status: "Active" | "Inactive";
+  educationalLevelId: string;
+  academicYearName: string;
+  academicYearId: string;
+}
+
+export interface UpdateAcademicTermTimeRange {
+  EducationalLevelId: string;
+  AcademicTermId: string;
+  AcademicYearId: string;
+  StartDate: string;
+  EndDate: string;
 }
 
 export interface AcademicTermPost {
@@ -19,13 +41,10 @@ export interface AcademicTermPost {
   EducationalLevelId: string;
 }
 export interface ActivateTerm {
-  id: string;
-  data: {
-    Status: "Active";
-    StartDate: string;
-    EndDate: string;
-    UserId: string;
-  };
+  AcademicTermId: string;
+  AcademicYearId: string;
+  EducationalLevelId: string;
+  Status: "Active";
 }
 
 export interface AcademicYearGet {
@@ -66,4 +85,20 @@ export interface Others {
   academicTerm: AcademicTermGet[];
   institution: InstitutionGet;
   permissions: { permission: Permission; createdOn: string }[];
+}
+
+export interface CloseTermPayload {
+  VacationName: string;
+  HeadMasterRemarks?: string;
+  Notice?: string;
+  UserId: string;
+  CurrentAcademicTermId: string;
+  NextAcademicTermId: string;
+  AcademicYearId: string;
+  EducationalLevelId: string;
+  settings: {
+    publishReport: boolean;
+    billStudents: boolean;
+    [key: string]: boolean; // room for future settings
+  };
 }

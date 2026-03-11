@@ -53,6 +53,11 @@ const {
   // permissions
   admin_permissions,
   staff_permissions,
+
+  // sessions
+  closeAcademicTerm,
+  openAcademicTerm,
+  closeAcademicYear,
 } = paths.admin;
 
 // admin pages component
@@ -150,6 +155,17 @@ const AdministrativePermissions = lazy(
 );
 const StaffPermissions = lazy(
   () => import("@/features/admins/pages/permissions/staff_permissions"),
+);
+
+// sessions
+const CloseAcademicTerm = lazy(
+  () => import("@/features/admins/pages/session/close-academic-term"),
+);
+const OpenAcademicTerm = lazy(
+  () => import("@/features/admins/pages/session/open-academic-term"),
+);
+const CloseAcademicYear = lazy(
+  () => import("@/features/admins/pages/session/close-academic-year"),
 );
 
 const adminRoutes: RouteObject[] = [
@@ -313,6 +329,20 @@ const adminRoutes: RouteObject[] = [
       {
         path: staff_permissions.href,
         element: <StaffPermissions />,
+      },
+
+      // sessions
+      {
+        path: closeAcademicTerm.href,
+        element: <CloseAcademicTerm />,
+      },
+      {
+        path: openAcademicTerm.href,
+        element: <OpenAcademicTerm />,
+      },
+      {
+        path: closeAcademicYear.href,
+        element: <CloseAcademicYear />,
       },
     ],
   },

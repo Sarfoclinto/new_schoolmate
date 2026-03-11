@@ -7,6 +7,7 @@ import {
   FileText,
   GraduationCap,
   LayoutDashboard,
+  LockOpen,
   Settings,
   Shield,
   Users,
@@ -63,6 +64,10 @@ export const ADMINISTRATIVE_PERMISSIONS = {
   // All staff with a dashboard should have this — no explicit guard needed,
   // but kept here for completeness and future API-level checks.
   ASSIGNMENTS_READ: "admin:assignments:read",
+
+  // ── Session (staff) ───────────────────────────────────────────────
+  SESSION_READ: "admin:session:read", // view session records
+  SESSION_WRITE: "admin:session:write", // add/edit session records
 };
 
 export const STAFF_PERMISSIONS = {
@@ -159,6 +164,12 @@ export const ADMIN_PERMISSION_GROUPS: PermissionGroup[] = [
     description: "View assigned classes, subjects, and schedules.",
     icon: LayoutDashboard,
     permissions: [PERMISSIONS.ASSIGNMENTS_READ],
+  },
+  {
+    label: "Session",
+    description: "Access session records and attendance summaries.",
+    icon: LockOpen,
+    permissions: [PERMISSIONS.SESSION_READ, PERMISSIONS.SESSION_WRITE],
   },
 ];
 
