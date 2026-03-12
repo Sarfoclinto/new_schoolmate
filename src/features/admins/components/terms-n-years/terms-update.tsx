@@ -5,13 +5,13 @@ import {
   activeTermFn,
   getAllYearsFn,
   getTermsByEduIdFn,
-  getTermsTimeRangeFn,
+  getTermsFromStateByEduId,
   updateTermTimeRangeFn,
 } from "@/services/setup/year-n-term";
 import type { SelectTypes } from "@/types/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button, DatePicker, Form, Select } from "antd";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SetupPage } from "../setup-page";
 import type { ColumnsType } from "antd/es/table";
 import type {
@@ -24,6 +24,7 @@ import usePost from "@/hooks/api/use-post";
 import { toast } from "sonner";
 import { formatDate } from "@/utils/date-n-time";
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "react-router-dom";
 
 interface FormValues {
   AcademicYear: { value: string };
@@ -34,6 +35,7 @@ interface FormValues {
 }
 
 const TermsUpdate = () => {
+  const [searchParams] = useSearchParams();
   // states
   const [form] = Form.useForm<FormValues>();
   const [record, setRecord] = useState<AcademicTermTimeRange | null>(null);
@@ -62,8 +64,8 @@ const TermsUpdate = () => {
     enabled: !!eduId,
   });
   const { data: termTimeRanges, isLoading: loadingTermTimeRanges } = useFetch({
-    queryFn: () => getTermsTimeRangeFn(eduId!, yearId!),
-    queryKeys: termKeys.custom("edu-terms-time-range", { eduId, yearId }),
+    queryFn: () => getTermsFromStateByEduId(eduId!, yearId!),
+    queryKeys: termKeys.custom("edu-terms-from-state", { eduId, yearId }),
     enabled: !!yearId && !!eduId,
   });
 
@@ -91,6 +93,33 @@ const TermsUpdate = () => {
       value: year.academicYearId,
     }));
   }, [academicYears]);
+
+  useEffect(() => {
+    const urlEdu = searchParams.get("eduLevelId");
+    const urlYear = searchParams.get("academicYearId");
+    if (urlEdu && urlYear && eduOptions.length > 0 && yearOptions.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedEdu({
+        label: eduOptions.find((e) => e.value === urlEdu)?.label ?? "",
+        value: urlEdu,
+      });
+      setSelectedYear({
+        label: yearOptions.find((y) => y.value === urlYear)?.label ?? "",
+        value: urlYear,
+      });
+      form.setFieldsValue({
+        AcademicYear: { value: selectedYear?.value },
+        EducationalLevel: { value: selectedEdu?.value },
+      });
+    }
+  }, [
+    eduOptions,
+    form,
+    searchParams,
+    selectedEdu?.value,
+    selectedYear?.value,
+    yearOptions,
+  ]);
 
   const dataSource = useMemo(() => {
     if (!termTimeRanges) return [];
@@ -123,7 +152,6 @@ const TermsUpdate = () => {
     postFn: activeTermFn,
     mutationOptions: { mutationKey: ["term", "activate"] },
     onSuccess: async ({ responseCode, responseMessage }) => {
-      // TODO: broadcast will be made to receive new one and update local store
       if (responseCode === 1) {
         await invalidate();
         toast.success(responseMessage);

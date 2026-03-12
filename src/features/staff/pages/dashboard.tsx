@@ -1,4 +1,4 @@
-import { eventKeys, noticeKeys, subjectKeys } from "@/config/query-keys";
+import { eventKeys, mappingsKeys, noticeKeys } from "@/config/query-keys";
 import useFetch from "@/hooks/api/use-fetch";
 import { getUserNotices } from "@/services/setup/notice";
 import { getTeacherMappingFn } from "@/services/staff";
@@ -26,7 +26,7 @@ const StaffDashboard = () => {
 
   const { data: data, isLoading } = useFetch({
     queryFn: () => getTeacherMappingFn(teacherId!),
-    queryKeys: subjectKeys.custom("teacher", { teacherId }),
+    queryKeys: mappingsKeys.custom("teacher", { teacherId }),
     enabled: !!teacherId,
   });
 

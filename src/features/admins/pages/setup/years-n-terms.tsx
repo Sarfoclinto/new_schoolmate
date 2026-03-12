@@ -6,6 +6,7 @@ import TermsUpdate from "../../components/terms-n-years/terms-update";
 import { useState } from "react";
 import { MotionDiv, MotionSpan } from "@/components/custom/motion";
 import { AnimatePresence } from "motion/react";
+import { useSearchParams } from "react-router-dom";
 
 interface Tab {
   key: YearsNTerms;
@@ -40,7 +41,9 @@ const tabs: Tab[] = [
 ];
 
 const YearsnTerms = () => {
-  const [active, setActive] = useState<YearsNTerms>("years");
+  const [searchParam] = useSearchParams();
+  const urlTab = (searchParam.get("tab") as YearsNTerms) ?? null;
+  const [active, setActive] = useState<YearsNTerms>(urlTab ?? "years");
   const activeTab = tabs.find((t) => t.key === active)!;
 
   return (

@@ -26,5 +26,5 @@ export const signalRConfig: SignalRConfig = {
   logLevel: env.ISDEV ? "debug" : "warn",
 };
 
-export const AUTO_CONNECT = { admin: false, staff: false };
+export const AUTO_CONNECT = { admin: true, staff: true };
 export const ENABLE_TOAST = { admin: true, staff: true };

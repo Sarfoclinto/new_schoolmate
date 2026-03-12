@@ -35,7 +35,7 @@ const Page404 = () => {
             size="large"
             icon={<MoveLeft size={18} />}
             onClick={() => navigate(-1)}
-            className="min-w-[160px] h-12 flex items-center justify-center gap-2 border-slate-700 text-slate-300 hover:text-white hover:border-white bg-transparent"
+            className="min-w-40 h-12 flex items-center justify-center gap-2 border-slate-700 text-slate-300 hover:text-white hover:border-white bg-transparent"
           >
             Go Back
           </Button>
@@ -44,7 +44,7 @@ const Page404 = () => {
             size="large"
             icon={<Home size={18} />}
             onClick={() => navigate(dashboardRoute)}
-            className="min-w-[160px] h-12 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 border-none"
+            className="min-w-40 h-12 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 border-none"
           >
             Dashboard
           </Button>

@@ -66,7 +66,10 @@ const PageError = () => {
       <Button
         className="px-5 mt-5 bg-slate-900!"
         danger
-        onClick={() => navigate(to)}
+        onClick={() => {
+          window.location.reload();
+          navigate(to);
+        }}
       >
         Retry
       </Button>

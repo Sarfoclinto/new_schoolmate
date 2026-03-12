@@ -46,7 +46,6 @@ export const getTeacherMappingFn = async (id: string) => {
   return getHelper<TeachersMapping>(staffMn.teacherSubjects(id));
 };
 
-// TODO: use the below function at the appropraite places
 export const getTeacherSublevelSubjectsFn = async (
   teacherId: string,
   sublevelId: string,

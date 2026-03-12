@@ -34,7 +34,6 @@ const StaffSubjects = ({ teacherId, isATeacher }: Props) => {
     enabled: !!teacherId,
   });
 
-  //   TODO: filter subjects by subleves and render
   // memoized
   // ── Derived ──────────────────────────────────────────────
   const sublevels = useMemo(() => {

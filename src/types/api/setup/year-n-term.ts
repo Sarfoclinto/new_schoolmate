@@ -84,7 +84,7 @@ export interface Others {
   academicYear: AcademicYearGet;
   academicTerm: AcademicTermGet[];
   institution: InstitutionGet;
-  permissions:Permission[];
+  permissions: Permission[];
 }
 
 export interface CloseTermPayload {
@@ -96,9 +96,45 @@ export interface CloseTermPayload {
   NextAcademicTermId: string;
   AcademicYearId: string;
   EducationalLevelId: string;
+  ReOpeningYearId: string;
   settings: {
     publishReport: boolean;
     billStudents: boolean;
     [key: string]: boolean; // room for future settings
+  };
+}
+
+export interface OpenTermPayload {
+  VacationId: string;
+  ReOpeningYearName: string; // start-end
+  UserId: string;
+  HeadMasterRemarks?: string;
+  Notice?: string
+  Settings: {
+    PublishReport: boolean;
+    BillStudents: boolean;
+  };
+}
+
+// query params
+// educationalLevelId
+export interface LastClosedTermRecord {
+  vacationId: string;
+  vacationName: string;
+  closedTermId: string;
+  closedTermName: string;
+  nextTermId: string;
+  nextTermName: string;
+  currentYearId: string;
+  currentYearName: string;
+  reOpeningYearId: string;
+  reOpeningYearName: string;
+  educationalLevelId: string;
+  notice: string;
+  headMasterRemarks: string;
+  settingsApplied: {
+    publishReport: boolean;
+    billStudents: boolean;
+    // extend as you add more settings
   };
 }

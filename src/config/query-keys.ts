@@ -39,6 +39,10 @@ export const academicRecordsKeys = createQueryKeys("academic-records");
 
 export const attendanceKeys = createQueryKeys("attendance");
 
+export const mappingsKeys = createQueryKeys("mappings");
+
+
+
 
 
 // educational level

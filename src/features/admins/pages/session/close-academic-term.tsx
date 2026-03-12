@@ -24,12 +24,13 @@ import { useMemo, useState } from "react";
 import { useActiveTerm } from "@/hooks/use-active-term";
 import useFetch from "@/hooks/api/use-fetch";
 import { getAllEduLevelsFn } from "@/services/setup/educational-level";
-import { eduKeys, termKeys } from "@/config/query-keys";
+import { eduKeys, termKeys, yearKeys } from "@/config/query-keys";
 import {
   closeAcademicTermFn,
-  getTermsByEduIdFn,
+  getAllYearsFn,
+  getTermsFromStateByEduId,
 } from "@/services/setup/year-n-term";
-import { Select } from "antd";
+import { Checkbox, Select } from "antd";
 import { AnimatePresence } from "motion/react";
 import type { CloseTermPayload } from "@/types/api/setup/year-n-term";
 import usePost from "@/hooks/api/use-post";
@@ -96,7 +97,7 @@ const Section = ({
 );
 
 /** Field label */
-const FL = ({
+export const FL = ({
   children,
   optional,
 }: {
@@ -119,7 +120,7 @@ const FL = ({
 );
 
 /** Styled text input */
-const TextInput = ({
+export const TextInput = ({
   value,
   onChange,
   placeholder,
@@ -146,7 +147,7 @@ const TextInput = ({
 );
 
 /** Styled textarea */
-const TextArea = ({
+export const TextArea = ({
   value,
   onChange,
   placeholder,
@@ -243,7 +244,7 @@ const NoActiveTerm = () => (
 );
 
 /** Toggle setting row */
-const SettingToggle = ({
+export const SettingToggle = ({
   icon,
   label,
   description,
@@ -310,7 +311,7 @@ const SettingToggle = ({
 );
 
 /** Review summary pill */
-const ReviewPill = ({
+export const ReviewPill = ({
   label,
   value,
   icon,
@@ -338,9 +339,8 @@ const ReviewPill = ({
 );
 
 const CloseAcademicTerm = () => {
-  const academicYearId = useSignalRStore(
-    signalRSelectors.academicYear,
-  )?.academicYearId;
+  const year = useSignalRStore(signalRSelectors.academicYear);
+  const academicYearId = year?.academicYearId;
   const userId = useAuth((s) => s.user?.userId);
 
   // ── Form state ─────────────────────────────────────────────────────────────
@@ -348,10 +348,12 @@ const CloseAcademicTerm = () => {
     null,
   );
   const [vacationName, setVacationName] = useState("");
+  const [useActiveYear, SetUseActiveyear] = useState(true);
+  const [reOpeningYearId, setReOpeningYearId] = useState(academicYearId);
   const [reOpeningTermId, setReOpeningTermId] = useState<string | null>(null);
   const [remarks, setRemarks] = useState("");
   const [notice, setNotice] = useState("");
-  const [optionalOpen, setOptionalOpen] = useState(false);
+  const [optionalOpen, setOptionalOpen] = useState(true);
   const [settings, setSettings] = useState({
     publishReport: true,
     billStudents: false,
@@ -363,12 +365,15 @@ const CloseAcademicTerm = () => {
   const reset = () => {
     setVacationName("");
     setReOpeningTermId(null);
+    setSelectedEduLevelId(null);
     setRemarks("");
     setNotice("");
     setSettings({
       publishReport: true,
       billStudents: false,
     });
+    SetUseActiveyear(true);
+    setReOpeningYearId(academicYearId);
   };
 
   // ── Queries ────────────────────────────────────────────────────────────────
@@ -378,9 +383,18 @@ const CloseAcademicTerm = () => {
   });
 
   const { data: allTerms = [], isLoading: loadingTerms } = useFetch({
-    queryKeys: termKeys.custom("edu-terms", { eduId: selectedEduLevelId }),
-    queryFn: () => getTermsByEduIdFn(selectedEduLevelId!),
-    enabled: !!selectedEduLevelId,
+    queryKeys: termKeys.custom("edu-terms-from-state", {
+      eduId: selectedEduLevelId,
+      yearId: academicYearId,
+    }),
+    queryFn: () =>
+      getTermsFromStateByEduId(selectedEduLevelId!, academicYearId!),
+    enabled: !!selectedEduLevelId && !!academicYearId,
+  });
+
+  const { data: academicYears = [], isLoading: loadingYears } = useFetch({
+    queryFn: getAllYearsFn,
+    queryKeys: yearKeys.list(),
   });
 
   // Terms for re-opening select — exclude the currently active term
@@ -390,6 +404,17 @@ const CloseAcademicTerm = () => {
         .filter((t) => t.academicTermId !== activeTerm?.academicTermId)
         .map((t) => ({ label: t.academicTermName, value: t.academicTermId })),
     [allTerms, activeTerm],
+  );
+
+  const yearOptions = useMemo(
+    () =>
+      academicYears
+        .filter((y) => y.academicYearId !== academicYearId)
+        .map((y) => ({
+          label: `${y.startYear}-${y.endYear}`,
+          value: y.academicYearId,
+        })),
+    [academicYearId, academicYears],
   );
 
   const selectedEduLevel = useMemo(
@@ -439,7 +464,8 @@ const CloseAcademicTerm = () => {
       !selectedEduLevelId ||
       !activeTerm?.academicTermId ||
       !academicYearId ||
-      !reOpeningTermId
+      !reOpeningTermId ||
+      !reOpeningYearId
     ) {
       toast.warning("Please complete all required fields.");
       return;
@@ -454,6 +480,7 @@ const CloseAcademicTerm = () => {
       CurrentAcademicTermId: activeTerm.academicTermId,
       NextAcademicTermId: reOpeningTermId,
       AcademicYearId: academicYearId,
+      ReOpeningYearId: reOpeningYearId,
       EducationalLevelId: selectedEduLevelId,
       settings,
       ...(remarks.trim() && { HeadMasterRemarks: remarks.trim() }),
@@ -603,6 +630,8 @@ const CloseAcademicTerm = () => {
                 </p>
               </div>
 
+              {/* re-opeing academic term */}
+
               <div>
                 <FL>Re-opening Academic Term</FL>
                 <Select
@@ -639,6 +668,95 @@ const CloseAcademicTerm = () => {
                   this vacation.
                 </p>
               </div>
+              {/* re-opeing academic year */}
+              {useActiveYear && year ? (
+                <div className="flex flex-col">
+                  <FL>Re-Opening Year</FL>
+                  <Checkbox
+                    checked={useActiveYear}
+                    onChange={(e) => {
+                      SetUseActiveyear(e.target.checked);
+                      if (!e.target.checked) {
+                        setReOpeningYearId(undefined);
+                      } else {
+                        setReOpeningYearId(academicYearId);
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <span>Use Current Active Year</span>
+                      <span
+                        className="text-[10px] px-2.5 py-0.5 bg-[#0D1B2E] text-[#C9A84C] rounded-md font-bold tracking-wider uppercase flex items-center justify-center"
+                        style={{
+                          fontFamily: "'DM Sans', sans-serif",
+                        }}
+                      >
+                        {year.startYear} — {year.endYear}
+                      </span>
+                    </div>
+                  </Checkbox>
+                  <span className="text-xs font-mono px-2 py-0.5. mt-0.5 ml-5 rounded bg-slate-200 w-fit">
+                    Uncheck to select a different year
+                  </span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 items-center gap-x-2">
+                  <div>
+                    <FL>Re-opening Academic Year</FL>
+                    <Select
+                      size="large"
+                      className="w-full"
+                      placeholder="Select the year students return to…"
+                      loading={loadingYears}
+                      disabled={loadingYears || isPending}
+                      options={yearOptions}
+                      onChange={setReOpeningYearId}
+                      value={reOpeningYearId ?? undefined}
+                      notFoundContent={
+                        <div className="py-4 flex flex-col items-center gap-1.5">
+                          <Hash className="w-5 h-5 text-slate-300" />
+                          <span className="text-xs text-slate-400">
+                            No other year available
+                          </span>
+                        </div>
+                      }
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1.5">
+                      The year that becomes active when the school re-opens
+                      after this vacation.
+                    </p>
+                  </div>
+                  {year && (
+                    <div className="mb-4! ml-auto">
+                      <Checkbox
+                        checked={useActiveYear}
+                        onChange={(e) => {
+                          SetUseActiveyear(e.target.checked);
+                          if (!e.target.checked) {
+                            setReOpeningYearId(undefined);
+                          } else {
+                            setReOpeningYearId(academicYearId);
+                          }
+                        }}
+                      >
+                        <div className="flex items-center gap-x-2">
+                          <span className="text-xs">
+                            Use Current Active Year
+                          </span>
+                          <span
+                            className="text-[10px] px-2.5 py-0.5 bg-[#0D1B2E] text-[#C9A84C] rounded-md font-bold tracking-wider uppercase flex items-center justify-center"
+                            style={{
+                              fontFamily: "'DM Sans', sans-serif",
+                            }}
+                          >
+                            {year.startYear} — {year.endYear}
+                          </span>
+                        </div>
+                      </Checkbox>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </Section>
         </div>

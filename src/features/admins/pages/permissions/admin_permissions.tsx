@@ -456,7 +456,6 @@ const AdministrativePermissions = () => {
   const [isDirty, setIsDirty] = useState(false);
 
   // ── Staff list ─────────────────────────────────────────────────────────────
-  // TODO: Fetch staffs whose dashboard type is admin
   const { data: staffList = [], isLoading: loadingStaff } = useFetch({
     queryKeys: staffKeys.custom("admins"),
     queryFn: () => getStaffByDashboardTypeFn("admin"),

@@ -455,7 +455,6 @@ const StaffPermissions = () => {
   const [isDirty, setIsDirty] = useState(false);
 
   // ── Staff list ─────────────────────────────────────────────────────────────
-  // TODO: Fetch staffs whose dashboard type is staff
   const { data: staffList = [], isLoading: loadingStaff } = useFetch({
     queryKeys: staffKeys.custom("staff"),
     queryFn: () => getStaffByDashboardTypeFn("staff"),

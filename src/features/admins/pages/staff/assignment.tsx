@@ -37,6 +37,7 @@ import {
 } from "@/services/staff";
 import {
   eduKeys,
+  mappingsKeys,
   programKeys,
   staffKeys,
   subjectKeys,
@@ -93,7 +94,7 @@ const StaffAssignment = () => {
   });
   const { data: teachersData, isLoading: loadingTeacherData } = useFetch({
     queryFn: () => getTeacherMappingFn(teacherId!),
-    queryKeys: subjectKeys.custom("teacher", { teacherId }),
+    queryKeys: mappingsKeys.custom("teacher", { teacherId }),
     enabled: !!teacherId,
   });
 
@@ -140,7 +141,7 @@ const StaffAssignment = () => {
 
   const invalidate = () => {
     qc.invalidateQueries({
-      queryKey: subjectKeys.custom("teacher", { teacherId }),
+      queryKey: mappingsKeys.custom("teacher", { teacherId }),
     });
   };
 

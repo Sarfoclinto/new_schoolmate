@@ -492,16 +492,16 @@ const adminMenu: AppMenuItem[] = [
         icon: <CalendarRangeIcon className="size-3.5" />,
         permission: PERMISSIONS.SESSION_WRITE,
       }),
-      item({
-        key: admin.closeAcademicYear.href,
-        label: (
-          <SidebarLabel type="link" to={admin.closeAcademicYear.href}>
-            {admin.closeAcademicYear.label}
-          </SidebarLabel>
-        ),
-        icon: <CalendarXIcon className="size-3.5" />,
-        permission: PERMISSIONS.SESSION_WRITE,
-      }),
+      // item({
+      //   key: admin.closeAcademicYear.href,
+      //   label: (
+      //     <SidebarLabel type="link" to={admin.closeAcademicYear.href}>
+      //       {admin.closeAcademicYear.label}
+      //     </SidebarLabel>
+      //   ),
+      //   icon: <CalendarXIcon className="size-3.5" />,
+      //   permission: PERMISSIONS.SESSION_WRITE,
+      // }),
     ],
   }),
 ];

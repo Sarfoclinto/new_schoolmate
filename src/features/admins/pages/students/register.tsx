@@ -816,4 +816,3 @@ const CameraModal = ({ isOpen, onClose, capture, webcamRef }: Props) => {
   );
 };
 
-// TODO: in term activation, there is an update of the auth store i've not done yet

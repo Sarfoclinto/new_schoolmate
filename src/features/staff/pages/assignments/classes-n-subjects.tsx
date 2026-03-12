@@ -8,7 +8,7 @@ import { AnimatePresence } from "motion/react";
 import { useAuth } from "@/store/auth.store";
 import useFetch from "@/hooks/api/use-fetch";
 import { getTeacherMappingFn } from "@/services/staff";
-import { subjectKeys } from "@/config/query-keys";
+import { mappingsKeys } from "@/config/query-keys";
 import { useSearchParams } from "react-router-dom";
 import SubLevelSubjects from "../../components/classes-n-subjects/sublevel-subjects";
 
@@ -28,7 +28,7 @@ const ClassesnSubjects = () => {
 
   const { data: data, isLoading } = useFetch({
     queryFn: () => getTeacherMappingFn(teacherId!),
-    queryKeys: subjectKeys.custom("teacher", { teacherId }),
+    queryKeys: mappingsKeys.custom("teacher", { teacherId }),
     enabled: !!teacherId,
   });
 

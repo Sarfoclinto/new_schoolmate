@@ -43,7 +43,7 @@ import useFetch from "@/hooks/api/use-fetch";
 import {
   academicRecordsKeys,
   educationKeys,
-  subjectKeys,
+  mappingsKeys,
 } from "@/config/query-keys";
 import type { SelectTypes } from "@/types/ui";
 import { getAssessmentsBySubIdFn } from "@/services/setup/assessment-n-grading";
@@ -278,8 +278,7 @@ const ViewRecords = () => {
 
   const { data: teacherMapping, isLoading: loadingMapping } = useFetch({
     queryFn: () => getTeacherMappingFn(teacherId!),
-    //  TODO: Find all occurrence of this and change the key to sth related to the teacher
-    queryKeys: subjectKeys.custom("teacher", { teacherId }),
+    queryKeys: mappingsKeys.custom("teacher", { teacherId }),
     enabled: !!teacherId,
   });
   const { data: assessments, isLoading: loadingAssessments } = useFetch({

@@ -159,10 +159,12 @@ const endpoints = {
     term: {
       getAll: "/GetAllAcademicTerms",
       create: "/CreateAcademicTerm",
+      open: "/OpenAcademicTerm",
       getById: (id: string) => `/GetAcademicTermById/${id}`,
       getBySubId: (id: string) => `/GetAllAcademicTermsBySubLevelId/${id}`,
       getTermTimeRange: "/GetAcademicTermsTimeRange",
       updateTermTimeRange: "/PostAcademicTermTimeRange",
+      getRecentlyClosedByEduId: "/GetClosedAcademicTermSettings",
       getByEduId: (id: string) =>
         `/GetAllAcademicTermsByEducationalLevelById/${id}`,
       delete: (id: string) => `/DeleteAcademicTerm/${id}`,

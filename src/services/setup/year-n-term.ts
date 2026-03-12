@@ -9,7 +9,9 @@ import type {
   AcademicYearUpdate,
   ActivateTerm,
   ActivateYear,
+  LastClosedTermRecord,
   CloseTermPayload,
+  OpenTermPayload,
   UpdateAcademicTermTimeRange,
 } from "@/types/api/setup/year-n-term";
 
@@ -50,12 +52,31 @@ export const getTermsBySubIdFn = async (id: string) => {
 export const getTermsByEduIdFn = async (id: string) => {
   return getHelper<AcademicTermGet[]>(term.getByEduId(id));
 };
+
+export const getTermsFromStateByEduId = async (eduId: string,yearId: string) => {
+  return getHelper<AcademicTermTimeRange[]>(term.getTermTimeRange, {
+    educationalLevelId: eduId,
+    academicYearId: yearId,
+  });
+}
 export const getTermsTimeRangeFn = async (eduId: string, yearId: string) => {
   return getHelper<AcademicTermTimeRange[]>(term.getTermTimeRange, {
     educationalLevelId: eduId,
     academicYearId: yearId,
   });
 };
+// Returns the most recently closed term for a given educational level
+export const getLastClosedTermFn = async (_eduLevelId: string) => {
+  return getHelper<LastClosedTermRecord>(term.getRecentlyClosedByEduId, {
+    educationalLevelId: _eduLevelId,
+  });
+};
+
+// Opens (re-activates) a new academic term
+export const openAcademicTermFn = async (_payload: OpenTermPayload) => {
+  return postHelper(term.open, _payload);
+};
+
 export const updateTermTimeRangeFn = async (
   data: UpdateAcademicTermTimeRange,
 ) => {
