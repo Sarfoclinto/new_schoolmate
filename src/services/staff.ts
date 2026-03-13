@@ -74,6 +74,12 @@ export const updateStaffProfileFn = async (update: StaffUpdateWithFile) => {
     update.data,
   );
 };
+export const updateStaffImageFn = async (update: StaffUpdateWithFile) => {
+  return updateWithFile(
+    staffMn.updateImage(update.id),
+    update.data,
+  );
+};
 
 export const updateStaffPasswordFn = async (update: UpdateSecurity) => {
   return updateHelper(staffMn.updatePassword(update.id), update.data);

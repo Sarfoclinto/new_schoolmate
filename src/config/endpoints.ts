@@ -198,6 +198,7 @@ const endpoints = {
     create: "/CreateStaff",
     syncPermissions: "/AssignStaffPermissions",
     updateProfile: (id: string) => `/UpdateStaff/${id}`,
+    updateImage: (id: string) => `/UpdateStaffImage/${id}`,
     updatePassword: (id: string) => `/UpdateStaffPassword/${id}`,
     updateStaff: (id: string) => `/StaffUpdatedByAdmin/${id}`,
     createMapping: "/CreateTeacherMappings",

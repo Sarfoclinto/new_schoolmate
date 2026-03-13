@@ -51,6 +51,11 @@ import { getSublevelRecords } from "@/services/academic-records";
 import { MotionDiv } from "@/components/custom/motion";
 import { CardHeader } from "@/features/admins/components/teacher-util-components";
 import { FL } from "@/features/admins/components/util-components";
+import { useUIStore } from "@/store/ui.store";
+import { useShallow } from "zustand/react/shallow";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import { capitalizeWords } from "@/utils/string";
 
 // ─── Stat chip ──────────────────────────────────────────────────────
 const StatChip = ({
@@ -272,6 +277,13 @@ const ViewRecords = () => {
   const [assessment, setAssessment] = useState<SelectTypes | null>(null);
   const [search, setSearch] = useState("");
 
+  const { collapsed } = useUIStore(
+    useShallow((s) => ({
+      collapsed: s.menuCollapsed,
+    })),
+  );
+  const isMobile = useIsMobile();
+
   const teacherId = user?.userId;
   const sublevelId = sublevel?.value;
   const assessmentId = assessment?.value;
@@ -309,7 +321,7 @@ const ViewRecords = () => {
   const assessmentOptions = useMemo(
     () =>
       assessments?.assessments?.map((a) => ({
-        label: a.assessmentName,
+        label: capitalizeWords(a.assessmentName),
         value: a.assessmentId,
       })) ?? [],
     [assessments],
@@ -330,7 +342,7 @@ const ViewRecords = () => {
         key: record.studentId,
         studentFullName: record.studentFullName,
       };
-      record.subjects.forEach((subject) => {
+      record?.subjects?.forEach((subject) => {
         const r = subject.academicRecord[0];
         row[subject.subjectId] = r ? `${r.marks}/${r.markedOver}` : undefined;
       });
@@ -340,9 +352,9 @@ const ViewRecords = () => {
 
   /** Filtered by name search */
   const dataSource = useMemo(() => {
-    if (!search.trim()) return allRows;
-    const q = search.toLowerCase();
-    return allRows.filter((r) =>
+    if (!search?.trim()) return allRows;
+    const q = search?.toLowerCase();
+    return allRows?.filter((r) =>
       (r.studentFullName as string)?.toLowerCase().includes(q),
     );
   }, [allRows, search]);
@@ -352,8 +364,8 @@ const ViewRecords = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (row: Record<string, any>): number | null => {
       const pcts = subjects
-        .map((s) => parsePct(row[s.subjectId]))
-        .filter((v): v is number => v !== null);
+        ?.map((s) => parsePct(row[s.subjectId]))
+        ?.filter((v): v is number => v !== null);
       return pcts.length > 0
         ? pcts.reduce((a, b) => a + b, 0) / pcts.length
         : null;
@@ -364,10 +376,10 @@ const ViewRecords = () => {
   // ── Per-subject class averages ────────────────────────────────────
   const subjectAvgs = useMemo<Record<string, number | null>>(() => {
     const out: Record<string, number | null> = {};
-    subjects.forEach((s) => {
+    subjects?.forEach((s) => {
       const pcts = allRows
-        .map((row) => parsePct(row[s.subjectId]))
-        .filter((v): v is number => v !== null);
+        ?.map((row) => parsePct(row[s.subjectId]))
+        ?.filter((v): v is number => v !== null);
       out[s.subjectId] =
         pcts.length > 0 ? pcts.reduce((a, b) => a + b, 0) / pcts.length : null;
     });
@@ -378,10 +390,10 @@ const ViewRecords = () => {
   const stats = useMemo(() => {
     if (!allRows.length || !subjects.length) return null;
     const avgs = allRows
-      .map(getStudentAvg)
-      .filter((v): v is number => v !== null);
+      ?.map(getStudentAvg)
+      ?.filter((v): v is number => v !== null);
     if (!avgs.length) return null;
-    const classAvg = avgs.reduce((a, b) => a + b, 0) / avgs.length;
+    const classAvg = avgs?.reduce((a, b) => a + b, 0) / avgs.length;
     return {
       students: allRows.length,
       subjects: subjects.length,
@@ -398,6 +410,7 @@ const ViewRecords = () => {
   const showEmpty = !!assessment && !loadingRecords && allRows.length === 0;
 
   // minimum table width = # col + name col + subjects + avg col
+  // const tableMinW = 40 + 200 + subjects.length * 106 + 72;
   const tableMinW = 40 + 200 + subjects.length * 106 + 72;
 
   // ─────────────────────────────────────────────────────────────────
@@ -587,14 +600,14 @@ const ViewRecords = () => {
         {/* Search bar — visible only with data */}
         {hasData && (
           <div className="px-5 py-3.5 border-b border-slate-100 bg-slate-50/40 flex items-center gap-x-3">
-            <div className="relative">
+            <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search student name…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="h-9 pl-9 pr-8 rounded-xl border border-slate-200 bg-white text-sm text-[#0D1B2E] placeholder:text-slate-300 focus:outline-none focus:border-[#1E3A5F] focus:ring-1 focus:ring-[#1E3A5F]/20 transition-all w-56"
+                className="h-9 pl-9 pr-8 rounded-xl border border-slate-200 bg-white text-sm text-[#0D1B2E] placeholder:text-slate-300 focus:outline-none focus:border-[#1E3A5F] focus:ring-1 focus:ring-[#1E3A5F]/20 transition-all w-56 md:w-1/3"
                 style={{ fontFamily: "'DM Sans', sans-serif" }}
               />
               {search && (
@@ -649,7 +662,12 @@ const ViewRecords = () => {
             Sticky right: student average col
         ═══════════════════════════════════════════════════════ */}
         {hasData && !loadingRecords && (
-          <div className="overflow-x-auto">
+          <div
+            className={cn(
+              "overflow-x-auto",
+              !isMobile ? (collapsed ? "max-w-[93dvw]" : "max-w-[81dvw]") : "",
+            )}
+          >
             <table
               style={{
                 borderCollapse: "separate",
@@ -689,7 +707,7 @@ const ViewRecords = () => {
                   <th
                     style={{
                       position: "sticky",
-                      left: 40,
+                      left: 30,
                       zIndex: 4,
                       background: "#F4F6FA",
                       borderBottom: "2px solid #E2E8F0",
@@ -788,6 +806,7 @@ const ViewRecords = () => {
                           fontSize: "11px",
                           color: "#94A3B8",
                           fontWeight: 600,
+                          minWidth: "fit-content"
                         }}
                       >
                         {ri + 1}
@@ -797,7 +816,7 @@ const ViewRecords = () => {
                       <td
                         style={{
                           position: "sticky",
-                          left: 40,
+                          left: 30,
                           zIndex: 2,
                           background: rowBg,
                           borderBottom: "1px solid #F1F5F9",

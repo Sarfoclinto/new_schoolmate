@@ -67,6 +67,7 @@ const AddRecords = () => {
     queryKeys: educationKeys.custom("teacher-sublevels", { teacherId }),
     enabled: !!teacherId,
   });
+
   const { data: subjectsData, isLoading: loadingSubjects } = useFetch({
     queryFn: () => getTeacherSublevelSubjectsFn(teacherId!, sublevelId!),
     queryKeys: subjectKeys.custom("teacher-subjects", {
@@ -97,7 +98,7 @@ const AddRecords = () => {
   // memoized values
   const sublevelOptions = useMemo(() => {
     if (!sublevelData?.subLevels) return [];
-    return sublevelData.subLevels.map((s) => ({
+    return sublevelData?.subLevels?.map((s) => ({
       label: s.subLevelName,
       value: s.subLevelId,
     }));
@@ -105,7 +106,7 @@ const AddRecords = () => {
 
   const subjectOptions = useMemo(() => {
     if (!subjectsData?.subjects) return [];
-    return subjectsData.subjects.map((s) => ({
+    return subjectsData?.subjects?.map((s) => ({
       label: s.subjectName,
       value: s.subjectId,
     }));
@@ -113,7 +114,7 @@ const AddRecords = () => {
 
   const assessmentOptions = useMemo(() => {
     if (!assessments) return [];
-    return assessments.assessments.map((a) => ({
+    return assessments?.assessments?.map((a) => ({
       label: capitalizeWords(a.assessmentName),
       value: a.assessmentId,
     }));
@@ -121,24 +122,28 @@ const AddRecords = () => {
 
   const markedStudents = useMemo(() => {
     if (!records) return [];
-    return records.map((r) => r.studentId);
+    return records?.map((r) => r.studentId);
   }, [records]);
+
   const studentOptions = useMemo(() => {
     if (!students) return [];
     return students
-      .filter((s) => !markedStudents.includes(s.studentId))
-      .map((s) => ({
+      ?.filter((s) => !markedStudents.includes(s.studentId))
+      ?.map((s) => ({
         label: s.fullName,
         value: s.studentId,
       }));
   }, [markedStudents, students]);
+
   const dataSource = useMemo(() => {
     if (!records) return [];
     return records;
   }, [records]);
 
+  console.log("datasource: ", dataSource);
+
   const sub = useMemo(
-    () => sublevelData?.subLevels.find((s) => s.subLevelId === sublevelId),
+    () => sublevelData?.subLevels?.find((s) => s.subLevelId === sublevelId),
     [sublevelData?.subLevels, sublevelId],
   );
   const activeTerm = useActiveTerm(sub?.educationalLevelId);
@@ -146,7 +151,7 @@ const AddRecords = () => {
   // useEffect to check if academic records exist and set the MarkedOver value.
   useEffect(() => {
     if (records && records.length > 0) {
-      const fetchedMarkedOver = records[0].markedOver;
+      const fetchedMarkedOver = records[0]?.markedOver;
       // Set the MarkedOver field value in the form.
       form.setFieldsValue({ MarkedOver: fetchedMarkedOver });
     }
@@ -159,7 +164,7 @@ const AddRecords = () => {
     onSuccess: async ({ responseCode, responseMessage }) => {
       if (responseCode === 1) {
         await qc.invalidateQueries({ queryKey: academicRecordsKeys.all });
-        form.resetFields(["Marks"]);
+        form.resetFields(["Marks", "StudentId"]);
         toast.success(responseMessage);
       } else {
         toast.error(responseMessage);
@@ -181,7 +186,7 @@ const AddRecords = () => {
     {
       key: "student",
       title: "Student",
-      dataIndex: "fullName",
+      dataIndex: "studentFullName",
       render: (v: string) => (
         <span className="font-semibold capitalize text-[#0D1B2E]">{v}</span>
       ),

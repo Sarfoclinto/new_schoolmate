@@ -33,7 +33,7 @@ const Students = () => {
     enabled: !!teacherId,
   });
 
-  const { data: students, isLoading: loadingStu } = useFetch({
+  const { data: students = [], isLoading: loadingStu } = useFetch({
     queryFn: () => getAllSubLevelStuFn(sublevel!),
     queryKeys: studentKeys.custom("by-sub-level", {
       subLevelId: sublevel,
@@ -43,7 +43,7 @@ const Students = () => {
 
   const sublevels = useMemo(() => {
     if (!data) return [];
-    return data.subLevels.map((sub) => ({
+    return data.subLevels?.map((sub) => ({
       label: sub.subLevelName,
       value: sub.subLevelId,
     }));

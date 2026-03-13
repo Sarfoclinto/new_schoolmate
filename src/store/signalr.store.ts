@@ -51,6 +51,9 @@ interface SignalRActions {
 
   // all
   setPermissionAndSessions: (data: Others) => void;
+
+  // reset
+  resetStore: () => void;
 }
 
 /**
@@ -146,6 +149,9 @@ export const useSignalRStore = create<SignalRStore>()(
             false,
             "setPermissionAndSessions",
           ),
+
+        // reset
+        resetStore: () => set({ ...initialState }, false, "resetStore"),
       }),
       {
         name: "signalRState",

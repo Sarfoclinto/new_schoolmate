@@ -1,10 +1,12 @@
 import { useAuth } from "@/store/auth.store";
+import { useSignalRStore } from "@/store/signalr.store";
 import { useUIStore } from "@/store/ui.store";
 import { Modal } from "antd";
 import { useShallow } from "zustand/react/shallow";
 
 const LogOutModal = () => {
   const logout = useAuth((s) => s.logout);
+  const resetStore = useSignalRStore((s) => s.resetStore);
   const { isOpen, close } = useUIStore(
     useShallow((s) => ({
       close: s.closeLogoutMenu,
@@ -13,8 +15,10 @@ const LogOutModal = () => {
   );
 
   const onLogOut = () => {
+    resetStore();
     logout();
     close();
+    window.location.reload();
   };
 
   return (
@@ -32,7 +36,9 @@ const LogOutModal = () => {
       }}
       closable={false}
     >
-      <h5 className="mt-3 ml-2 font-mono">Are you sure you want to log out of your account?</h5>
+      <h5 className="mt-3 ml-2 font-mono">
+        Are you sure you want to log out of your account?
+      </h5>
     </Modal>
   );
 };

@@ -90,7 +90,7 @@ const PassMark = () => {
 
   const subjectOptions = useMemo(() => {
     if (!subjectsData?.subjects) return [];
-    return subjectsData?.subjects.map((s) => ({
+    return subjectsData?.subjects?.map((s) => ({
       label: s.subjectName,
       value: s.subjectId,
     }));
@@ -98,14 +98,14 @@ const PassMark = () => {
 
   const sublevelOptions = useMemo(() => {
     if (!sublevelData?.subLevels) return [];
-    return sublevelData?.subLevels.map((s) => ({
+    return sublevelData?.subLevels?.map((s) => ({
       label: s.subLevelName,
       value: s.subLevelId,
     }));
   }, [sublevelData?.subLevels]);
 
   const sub = useMemo(
-    () => sublevelData?.subLevels.find((s) => s.subLevelId === sublevelId),
+    () => sublevelData?.subLevels?.find((s) => s.subLevelId === sublevelId),
     [sublevelData?.subLevels, sublevelId],
   );
   const activeTerm = useActiveTerm(sub?.educationalLevelId);

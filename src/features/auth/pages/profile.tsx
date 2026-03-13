@@ -20,7 +20,7 @@
  */
 
 import { DatePicker, Form, Input, Select } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AnimatePresence } from "motion/react";
@@ -34,7 +34,6 @@ import {
   Phone,
   Mail,
   Lock,
-  Camera,
   Copy,
   Check,
   Save,
@@ -51,6 +50,7 @@ import { useAuth } from "@/store/auth.store";
 import useFetch from "@/hooks/api/use-fetch";
 import {
   getStaffByIdFn,
+  updateStaffImageFn,
   updateStaffPasswordFn,
   updateStaffProfileFn,
 } from "@/services/staff";
@@ -60,8 +60,8 @@ import { useShallow } from "zustand/react/shallow";
 import type { StaffUpdateWithFile, UpdateSecurity } from "@/types/api/staff";
 import { MotionDiv } from "@/components/custom/motion";
 import type { Rule } from "antd/es/form";
-import { buildMediaUrl } from "@/utils/media";
 import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
+import AvatarUploader from "../components/avatar-uploader";
 
 // ═══════════════════════════════════════════════════════════════════
 // PRIMITIVES
@@ -294,92 +294,6 @@ const FormFooter = ({
 );
 
 // ═══════════════════════════════════════════════════════════════════
-// AVATAR UPLOADER
-// ═══════════════════════════════════════════════════════════════════
-const AvatarUploader = ({
-  currentImage,
-  name,
-  onUpload,
-  isUploading,
-}: {
-  currentImage?: string;
-  name: string;
-  onUpload: (file: File) => void;
-  isUploading: boolean;
-}) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const initials =
-    name
-      ?.split(" ")
-      .slice(0, 2)
-      .map((n) => n[0]?.toUpperCase() ?? "")
-      .join("") || "?";
-  const imgUrl = buildMediaUrl(currentImage, { useNoLogo: false });
-
-  return (
-    <div className="flex flex-col items-center gap-y-3">
-      {/* Avatar circle */}
-      <div className="relative">
-        <div
-          className="w-24 h-24 rounded-2xl overflow-hidden flex items-center justify-center font-bold text-[#C9A84C] text-3xl select-none"
-          style={{
-            background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
-            boxShadow: "0 4px 20px rgba(13,27,46,0.25)",
-          }}
-        >
-          {imgUrl ? (
-            <img
-              src={imgUrl}
-              alt={name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-          ) : (
-            initials
-          )}
-        </div>
-
-        {/* Upload overlay button */}
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={isUploading}
-          className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform cursor-pointer disabled:opacity-50"
-          style={{
-            background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
-          }}
-        >
-          {isUploading ? (
-            <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-[#C9A84C] animate-spin" />
-          ) : (
-            <Camera className="w-4 h-4 text-[#C9A84C]" />
-          )}
-        </button>
-      </div>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) onUpload(f);
-        }}
-      />
-
-      <p className="text-[10px] text-slate-400 text-center font-medium">
-        Click the camera icon to update photo
-        <br />
-        <span className="opacity-60">JPG, PNG · max 2MB</span>
-      </p>
-    </div>
-  );
-};
-
-// ═══════════════════════════════════════════════════════════════════
 // TAB TYPES
 // ═══════════════════════════════════════════════════════════════════
 type TabKey = "personal" | "security" | "account";
@@ -464,8 +378,8 @@ const UserProfile = () => {
   });
 
   const uploadImage = useUpdate({
-    updateFn: updateStaffProfileFn,
-    onSuccess: async ({ response: { responseCode, responseMessage } }) => {
+    updateFn: updateStaffImageFn,
+    onSuccess: async ({ responseCode, responseMessage }) => {
       if (responseCode === 1) {
         await qc.invalidateQueries({ queryKey: staffKeys.detail(userId!) });
         toast.success(responseMessage);
@@ -538,6 +452,7 @@ const UserProfile = () => {
     { key: "account", icon: <Info className="w-4 h-4" />, label: "Account" },
   ];
 
+
   // ─────────────────────────────────────────────────────────────────
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-2">
@@ -578,14 +493,14 @@ const UserProfile = () => {
                 <AvatarUploader
                   currentImage={profile?.staffImage}
                   name={displayName}
-                  onUpload={(file) => {
+                  onUpload={async (file) => {
                     const fd = new FormData();
-                    fd.append("StaffImage", file);
+                    fd.append("Image", file);
                     const payload: StaffUpdateWithFile = {
                       id: userId!,
                       data: fd,
                     };
-                    uploadImage.mutate(payload);
+                    await uploadImage.mutateAsync(payload);
                   }}
                   isUploading={uploadImage.isPending}
                 />

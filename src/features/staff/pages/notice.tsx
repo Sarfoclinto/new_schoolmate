@@ -75,7 +75,7 @@ const Avatar = ({
     .join("");
   return (
     <div
-      className="rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center font-bold text-[#C9A84C]"
+      className="rounded-xl overflow-hidden shrink-0 flex items-center justify-center font-bold text-[#C9A84C]"
       style={{
         width: size,
         height: size,
@@ -197,7 +197,7 @@ const NoticeCard = ({
             </p>
           </div>
           <div
-            className={`flex items-center gap-x-1 text-[10px] font-bold flex-shrink-0
+            className={`flex items-center gap-x-1 text-[10px] font-bold shrink-0
             ${isUnread ? "text-[#1E3A5F]" : "text-slate-300"}`}
           >
             {isUnread ? (
@@ -337,7 +337,7 @@ const UpdateModal = ({
       }
       styles={{
         container: { padding: 0, borderRadius: 20, overflow: "hidden" },
-        body: { padding: 0 },
+        body: { padding: 0},
       }}
     >
       <div
@@ -361,26 +361,26 @@ const UpdateModal = ({
         layout="vertical"
         requiredMark={false}
         onFinish={onSubmit}
-        className="p-5"
+        className="p-5!"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         <Form.Item
           name="Title"
           label={<FL>Title</FL>}
           rules={[{ required: true }]}
-          className="!mb-4"
+          className="mb-4!"
         >
-          <Input size="large" className="!rounded-xl" />
+          <Input size="large" className="rounded-xl!" />
         </Form.Item>
         <Form.Item
           name="Body"
           label={<FL>Message</FL>}
           rules={[{ required: true }]}
-          className="!mb-4"
+          className="mb-4!"
         >
           <Input.TextArea
             rows={5}
-            className="!rounded-xl resize-none"
+            className="rounded-xl! resize-none"
             showCount
             maxLength={1000}
           />
@@ -884,12 +884,12 @@ const Notice = () => {
               }}
               allowClear
               size="middle"
-              className="!rounded-xl w-1/2!"
+              className="rounded-xl! w-1/2!"
             />
           </div>
 
           {/* Notice list */}
-          <div className="p-4 flex flex-col gap-y-3 min-h-[200px]">
+          <div className="p-4 flex flex-col gap-y-3 min-h-50">
             {noticesLoading && (
               <div className="flex flex-col gap-y-3">
                 {Array.from({ length: 3 }).map((_, i) => (

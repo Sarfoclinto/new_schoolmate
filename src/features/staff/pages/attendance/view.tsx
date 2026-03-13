@@ -264,7 +264,7 @@ const ViewMonthlyAttendance = () => {
   );
 
   const monthDays = useMemo(() => {
-    return getMonthDays(year, month).map((date) => ({
+    return getMonthDays(year, month)?.map((date) => ({
       day: date.getDate(),
       dayName: SHORT_DAYS[date.getDay()],
       dateStr: format(date, "yyyy-MM-dd"),
@@ -308,23 +308,23 @@ const ViewMonthlyAttendance = () => {
     if (!data?.length) return { rows: [], perDayPresent: {}, stats: null };
 
     const perDayPresent: Record<string, number> = {};
-    monthDays.forEach(({ dateStr }) => {
+    monthDays?.forEach(({ dateStr }) => {
       perDayPresent[dateStr] = 0;
     });
 
     let totalPresent = 0;
     let totalRecords = 0;
 
-    const rows = data.map((student) => {
+    const rows = data?.map((student) => {
       const map: Record<string, AttStatus> = {};
-      student.attendance.forEach((r) => {
+      student.attendance?.forEach((r) => {
         map[r.attendanceDate] = r.status as AttStatus;
       });
 
       let studentPresent = 0;
       let studentAbsent = 0;
 
-      monthDays.forEach(({ dateStr }) => {
+      monthDays?.forEach(({ dateStr }) => {
         const s = map[dateStr] ?? null;
         if (s === "Present") {
           studentPresent++;
@@ -369,13 +369,13 @@ const ViewMonthlyAttendance = () => {
     if (!data?.length) return;
 
     const rows_html = rows
-      .map(
+      ?.map(
         (r, i) =>
           `<tr>
         <td class="col-name">${i + 1}. ${r.studentName}</td>
         ${monthDays
-          .map(({ dateStr }) => {
-            const s = r.map[dateStr] ?? null;
+          ?.map(({ dateStr }) => {
+            const s = r?.map[dateStr] ?? null;
             return `<td>${s === "Present" ? '<span class="att-print-p">P</span>' : s === "Absent" ? '<span class="att-print-a">A</span>' : ""}</td>`;
           })
           .join("")}
@@ -388,7 +388,7 @@ const ViewMonthlyAttendance = () => {
 
     const footer_html = `<tr style="background:#f0f0f0;font-weight:700">
         <td class="col-name">Total Present</td>
-        ${monthDays.map(({ dateStr }) => `<td>${(perDayPresent as Record<string, number>)[dateStr] ?? 0}</td>`).join("")}
+        ${monthDays?.map(({ dateStr }) => `<td>${(perDayPresent as Record<string, number>)[dateStr] ?? 0}</td>`).join("")}
         <td colspan="3"></td>
       </tr>`;
 
@@ -415,7 +415,7 @@ const ViewMonthlyAttendance = () => {
         <thead><tr>
           <th class="col-name">Student Name</th>
           ${monthDays
-            .map(
+            ?.map(
               ({ day, dayName, isWeekend }) =>
                 `<th style="${isWeekend ? "background:#f8f8f8;color:#999" : ""}">${day}<br/><small>${dayName}</small></th>`,
             )
@@ -549,7 +549,7 @@ const ViewMonthlyAttendance = () => {
               picker="month"
               className="w-full"
               value={selectedMonth}
-              disabledDate={(d) => d && d > dayjs().startOf("month")}
+              disabledDate={(d) => d && d.isAfter(dayjs(), "month")}
               onChange={(v) => v && setMonth(v)}
               format="MMMM YYYY"
             />
@@ -639,7 +639,7 @@ const ViewMonthlyAttendance = () => {
         {/* Loading skeletons */}
         {isLoading && (
           <div className="p-5 flex flex-col gap-y-2.5">
-            {Array.from({ length: 8 }).map((_, i) => (
+            {Array.from({ length: 8 })?.map((_, i) => (
               <Skeleton
                 key={i}
                 active
@@ -707,7 +707,7 @@ const ViewMonthlyAttendance = () => {
                   </th>
 
                   {/* Day columns */}
-                  {monthDays.map(({ day, dayName, isWeekend }) => (
+                  {monthDays?.map(({ day, dayName, isWeekend }) => (
                     <th
                       key={day}
                       style={{
@@ -747,7 +747,7 @@ const ViewMonthlyAttendance = () => {
                     { label: "Pres.", title: "Days Present" },
                     { label: "Abs.", title: "Days Absent" },
                     { label: "Rate", title: "Attendance Rate" },
-                  ].map((col) => (
+                  ]?.map((col) => (
                     <th
                       key={col.label}
                       title={col.title}
@@ -782,7 +782,7 @@ const ViewMonthlyAttendance = () => {
               </thead>
 
               <tbody>
-                {rows.map((row, ri) => (
+                {rows?.map((row, ri) => (
                   <tr
                     key={row.studentId}
                     style={{ background: ri % 2 === 0 ? "#fff" : "#FAFBFD" }}
@@ -829,8 +829,8 @@ const ViewMonthlyAttendance = () => {
                     </td>
 
                     {/* Day cells */}
-                    {monthDays.map(({ dateStr, isWeekend }) => {
-                      const s = row.map[dateStr] ?? null;
+                    {monthDays?.map(({ dateStr, isWeekend }) => {
+                      const s = row?.map[dateStr] ?? null;
                       return (
                         <td
                           key={dateStr}
@@ -928,7 +928,7 @@ const ViewMonthlyAttendance = () => {
                   >
                     Total Present
                   </td>
-                  {monthDays.map(({ dateStr }) => {
+                  {monthDays?.map(({ dateStr }) => {
                     const count =
                       (perDayPresent as Record<string, number>)[dateStr] ?? 0;
                     const pct = rows.length > 0 ? count / rows.length : 0;
@@ -992,7 +992,7 @@ const ViewMonthlyAttendance = () => {
               { dot: "bg-emerald-500", label: "Present" },
               { dot: "bg-rose-500", label: "Absent" },
               { dot: "bg-slate-300", label: "No record" },
-            ].map(({ dot, label }) => (
+            ]?.map(({ dot, label }) => (
               <div
                 key={label}
                 className="flex items-center gap-x-1.5 text-xs text-slate-500 font-medium"

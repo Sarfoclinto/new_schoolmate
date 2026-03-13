@@ -541,7 +541,7 @@ const ViewMonthlyAttendance = () => {
               picker="month"
               className="w-full"
               value={selectedMonth}
-              disabledDate={(d) => d && d > dayjs().startOf("month")}
+              disabledDate={(d) => d && d.isAfter(dayjs(), "month")}
               onChange={(v) => v && setMonth(v)}
               format="MMMM YYYY"
             />

@@ -163,7 +163,7 @@ const InitialAvatar = ({ name }: { name: string }) => (
 
 // Skeleton row
 const SkeletonRows = ({ n = 5 }: { n?: number }) => (
-  <div className="flex flex-col gap-y-2 p-4">
+  <div className="w-full flex flex-col gap-y-2 p-4">
     {Array.from({ length: n }).map((_, i) => (
       <div
         key={i}
@@ -229,6 +229,8 @@ const MarkAttendance = () => {
     enabled: isReady,
   });
 
+  console.log("marked students: ", markedStudents);
+
   //   mutations
   const { mutate: mark, isPending: marking } = usePost({
     postFn: markAttendanceFn,
@@ -236,9 +238,24 @@ const MarkAttendance = () => {
     onSuccess: async ({ responseCode, responseMessage }) => {
       if (responseCode === 1) {
         await invalidate();
+
         toast.success(responseMessage);
+        reset();
       } else {
-        toast.info(responseMessage);
+        // Format warning messages if they exist (separated by semicolons)
+        if (responseMessage?.toLowerCase().includes("warnings:")) {
+          const formattedMsg = responseMessage
+            .replace(/Warnings:\s*/i, "")
+            .split(";")
+            .map((s) => s.trim())
+            .join("\n• ");
+          toast.warning("Some records already exist", {
+            description: "• " + formattedMsg,
+          });
+        } else {
+          toast.success(responseMessage);
+        }
+        // toast.info(responseMessage);
       }
     },
     onError: (err) => {
@@ -255,6 +272,7 @@ const MarkAttendance = () => {
       if (responseCode === 1) {
         await invalidate();
         toast.success(responseMessage);
+        reset();
       } else {
         toast.info(responseMessage);
       }
@@ -269,6 +287,11 @@ const MarkAttendance = () => {
   //   fns
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: attendanceKeys.all });
+  };
+
+  const reset = async () => {
+    setSearchUnmarked("");
+    setSearchMarked("");
   };
 
   // ── Derived data ─────────────────────────────────────────────────
@@ -296,7 +319,7 @@ const MarkAttendance = () => {
   const filteredUnmarked = useMemo(() => {
     if (!searchUnmarked) return unmarkedStudents;
     const q = searchUnmarked.toLowerCase();
-    return unmarkedStudents.filter((s) =>
+    return unmarkedStudents?.filter((s) =>
       s.fullName?.toLowerCase().includes(q),
     );
   }, [unmarkedStudents, searchUnmarked]);
@@ -333,7 +356,7 @@ const MarkAttendance = () => {
   };
 
   const buildPayload = (ids: string[]): AttendancePost[] =>
-    ids.map((id) => {
+    ids?.map((id) => {
       const s = subStudents!.find((x) => x.studentId === id)!;
       return {
         AttendanceDate: selectedDate!,
