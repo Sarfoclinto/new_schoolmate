@@ -21,11 +21,11 @@ import {
 import { institutionKeys } from "@/config/query-keys";
 import { buildMediaUrl } from "@/utils/media";
 import { useUnsavedChangesWarning } from "@/hooks/useUsavedChangesWarning";
-import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
+import { useSignalRStore } from "@/store/signalr.store";
 
 const InstitutionProfile = () => {
   const [form] = Form.useForm();
-  const updateInst = useSignalRStore(signalRSelectors.setInstitution);
+  const updateInst = useSignalRStore((s) => s.setInstitution);
   const [avatarFile, setAvatarFile] = useState<UploadFile[]>([]);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [cityList, setCityList] = useState<string[]>([]);

@@ -1,4 +1,8 @@
-import { ProtectAdminRoutes } from "@/components/custom/protect-routes";
+import {
+  ProtectAdminRoutes,
+  ProtectRoute,
+} from "@/components/custom/protect-routes";
+import { ADMIN_ROUTE_PERMISSIONS } from "@/config/route.permission";
 import paths from "@/config/routes";
 import AdminLayout from "@/features/admins/components/layout";
 import { lazy } from "react";
@@ -168,9 +172,31 @@ const CloseAcademicYear = lazy(
   () => import("@/features/admins/pages/session/close-academic-year"),
 );
 
+// =============================================================================
+// guard helper
+// Wraps a page element in <ProtectRoute> if ROUTE_PERMISSIONS has an entry
+// for the given path. Otherwise returns the element unwrapped.
+//
+// The layout-level ProtectAdminRoutes has already confirmed:
+//   ✅ user is authenticated
+//   ✅ user has dashboardType === "admin"
+//
+// This guard only adds the finer per-page permission check on top of that.
+// =============================================================================
+const guarded = (path: string, element: React.ReactNode): React.ReactNode => {
+  const permission = ADMIN_ROUTE_PERMISSIONS[path];
+  if (!permission) return element;
+  return <ProtectRoute requiredPermission={permission} intendedPath={path}>{element}</ProtectRoute>;
+};
+
+// =============================================================================
+// Admin routes
+// =============================================================================
 const adminRoutes: RouteObject[] = [
   {
     path: index.href,
+    // ProtectAdminRoutes is the outer shell — handles auth + dashboardType.
+    // Individual pages are wrapped by `guarded()` for permission-level checks.
     element: (
       <ProtectAdminRoutes>
         <AdminLayout />
@@ -178,172 +204,148 @@ const adminRoutes: RouteObject[] = [
     ),
     children: [
       {
+        // Dashboard is always accessible to any admin-dashboard user
         index: true,
         element: <Dashboard />,
       },
-      // setups
+
+      // ── Setup ───────────────────────────────────────────────────────────────
       {
         path: profile.href,
-        element: <InsititutionProfile />,
+        element: guarded(profile.href, <InsititutionProfile />),
       },
-      {
-        path: roles.href,
-        element: <Roles />,
-      },
+      { path: roles.href, element: guarded(roles.href, <Roles />) },
       {
         path: educationalLevel.href,
-        element: <EducationalLevel />,
+        element: guarded(educationalLevel.href, <EducationalLevel />),
       },
       {
         path: academicLevel.href,
-        element: <AcademicLevel />,
+        element: guarded(academicLevel.href, <AcademicLevel />),
       },
       {
         path: promotionPath.href,
-        element: <PromotionPath />,
+        element: guarded(promotionPath.href, <PromotionPath />),
       },
-      {
-        path: subLevel.href,
-        element: <SubLevel />,
-      },
+      { path: subLevel.href, element: guarded(subLevel.href, <SubLevel />) },
       {
         path: studyModules.href,
-        element: <StudyModules />,
+        element: guarded(studyModules.href, <StudyModules />),
       },
       {
         path: facultyNClassroom.href,
-        element: <FacultynClassroom />,
+        element: guarded(facultyNClassroom.href, <FacultynClassroom />),
       },
       {
         path: assessmentNGrading.href,
-        element: <AssessmentnGrading />,
+        element: guarded(assessmentNGrading.href, <AssessmentnGrading />),
       },
       {
         path: facilities.href,
-        element: <Facilities />,
+        element: guarded(facilities.href, <Facilities />),
       },
       {
         path: yearsNTerms.href,
-        element: <YearsnTerms />,
+        element: guarded(yearsNTerms.href, <YearsnTerms />),
       },
 
-      // students
+      // ── Students ────────────────────────────────────────────────────────────
       {
         path: registerStudent.href,
-        element: <RegisterStudent />,
+        element: guarded(registerStudent.href, <RegisterStudent />),
       },
-      {
-        path: viewAll.href,
-        element: <ViewAll />,
-      },
+      { path: viewAll.href, element: guarded(viewAll.href, <ViewAll />) },
       {
         path: viewBySub.href,
-        element: <ViewBySubLevel />,
+        element: guarded(viewBySub.href, <ViewBySubLevel />),
       },
       {
         path: viewByAca.href,
-        element: <ViewByAcaLevel />,
+        element: guarded(viewByAca.href, <ViewByAcaLevel />),
       },
       {
         path: viewByEdu.href,
-        element: <ViewByEduLevel />,
+        element: guarded(viewByEdu.href, <ViewByEduLevel />),
       },
       {
         path: studentDetails.href,
-        element: <StudentDetails />,
+        element: guarded(studentDetails.href, <StudentDetails />),
       },
 
-      // staff
+      // ── Staff ───────────────────────────────────────────────────────────────
       {
         path: createStaff.href,
-        element: <CreateStaff />,
+        element: guarded(createStaff.href, <CreateStaff />),
       },
       {
         path: staffAssignment.href,
-        element: <StaffAssignment />,
+        element: guarded(staffAssignment.href, <StaffAssignment />),
       },
       {
         path: staffDetails.href,
-        element: <StaffDetails />,
+        element: guarded(staffDetails.href, <StaffDetails />),
       },
-      {
-        path: allStaff.href,
-        element: <AllStaff />,
-      },
+      { path: allStaff.href, element: guarded(allStaff.href, <AllStaff />) },
       {
         path: staffByMode.href,
-        element: <StaffByMode />,
+        element: guarded(staffByMode.href, <StaffByMode />),
       },
       {
         path: staffByRole.href,
-        element: <StaffByRole />,
+        element: guarded(staffByRole.href, <StaffByRole />),
       },
 
-      // reports
+      // ── Reports ─────────────────────────────────────────────────────────────
       {
         path: stuTermReport.href,
-        element: <ViewTerminalReport />,
+        element: guarded(stuTermReport.href, <ViewTerminalReport />),
       },
       {
         path: stuAttReport.href,
-        element: <ViewMonthlyAttendance />,
+        element: guarded(stuAttReport.href, <ViewMonthlyAttendance />),
       },
       {
         path: stuReportDetail.href,
-        element: <ReportDetail />,
+        element: guarded(stuReportDetail.href, <ReportDetail />),
       },
 
-      // finance
-      {
-        path: fees.href,
-        element: <FeesSetup />,
-      },
+      // ── Finance ─────────────────────────────────────────────────────────────
+      { path: fees.href, element: guarded(fees.href, <FeesSetup />) },
 
-      // events
-      {
-        path: allEvents.href,
-        element: <AllEvents />,
-      },
+      // ── Events & Notices ────────────────────────────────────────────────────
+      { path: allEvents.href, element: guarded(allEvents.href, <AllEvents />) },
       {
         path: createEvent.href,
-        element: <CreateEvent />,
+        element: guarded(createEvent.href, <CreateEvent />),
       },
+      { path: notice.href, element: guarded(notice.href, <Notice />) },
 
-      // notice
-      {
-        path: notice.href,
-        element: <Notice />,
-      },
-
-      // profile
-      {
-        path: adminProfile.href,
-        element: <Profile />,
-      },
-
-      // permission
+      // ── Permissions ─────────────────────────────────────────────────────────
       {
         path: admin_permissions.href,
-        element: <AdministrativePermissions />,
+        element: guarded(admin_permissions.href, <AdministrativePermissions />),
       },
       {
         path: staff_permissions.href,
-        element: <StaffPermissions />,
+        element: guarded(staff_permissions.href, <StaffPermissions />),
       },
 
-      // sessions
-      {
-        path: closeAcademicTerm.href,
-        element: <CloseAcademicTerm />,
-      },
+      // ── Sessions ────────────────────────────────────────────────────────────
       {
         path: openAcademicTerm.href,
-        element: <OpenAcademicTerm />,
+        element: guarded(openAcademicTerm.href, <OpenAcademicTerm />),
+      },
+      {
+        path: closeAcademicTerm.href,
+        element: guarded(closeAcademicTerm.href, <CloseAcademicTerm />),
       },
       {
         path: closeAcademicYear.href,
-        element: <CloseAcademicYear />,
+        element: guarded(closeAcademicYear.href, <CloseAcademicYear />),
       },
+
+      // ── Profile (no permission guard — always accessible) ───────────────────
+      { path: adminProfile.href, element: <Profile /> },
     ],
   },
 ];

@@ -14,6 +14,7 @@ const Login = lazy(() => import("@/features/auth/pages/login"));
 const Error = lazy(() => import("@/components/error/error"));
 const Unknown = lazy(() => import("@/components/error/unknown"));
 const Page404 = lazy(() => import("@/components/error/404"));
+const Unauthorized = lazy(() => import("@/components/error/unauthorized"));
 
 const routes: RouteObject[] = [
   {
@@ -27,6 +28,10 @@ const routes: RouteObject[] = [
       {
         path: paths.public.unknown.href,
         element: <Unknown />,
+      },
+      {
+        path: paths.public.unauthorized.href,
+        element: <Unauthorized />,
       },
       {
         path: paths.auth.login.href,

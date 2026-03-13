@@ -10,6 +10,12 @@ const paths = {
         `/unknown?reason=${encodeURIComponent(reason)}`,
       label: "Unknown",
     },
+    unauthorized: {
+      href: "/unauthorized",
+      redirect: (reason: string) =>
+        `/unauthorized?reason=${encodeURIComponent(reason)}`,
+      label: "unauthorized",
+    },
     "404": {
       href: "*",
       label: "404",

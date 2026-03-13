@@ -110,11 +110,13 @@ export const ProtectStaffRoutes = ({ children }: PropsWithChildren) => (
 // =============================================================================
 interface ProtectRouteProps extends PropsWithChildren {
   requiredPermission: Permission;
+  intendedPath?: string;
 }
 
 export const ProtectRoute = ({
   children,
   requiredPermission,
+  intendedPath = "",
 }: ProtectRouteProps) => {
   const { user, isAuth, isLoading } = useAuth(
     useShallow((s) => ({
@@ -134,7 +136,10 @@ export const ProtectRoute = ({
   if (!permissions?.includes(requiredPermission)) {
     // Redirect to their dashboard root; swap for a <Forbidden /> page if you
     // want to show an explicit "you don't have access" message.
-    return <Navigate to={getUserDashboardRoute()} replace />;
+    // return <Navigate to={getUserDashboardRoute()} replace />;
+    return (
+      <Navigate to={paths.public.unauthorized.redirect(intendedPath)} replace />
+    );
   }
 
   return <>{children}</>;
