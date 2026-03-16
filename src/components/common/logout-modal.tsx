@@ -15,10 +15,9 @@ const LogOutModal = () => {
   );
 
   const onLogOut = () => {
-    resetStore();
     logout();
+    resetStore();
     close();
-    window.location.reload();
   };
 
   return (

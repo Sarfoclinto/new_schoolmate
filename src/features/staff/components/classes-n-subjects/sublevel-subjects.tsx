@@ -26,7 +26,7 @@ const SubLevelSubjects = ({ subLevels, teacherId }: Props) => {
   const [sublevelId, setSublevelId] = useState<string | undefined>(undefined);
   const { data: subjectsData, isLoading } = useFetch({
     queryFn: () => getTeacherSublevelSubjectsFn(teacherId!, sublevelId!),
-    queryKeys: subjectKeys.custom("teacher-subjects", {
+    queryKeys: subjectKeys.custom("teacher-sublevel-subjects", {
       sublevelId,
       teacherId,
     }),

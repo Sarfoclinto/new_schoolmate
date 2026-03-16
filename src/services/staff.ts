@@ -43,15 +43,18 @@ export const getAllTeachersFn = async () => {
   return getHelper<StaffGet[]>(staffMn.allTeachers);
 };
 export const getTeacherMappingFn = async (id: string) => {
-  return getHelper<TeachersMapping>(staffMn.teacherSubjects(id));
+  return getHelper<TeachersMapping>(staffMn.getTeacherMapping(id));
 };
 
+export const getTeacherSubjectsFn = async (id: string) => {
+  return getHelper<TeacherSubjectsGet>(staffMn.getTeacherSubjects(id));
+};
 export const getTeacherSublevelSubjectsFn = async (
   teacherId: string,
   sublevelId: string,
 ) => {
   return getHelper<TeacherSubjectsGet>(
-    staffMn.subLevelSubjects(teacherId, sublevelId),
+    staffMn.getSubLevelSubjects(teacherId, sublevelId),
   );
 };
 export const getStaffByDashboardTypeFn = async (
@@ -60,7 +63,7 @@ export const getStaffByDashboardTypeFn = async (
   return getHelper<StaffGet[]>(staffMn.getByDashboardType, { dashboardType });
 };
 export const getTeachersSublevelsFn = async (id: string) => {
-  return getHelper<TeacherSubLevelsGet>(staffMn.teacherSublevels(id));
+  return getHelper<TeacherSubLevelsGet>(staffMn.getTeacherSublevels(id));
 };
 export const createStaffFn = async (data: FormData) => {
   return postWithFile<RegisterResponse>(staffMn.create, data);
@@ -75,10 +78,7 @@ export const updateStaffProfileFn = async (update: StaffUpdateWithFile) => {
   );
 };
 export const updateStaffImageFn = async (update: StaffUpdateWithFile) => {
-  return updateWithFile(
-    staffMn.updateImage(update.id),
-    update.data,
-  );
+  return updateWithFile(staffMn.updateImage(update.id), update.data);
 };
 
 export const updateStaffPasswordFn = async (update: UpdateSecurity) => {

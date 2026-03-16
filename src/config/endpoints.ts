@@ -206,9 +206,10 @@ const endpoints = {
     getAllUnPn: "/GetAllStaff",
     allTeachers: "/GetAllTeachers",
     getByDashboardType: "/GetStaffByDashboardType",
-    teacherSubjects: (id: string) => `/GetTeacherMappings/${id}`,
-    teacherSublevels: (id: string) => `/GetTeacherSubLevels/${id}`,
-    subLevelSubjects: (teacherId: string, sublevelId: string) =>
+    getTeacherSubjects: (id: string) => `/GetTeacherSubjects/${id}`,
+    getTeacherMapping: (id: string) => `/GetTeacherMappings/${id}`,
+    getTeacherSublevels: (id: string) => `/GetTeacherSubLevels/${id}`,
+    getSubLevelSubjects: (teacherId: string, sublevelId: string) =>
       `/GetTeacherSubLevelSubjects/Teacher/${teacherId}/SubLevel/${sublevelId}`,
 
     delTeacherSubject: (teachId: string, subId: string) =>

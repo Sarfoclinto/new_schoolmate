@@ -21,7 +21,7 @@ const StaffSubLevels = ({ teacherId, isATeacher }: Props) => {
   // ── Derived ──────────────────────────────────────────────
   const sublevels = useMemo(() => {
     if (!sublevelData) return [];
-    return sublevelData.subLevels;
+    return sublevelData?.subLevels;
   }, [sublevelData]);
 
   if (loadingSubs) {
@@ -52,7 +52,7 @@ const StaffSubLevels = ({ teacherId, isATeacher }: Props) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {sublevels.map((sub, i) => (
+      {sublevels?.map((sub, i) => (
         <MotionDiv
           key={sub.subLevelId}
           initial={{ opacity: 0, y: 8 }}

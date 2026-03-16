@@ -1,4 +1,3 @@
-import { DEFAULT_LIMIT, df } from "@/config/constants";
 import { roleKeys, staffKeys } from "@/config/query-keys";
 import { ListPage as StaffListPage } from "@/features/admins/components/list-page";
 import {
@@ -15,28 +14,21 @@ import {
 } from "@/features/admins/components/staff/staff-columns";
 import useFetch from "@/hooks/api/use-fetch";
 import { getAllRolesFn } from "@/services/setup/roles";
-import { getAllStaffPnFn } from "@/services/staff";
+import { getAllStaffUnPnFn } from "@/services/staff";
 import type { StaffGet } from "@/types/api/staff";
+import { Input } from "antd";
 import { UsersRoundIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ViewAllStaff = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [page, setPage] = useState(() =>
-    parseInt(searchParams.get("page") || df.page, 10),
-  );
   const navigate = useNavigate();
-
-  // effects
-  useEffect(() => {
-    setSearchParams({ page: String(page), limit: String(DEFAULT_LIMIT) });
-  }, [page, setSearchParams]);
+  const [search, setSearch] = useState("");
 
   // queries
   const { data: staff, isLoading: loadingStaff } = useFetch({
-    queryFn: () => getAllStaffPnFn(page, DEFAULT_LIMIT),
-    queryKeys: staffKeys.list({ page }),
+    queryFn: () => getAllStaffUnPnFn(),
+    queryKeys: staffKeys.list(),
   });
   const { data: roles } = useFetch({
     queryFn: getAllRolesFn,
@@ -45,9 +37,14 @@ const ViewAllStaff = () => {
 
   // memoized values
   const dataSource = useMemo(() => {
-    if (!staff || !staff.data) return [];
-    return staff.data;
-  }, [staff]);
+    if (!staff) return [];
+    if (!search) return staff;
+    return staff?.filter(
+      (s) =>
+        s.firstName.toLowerCase().includes(search.toLowerCase()) ||
+        s.lastName.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [search, staff]);
 
   const roleFilters = useMemo(() => {
     if (!roles) return [];
@@ -79,26 +76,24 @@ const ViewAllStaff = () => {
       stats={[
         {
           label: "Total",
-          value: staff?.pagination.totalRecords ?? "—",
+          value: staff?.length ?? "—",
           color: "navy",
         },
-        {
-          label: "Pages",
-          value: staff?.pagination.totalPages ?? "—",
-          color: "slate",
-        },
       ]}
+      filters={
+        <div className="w-full flex items-center justify-between gap-x-4">
+          <Input
+            placeholder="Quick search name..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-64! h-8! text-xs rounded-lg!"
+            allowClear
+          />
+        </div>
+      }
       columns={columns}
       dataSource={dataSource}
       loading={loadingStaff}
-      pagination={{
-        page,
-        totalPages: staff?.pagination.totalPages ?? 1,
-        pageSize: DEFAULT_LIMIT,
-        totalItems: staff?.pagination.totalRecords,
-      }}
-      onPrev={() => setPage((p) => Math.max(p - 1, 1))}
-      onNext={() => setPage((p) => p + 1)}
       emptyText="No staff registered yet"
     />
   );

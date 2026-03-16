@@ -44,8 +44,14 @@ import StaffFiles from "./tabs/files";
 import StaffOtherData from "./tabs/others";
 import { useQueryClient } from "@tanstack/react-query";
 import AdminUpdateStaff from "./admin-update-staff";
+import StaffSublevelSubjects from "./tabs/sublevel-subject";
 
-type TabKey = "subjects" | "sublevels" | "files" | "others";
+type TabKey =
+  | "sublevel-subject"
+  | "subjects"
+  | "sublevels"
+  | "files"
+  | "others";
 
 const StaffDetail = () => {
   const location = useLocation();
@@ -83,6 +89,12 @@ const StaffDetail = () => {
     subjects: (
       <StaffSubjects teacherId={staff?.staffId} isATeacher={isATeacher} />
     ),
+    "sublevel-subject": (
+      <StaffSublevelSubjects
+        teacherId={staff?.staffId}
+        isATeacher={isATeacher}
+      />
+    ),
     sublevels: (
       <StaffSubLevels teacherId={staff?.staffId} isATeacher={isATeacher} />
     ),
@@ -102,6 +114,11 @@ const StaffDetail = () => {
             key: "subjects",
             icon: <BookOpen className="w-3.5 h-3.5" />,
             label: "Subjects",
+          },
+          {
+            key: "sublevel-subject",
+            icon: <BookOpen className="w-3.5 h-3.5" />,
+            label: "Sublevel-Subjects",
           },
         ]
       : []),

@@ -70,7 +70,7 @@ const AddRecords = () => {
 
   const { data: subjectsData, isLoading: loadingSubjects } = useFetch({
     queryFn: () => getTeacherSublevelSubjectsFn(teacherId!, sublevelId!),
-    queryKeys: subjectKeys.custom("teacher-subjects", {
+    queryKeys: subjectKeys.custom("teacher-sublevel-subjects", {
       sublevelId,
       teacherId,
     }),

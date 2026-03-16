@@ -15,17 +15,20 @@
  *   loading        – Loading state
  *   pagination     – { page, totalPages, pageSize, totalItems? }
  *   onPrev/onNext  – Page handlers
+ *   onRowClick     – Optional function to handle row clicks (e.g. navigation)
  *   rowKey         – Table rowKey (default "studentId")
  *   emptyText      – Custom empty state text
  */
 
 import { MotionDiv } from "@/components/custom/motion";
-import { Table, type TableProps } from "antd";
+import { Table, Tag, type TableProps } from "antd";
 import { ChevronRight } from "lucide-react";
 import { ListPagination } from "./pagination";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUIStore } from "@/store/ui.store";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import paths from "@/config/routes";
 
 // ── Types ─────────────────────────────────────────────────────
 export interface StatBadge {
@@ -53,6 +56,9 @@ export interface ListPageProps<T extends object> {
   pagination?: PaginationMeta;
   onPrev?: () => void;
   onNext?: () => void;
+  navigateOndbClick?: boolean;
+  onRowClick?: (record: T) => void;
+  toDetailsOnDbClk?: boolean;
   rowKey?: string;
   emptyText?: string;
   showCardHeader?: boolean;
@@ -81,14 +87,16 @@ export function ListPage<T extends object>({
   pagination,
   onPrev,
   onNext,
+  onRowClick,
   rowKey = "studentId",
   emptyText = "No students found",
   showCardHeader = true,
   className,
+  toDetailsOnDbClk = true,
 }: ListPageProps<T>) {
   const isMobile = useIsMobile();
   const collapsed = useUIStore((s) => s.menuCollapsed);
-  // const opened = useUIStore((s) => s.sidebarOpen);
+  const navigate = useNavigate();
   return (
     <div
       style={{ fontFamily: "'DM Sans', sans-serif" }}
@@ -173,9 +181,22 @@ export function ListPage<T extends object>({
           {/* Filters */}
           <div className="flex items-center gap-x-2 flex-wrap gap-y-2 min-w-0 flex-1">
             {filters ?? (
-              <span className="text-xs text-slate-300 italic">No filters</span>
+              <>
+                <Tag className="mr-0! bg-slate-100 border-slate-200 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-md">
+                  Tip: Double-click row for details
+                </Tag>
+                {/* <span className="text-xs text-slate-300 italic">
+                  No filters
+                </span> */}
+              </>
             )}
           </div>
+
+          {filters && (
+            <Tag className="mr-0! bg-slate-100 border-slate-200 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-md">
+              Tip: Double-click row for details
+            </Tag>
+          )}
           {/* Top pagination */}
           {pagination && onPrev && onNext && (
             <ListPagination
@@ -198,6 +219,30 @@ export function ListPage<T extends object>({
             loading={loading}
             rowKey={rowKey}
             pagination={false}
+            onRow={(r) => ({
+              onDoubleClick: () => {
+                if (toDetailsOnDbClk) {
+                  if (r && "studentId" in r) {
+                    navigate(paths.admin.studentDetails.href, {
+                      state: { studentId: r.studentId },
+                    });
+                    return;
+                  } else if (r && "staffId" in r) {
+                    navigate(paths.admin.staffDetails.href, {
+                      state: { staffId: r.staffId },
+                    });
+                    return;
+                  }
+                } else if (onRowClick) {
+                  onRowClick?.(r);
+                }
+              },
+              className: cn(
+                onRowClick || toDetailsOnDbClk
+                  ? "cursor-pointer hover:bg-slate-50/80 transition-colors select-none!"
+                  : "",
+              ),
+            })}
             size="middle"
             scroll={{ x: isMobile ? "max-content" : "" }}
             styles={{ header: { cell: { color: "white" } } }}

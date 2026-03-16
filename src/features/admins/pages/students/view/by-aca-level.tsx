@@ -21,6 +21,7 @@ import { Select } from "antd";
 import { Filter, LayoutGridIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import paths from "@/config/routes";
 
 const df = {
   page: DEFAULT_PAGE.toString(),
@@ -132,6 +133,11 @@ const ViewByAcaLevel = () => {
       }}
       onPrev={() => setPage((p) => Math.max(p - 1, 1))}
       onNext={() => setPage((p) => p + 1)}
+      onRowClick={(r) =>
+        navigate(paths.admin.studentDetails.href, {
+          state: { studentId: r.studentId },
+        })
+      }
       emptyText="No students registered yet"
       filters={
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
