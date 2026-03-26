@@ -222,6 +222,8 @@ const endpoints = {
   finance: {
     ledgers: {
       getAllSub: "/GetAllSubsidiaryLedgers",
+      create: "/CreateSubsidiaryLedgers",
+      update: (id: string) => `/UpdateSubsidiaryLedger/${id}`,
     },
     fees: {
       setup: "/CreateTuitionSetup",

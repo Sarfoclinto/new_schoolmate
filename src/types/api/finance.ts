@@ -39,5 +39,12 @@ export type TuitionGet = {
 export type SubsidiaryLedger = {
   slCode: string;
   sl: string;
-  glCode: string;
+  glCode: string; // 100
+};
+
+export type SubsidiaryLedgerPost = Pick<SubsidiaryLedger, "sl">;
+
+export type SubsidiaryLedgerUpdate = {
+  id: string;
+  data: SubsidiaryLedgerPost;
 };

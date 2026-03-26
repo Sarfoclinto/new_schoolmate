@@ -32,6 +32,7 @@ import {
   CalendarXIcon,
   CalendarRangeIcon,
   ShieldCheck,
+  CoinsIcon,
 } from "lucide-react";
 
 const { admin } = paths;
@@ -410,7 +411,17 @@ const adminMenu: AppMenuItem[] = [
           </SidebarLabel>
         ),
         icon: <ReceiptIcon className="size-3.5" />,
-        permission: PERMISSIONS.FINANCE_READ,
+        permission: PERMISSIONS.FINANCE_WRITE,
+      }),
+      item({
+        key: admin.subLedgers.href,
+        label: (
+          <SidebarLabel type="link" to={admin.subLedgers.href}>
+            {admin.subLedgers.label}
+          </SidebarLabel>
+        ),
+        icon: <CoinsIcon className="size-3.5" />,
+        permission: PERMISSIONS.FINANCE_WRITE,
       }),
     ],
   }),

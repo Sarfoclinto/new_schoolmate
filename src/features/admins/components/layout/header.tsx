@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
+import { useHotkey } from "@tanstack/react-hotkeys";
 
 const AdminLayoutHeader = () => {
   const { collapsed, toggleCollapsed, isOpen, openSidebar } = useUIStore(
@@ -25,6 +26,14 @@ const AdminLayoutHeader = () => {
   const isMobile = useIsMobile();
   const terms = useSignalRStore(signalRSelectors.academicTerms);
   const year = useSignalRStore(signalRSelectors.academicYear);
+
+  useHotkey("Control+B", () => {
+    if (!isOpen) {
+      openSidebar();
+      return;
+    }
+    toggleCollapsed();
+  });
 
   const handleCollapseToggle = () => {
     if (!isOpen) {

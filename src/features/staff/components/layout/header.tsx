@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
+import { useHotkey } from "@tanstack/react-hotkeys";
 
 const StaffLayoutHeader = () => {
   const terms = useSignalRStore(signalRSelectors.academicTerms);
@@ -34,6 +35,14 @@ const StaffLayoutHeader = () => {
       openSidebar: s.openSidebar,
     })),
   );
+
+  useHotkey("Control+B", () => {
+    if (!isOpen) {
+      openSidebar();
+      return;
+    }
+    toggleCollapsed();
+  });
 
   const handleCollapseToggle = () => {
     if (!isOpen) {

@@ -48,6 +48,7 @@ const {
 
   // finance
   fees,
+  subLedgers,
 
   // events & notice
   notice,
@@ -144,6 +145,9 @@ const ReportDetail = lazy(
 
 // finance
 const FeesSetup = lazy(() => import("@/features/admins/pages/finance/setup"));
+const SubLedgers = lazy(
+  () => import("@/features/admins/pages/finance/create-sub-ledger"),
+);
 
 // events & notices
 const Notice = lazy(() => import("@/features/admins/pages/notice"));
@@ -186,7 +190,11 @@ const CloseAcademicYear = lazy(
 const guarded = (path: string, element: React.ReactNode): React.ReactNode => {
   const permission = ADMIN_ROUTE_PERMISSIONS[path];
   if (!permission) return element;
-  return <ProtectRoute requiredPermission={permission} intendedPath={path}>{element}</ProtectRoute>;
+  return (
+    <ProtectRoute requiredPermission={permission} intendedPath={path}>
+      {element}
+    </ProtectRoute>
+  );
 };
 
 // =============================================================================
@@ -311,6 +319,10 @@ const adminRoutes: RouteObject[] = [
 
       // ── Finance ─────────────────────────────────────────────────────────────
       { path: fees.href, element: guarded(fees.href, <FeesSetup />) },
+      {
+        path: subLedgers.href,
+        element: guarded(subLedgers.href, <SubLedgers />),
+      },
 
       // ── Events & Notices ────────────────────────────────────────────────────
       { path: allEvents.href, element: guarded(allEvents.href, <AllEvents />) },

@@ -2,6 +2,8 @@ import { deleteHelper, getHelper, postHelper, updateHelper } from "@/api/crud";
 import endpoints from "@/config/endpoints";
 import type {
   SubsidiaryLedger,
+  SubsidiaryLedgerPost,
+  SubsidiaryLedgerUpdate,
   TuitionGet,
   TuitionPost,
   TuitionUpdate,
@@ -14,6 +16,14 @@ const {
 // ledgers
 export const getAllSubsidiaryLedgerFn = async () => {
   return getHelper<SubsidiaryLedger[]>(ledgers.getAllSub);
+};
+export const createSubsidiaryLedgerFn = async (data: SubsidiaryLedgerPost) => {
+  return postHelper(ledgers.create, data);
+};
+export const updateSubsidiaryLedgerFn = async (
+  update: SubsidiaryLedgerUpdate,
+) => {
+  return updateHelper(ledgers.update(update.id), update.data);
 };
 
 // fees
