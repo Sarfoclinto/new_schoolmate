@@ -98,17 +98,19 @@ export function studentImageCol<
   };
 }
 
-export function studentNameCol<T extends { fullName: string }>(
-  width: string | number = "50%",
-): TableColumnType<T> {
+export function studentNameCol<
+  T extends { fullName: string; otherName?: string },
+>(width: string | number = "50%", showOtherName = true): TableColumnType<T> {
   return {
     key: "fullName",
     title: "Student Name",
     dataIndex: "fullName",
     width,
     ...searchFilter<T>("fullName" as keyof T, "Search name"),
-    render: (name: string) => (
-      <span className="font-semibold text-[#0D1B2E] text-sm">{name}</span>
+    render: (name: string, r) => (
+      <span className="font-semibold text-[#0D1B2E] text-sm">
+        {name} {showOtherName && r.otherName && r.otherName}
+      </span>
     ),
   };
 }

@@ -201,6 +201,8 @@ const endpoints = {
     updateImage: (id: string) => `/UpdateStaffImage/${id}`,
     updatePassword: (id: string) => `/UpdateStaffPassword/${id}`,
     updateStaff: (id: string) => `/StaffUpdatedByAdmin/${id}`,
+    postPrincipalTeacher: "/PostPrincipalTeacher",
+    unAssignPrincipal: "/UnAssignPrincipal",
     createMapping: "/CreateTeacherMappings",
     getAllPn: "/GetPaginatedStaff",
     getAllUnPn: "/GetAllStaff",
@@ -209,6 +211,8 @@ const endpoints = {
     getTeacherSubjects: (id: string) => `/GetTeacherSubjects/${id}`,
     getTeacherMapping: (id: string) => `/GetTeacherMappings/${id}`,
     getTeacherSublevels: (id: string) => `/GetTeacherSubLevels/${id}`,
+    getSublevelTeachers: `/GetAllSubLevelTeacher`,
+    getPrincipalTeachers: "/GetAllPrincipalTeacher",
     getSubLevelSubjects: (teacherId: string, sublevelId: string) =>
       `/GetTeacherSubLevelSubjects/Teacher/${teacherId}/SubLevel/${sublevelId}`,
 

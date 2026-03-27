@@ -40,6 +40,7 @@ const {
   allStaff,
   staffByMode,
   staffByRole,
+  principalTeacher,
 
   // reports
   stuTermReport,
@@ -130,6 +131,9 @@ const StaffByMode = lazy(
 );
 const StaffByRole = lazy(
   () => import("@/features/admins/pages/staff/view/by-role"),
+);
+const PrincipalTeachers = lazy(
+  () => import("@/features/admins/pages/staff/view/view-assignments"),
 );
 
 // reports
@@ -288,6 +292,10 @@ const adminRoutes: RouteObject[] = [
       {
         path: staffAssignment.href,
         element: guarded(staffAssignment.href, <StaffAssignment />),
+      },
+      {
+        path: principalTeacher.href,
+        element: guarded(principalTeacher.href, <PrincipalTeachers />),
       },
       {
         path: staffDetails.href,

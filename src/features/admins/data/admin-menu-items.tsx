@@ -324,6 +324,16 @@ const adminMenu: AppMenuItem[] = [
         permission: PERMISSIONS.STAFF_WRITE,
       }),
       item({
+        key: admin.principalTeacher.href,
+        label: (
+          <SidebarLabel type="link" to={admin.principalTeacher.href}>
+            {admin.principalTeacher.label}
+          </SidebarLabel>
+        ),
+        icon: <UserCogIcon className="size-3.5" />,
+        permission: PERMISSIONS.STAFF_WRITE,
+      }),
+      item({
         key: admin.allStaff.href,
         label: (
           <SidebarLabel type="link" to={admin.allStaff.href}>

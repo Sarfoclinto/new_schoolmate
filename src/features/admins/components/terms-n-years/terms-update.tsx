@@ -168,7 +168,7 @@ const TermsUpdate = () => {
 
   const invalidate = () =>
     qc.invalidateQueries({
-      queryKey: termKeys.custom("edu-terms-time-range", { eduId, yearId }),
+      queryKey: termKeys.custom("edu-terms-from-state", { eduId, yearId }),
     });
   const reset = () => {
     setRecord(null);

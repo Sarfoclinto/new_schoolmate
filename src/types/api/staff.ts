@@ -50,6 +50,18 @@ export interface StaffGetResponse {
   };
 }
 
+export interface PrincipalTeacherPost {
+  teacherId: string;
+  subLevelId: string;
+}
+export interface PrincipalTeacherGet extends PrincipalTeacherPost {
+  isPrincipal: boolean;
+  subLevelName: string;
+  subLevelAlias: string | null;
+  teacherName: string;
+}
+export type SubLevelTeachersGet = PrincipalTeacherGet;
+
 export interface TeacherMappingPost {
   TeacherId: string;
   SubLevelIds?: string[];

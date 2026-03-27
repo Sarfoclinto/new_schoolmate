@@ -15,9 +15,12 @@ import type {
   AdminUpdateStaffType,
   AssignPermissionsPayload,
   DeleteMapping,
+  PrincipalTeacherGet,
+  PrincipalTeacherPost,
   StaffGet,
   StaffGetResponse,
   StaffUpdateWithFile,
+  SubLevelTeachersGet,
   TeacherMappingPost,
   TeachersMapping,
   TeacherSubjectsGet,
@@ -41,6 +44,14 @@ export const getStaffByIdFn = async (id: string) => {
 };
 export const getAllTeachersFn = async () => {
   return getHelper<StaffGet[]>(staffMn.allTeachers);
+};
+export const getSublevelTeachersFn = async (sublevelId: string) => {
+  return getHelper<SubLevelTeachersGet[]>(staffMn.getSublevelTeachers, {
+    subLevelId: sublevelId,
+  });
+};
+export const getPrincipalTeachersFn = async () => {
+  return getHelper<PrincipalTeacherGet[]>(staffMn.getPrincipalTeachers);
 };
 export const getTeacherMappingFn = async (id: string) => {
   return getHelper<TeachersMapping>(staffMn.getTeacherMapping(id));
@@ -77,6 +88,13 @@ export const updateStaffProfileFn = async (update: StaffUpdateWithFile) => {
     update.data,
   );
 };
+export const postPrincipalTeacherFn = async (data: PrincipalTeacherPost) => {
+  return postHelper(staffMn.postPrincipalTeacher, data);
+};
+export const unAssignPrincipalFn = async (data: PrincipalTeacherPost) => {
+  return deleteHelper(staffMn.unAssignPrincipal, data);
+};
+
 export const updateStaffImageFn = async (update: StaffUpdateWithFile) => {
   return updateWithFile(staffMn.updateImage(update.id), update.data);
 };

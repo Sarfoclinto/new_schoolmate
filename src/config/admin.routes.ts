@@ -79,6 +79,10 @@ const adminPaths = {
     label: "Staff Assignment",
     href: "/admin/staff/assignment",
   },
+  principalTeacher: {
+    label: "Principal Teachers",
+    href: "/admin/staff/principal-teachers",
+  },
   staffDetails: {
     label: "Staff Details",
     href: "/admin/staff/details",
