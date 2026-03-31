@@ -81,6 +81,7 @@ const endpoints = {
     subject: {
       create: "/CreateSubject",
       getAll: "/GetAllSubjects",
+      getBySublevel: (id: string) => `/GetSubjectsBySubLevel/${id}`,
       update: (id: string) => `/UpdateSubject/${id}`,
       delete: (id: string) => `/DeleteSubject/${id}`,
     },
@@ -253,12 +254,7 @@ const endpoints = {
         subjectId: string,
       ) =>
         `/GetSubLevelSubjectAcademicRecords/Assessment/${assessId}/SubLevel/${sublevelId}/Subject/${subjectId}`,
-      sublevelAcademicRecords: (
-        sublevelId: string,
-        assessId: string,
-        teacherId: string,
-      ) =>
-        `/GetSubLevelAcademicRecords/Assessment/${assessId}/SubLevel/${sublevelId}/Teacher/${teacherId}`,
+      sublevelAcademicRecords: `/GetSubLevelAcademicRecords/Assessment`,
     },
   },
   attendance: {
@@ -271,6 +267,12 @@ const endpoints = {
       `/GetStudentAttendancePreviews/SubLevel/${sublevelId}/AttendanceDate/${date}`,
     monthly: (subId: string, date: string) =>
       `/GetMonthlyStudentAttendances/SubLevel/${subId}/Month/${date}`,
+  },
+  request: {
+    list: "/GetRequests",
+    create: "/SendRequest",
+    delete: "/DeleteRequest",
+    update: "/UpdateRequestStatus"
   },
 };
 

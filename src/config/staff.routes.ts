@@ -31,6 +31,10 @@ const staffPaths = {
     label: "View Records",
     href: "/staff/academic-records/view-records",
   },
+  updateRecord: {
+    label: "Update Record",
+    href: "/staff/academic-records/update-record",
+  },
 
   // attendance
   attendance: {
@@ -48,6 +52,9 @@ const staffPaths = {
 
   // notice
   notice: { label: "Notices", href: "/staff/notices" },
+
+  // requests
+  request: { label: "Requests", href: "/staff/requests" },
 };
 
 export default staffPaths;

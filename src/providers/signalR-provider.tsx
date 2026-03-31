@@ -39,13 +39,16 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
     useState<ConnectionState>("Disconnected");
   const reconnectToastIdRef = useRef<string | number | null>(null);
 
-  //   store actions
+  // store actions
   const {
     setConnectionError,
     setStoreConnectionState,
     setPermissions,
     setTerms,
     setYear,
+    addRequest,
+    removeRequest,
+    updateStatus,
   } = useSignalRStore(
     useShallow((s) => ({
       setStoreConnectionState: s.setConnectionState,
@@ -53,6 +56,9 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
       setPermissions: s.setPermissions,
       setYear: s.setActiveYear,
       setTerms: s.setActiveTerms,
+      addRequest: s.addRequest,
+      removeRequest: s.deleteRequest,
+      updateStatus: s.updateReqStatus,
     })),
   );
 
@@ -117,8 +123,18 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
       setStoreConnectionState("Reconnecting");
 
       if (enableToasts) {
-        reconnectToastIdRef.current = toast.loading("Reconnecting...", {
+        reconnectToastIdRef.current = toast.loading("Reconnecting....", {
           duration: Infinity,
+          closeButton: true,
+          action: {
+            label: "Dismiss",
+            onClick: () => {
+              if (reconnectToastIdRef.current) {
+                toast.dismiss(reconnectToastIdRef.current);
+                reconnectToastIdRef.current = null;
+              }
+            },
+          },
         });
       }
     });
@@ -163,6 +179,39 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
       setTimeout(() => {
         setTerms(terms);
       }, 2000);
+    });
+
+    // requests
+    client.on("receiveRequests", (request) => {
+      // TODO: Play beep sound
+      if (request) {
+        addRequest(request);
+        if (enableToasts) {
+          toast.info("New request received");
+        }
+      }
+    });
+
+    client.on("deleteRequests", (requestId) => {
+      if (requestId) {
+        removeRequest(requestId);
+        if (enableToasts) {
+          toast.info("Request deleted");
+        }
+      }
+    });
+
+    client.on("updateRequestStatus", (requestId, status) => {
+      if (requestId) {
+        updateStatus(requestId, status);
+        if (enableToasts) {
+          if (status === "approved") {
+            toast.info("Request approved");
+          } else if (status === "declined") {
+            toast.warning("Request declined");
+          }
+        }
+      }
     });
 
     // Error handling

@@ -11,6 +11,7 @@ import {
   ClipboardListIcon,
   CalendarCheckIcon,
   UserCheckIcon,
+  SendIcon,
   AlertOctagon,
 } from "lucide-react";
 import type { AppMenuItem } from "@/features/admins/data/admin-menu-items";
@@ -156,6 +157,17 @@ const staffMenu: AppMenuItem[] = [
     ),
     icon: <AlertOctagon className="size-3.5" />,
     permission: PERMISSIONS.STAFF_NOTICES_WRITE,
+  }),
+
+  // ── Request ────────────────────────────────────────────────────────────────
+  item({
+    key: staff.request.href,
+    label: (
+      <SidebarLabel type="link" to={staff.request.href}>
+        {staff.request.label}
+      </SidebarLabel>
+    ),
+    icon: <SendIcon className="size-3.5" />,
   }),
 ];
 

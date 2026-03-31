@@ -110,6 +110,10 @@ const adminPaths = {
     label: "Student Report Detail",
     href: "/admin/reports/student-report-detail",
   },
+  academicRecords: {
+    label: "Academic Records",
+    href: "/admin/reports/academic-records",
+  },
   stuAttReport: {
     label: "Attendance",
     href: "/admin/reports/student-attendance-report",
@@ -164,6 +168,9 @@ const adminPaths = {
     label: "Close Academic Year",
     href: "/admin/session/close-academic-year",
   },
+
+  // requests
+  request: { label: "Requests", href: "/admin/requests" },
 };
 
 export default adminPaths;

@@ -41,6 +41,9 @@ export const attendanceKeys = createQueryKeys("attendance");
 
 export const mappingsKeys = createQueryKeys("mappings");
 
+export const requestKeys = createQueryKeys("request");
+
+
 
 
 

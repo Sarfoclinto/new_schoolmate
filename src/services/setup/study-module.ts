@@ -21,6 +21,9 @@ const {
 export const getAllSubjectsFn = async () => {
   return getHelper<SubjectGet[]>(subject.getAll);
 };
+export const getSublevelSubjectsFn = async (id: string) => {
+  return getHelper<SubjectGet[]>(subject.getBySublevel(id));
+};
 export const createSubjectFn = async (data: SubjectPost) => {
   return postHelper(subject.create, data);
 };

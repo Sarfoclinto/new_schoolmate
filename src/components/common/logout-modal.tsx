@@ -15,9 +15,9 @@ const LogOutModal = () => {
   );
 
   const onLogOut = () => {
+    close();
     logout();
     resetStore();
-    close();
   };
 
   return (

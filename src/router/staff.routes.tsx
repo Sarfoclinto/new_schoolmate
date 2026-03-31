@@ -27,6 +27,9 @@ const {
   // notice
   notice,
 
+  // request
+  request,
+
   // profile
   profile,
 
@@ -69,6 +72,9 @@ const Profile = lazy(() => import("@/features/auth/pages/profile"));
 
 // notice
 const Notice = lazy(() => import("@/features/staff/pages/notice"));
+
+// request
+const Request = lazy(() => import("@/features/staff/pages/request"));
 
 // notification
 const Notifications = lazy(() => import("@/features/staff/pages/notification"));
@@ -141,6 +147,12 @@ const staffRoutes: RouteObject[] = [
       {
         path: notice.href,
         element: guarded(notice.href, <Notice />),
+      },
+
+      // requests
+      {
+        path: request.href,
+        element: <Request />,
       },
 
       // profile

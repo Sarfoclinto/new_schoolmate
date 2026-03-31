@@ -32,7 +32,9 @@ import {
   CalendarXIcon,
   CalendarRangeIcon,
   ShieldCheck,
+  ClipboardList,
   CoinsIcon,
+  SendIcon,
 } from "lucide-react";
 
 const { admin } = paths;
@@ -379,6 +381,16 @@ const adminMenu: AppMenuItem[] = [
     type: "submenu",
     children: [
       item({
+        key: admin.academicRecords.href,
+        label: (
+          <SidebarLabel type="link" to={admin.academicRecords.href}>
+            {admin.academicRecords.label}
+          </SidebarLabel>
+        ),
+        icon: <ClipboardList className="size-3.5" />,
+        permission: PERMISSIONS.REPORTS_READ,
+      }),
+      item({
         key: admin.stuTermReport.href,
         label: (
           <SidebarLabel type="link" to={admin.stuTermReport.href}>
@@ -513,17 +525,18 @@ const adminMenu: AppMenuItem[] = [
         icon: <CalendarRangeIcon className="size-3.5" />,
         permission: PERMISSIONS.SESSION_WRITE,
       }),
-      // item({
-      //   key: admin.closeAcademicYear.href,
-      //   label: (
-      //     <SidebarLabel type="link" to={admin.closeAcademicYear.href}>
-      //       {admin.closeAcademicYear.label}
-      //     </SidebarLabel>
-      //   ),
-      //   icon: <CalendarXIcon className="size-3.5" />,
-      //   permission: PERMISSIONS.SESSION_WRITE,
-      // }),
     ],
+  }),
+
+  // ── Request ────────────────────────────────────────────────────────────────
+  item({
+    key: admin.request.href,
+    label: (
+      <SidebarLabel type="link" to={admin.request.href}>
+        {admin.request.label}
+      </SidebarLabel>
+    ),
+    icon: <SendIcon className="size-3.5" />,
   }),
 ];
 

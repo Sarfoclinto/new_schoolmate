@@ -1,4 +1,5 @@
 import type { Permission } from "@/config/permissions";
+import type { RequestItem } from "@/types/api/request";
 import type { InstitutionGet } from "@/types/api/setup/institution";
 import type {
   AcademicTermGet,
@@ -26,6 +27,9 @@ interface SignalRState {
 
   // institution
   institution: InstitutionGet | null;
+
+  // requests
+  requests: RequestItem[];
 }
 
 /**
@@ -52,6 +56,11 @@ interface SignalRActions {
   // all
   setPermissionAndSessions: (data: Others) => void;
 
+  // requests
+  addRequest: (request: RequestItem | RequestItem[]) => void;
+  deleteRequest: (id: string) => void;
+  updateReqStatus: (id: string, status: "approved" | "declined") => void;
+
   // reset
   resetStore: () => void;
 }
@@ -75,6 +84,8 @@ const initialState: SignalRState = {
   academicYear: null,
   academicTerms: [],
   institution: null,
+
+  requests: [],
 };
 
 /**
@@ -148,6 +159,44 @@ export const useSignalRStore = create<SignalRStore>()(
             },
             false,
             "setPermissionAndSessions",
+          ),
+
+        // requests
+        addRequest: (request) =>
+          set(
+            (state) => {
+              const newRequests = Array.isArray(request) ? request : [request];
+              const existingIds = new Set(state.requests.map((r) => r.id));
+              const uniqueNew = newRequests.filter(
+                (r) => !existingIds.has(r.id),
+              );
+
+              return {
+                requests: [...state.requests, ...uniqueNew],
+              };
+            },
+            false,
+            "addRequest",
+          ),
+
+        deleteRequest: (id) =>
+          set(
+            (state) => ({
+              requests: state.requests.filter((r) => r.id !== id),
+            }),
+            false,
+            "deleteRequest",
+          ),
+
+        updateReqStatus: (id, status) =>
+          set(
+            (state) => ({
+              requests: state.requests.map((r) =>
+                r.id === id ? { ...r, status } : r,
+              ),
+            }),
+            false,
+            "updateReqStatus",
           ),
 
         // reset

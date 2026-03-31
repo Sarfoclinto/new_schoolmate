@@ -31,7 +31,7 @@ const SidebarLabel = ({
   const showText = true;
 
   const baseClasses = cn(
-    "flex items-center gap-x-2.5 w-full",
+    "flex items-center gap-x-2 w-full",
     "text-[13px] font-medium",
     "text-slate-300. text-black",
     "transition-colors duration-150",
@@ -39,11 +39,11 @@ const SidebarLabel = ({
   );
 
   const content = (
-    <div className="flex items-center ">
-      {showIcon && <span className="text-slate-400 shrink-0 ">{icon}</span>}
+    <div className="flex items-center">
+      {showIcon && <span className="text-slate-400 shrink-0">{icon}</span>}
       {showText && (
         <span
-          className={cn("truncate text-white ")}
+          className={cn("truncate text-white")}
           style={{
             fontFamily: "'DM Sans', sans-serif",
             letterSpacing: "0.01em",
@@ -75,7 +75,7 @@ const SidebarLabel = ({
       className={({ isActive }) =>
         cn(
           baseClasses,
-          "px-2.5 py-1.5 rounded-md text-black!. .",
+          "p-2.5 py-1.5 rounded-md text-black!. .",
           !collapsed ? "text-black!" : "text-white!",
           isActive
             ? "text-white bg-white/10 font-semibold"

@@ -46,6 +46,7 @@ const {
   stuTermReport,
   stuAttReport,
   stuReportDetail,
+  academicRecords,
 
   // finance
   fees,
@@ -64,6 +65,9 @@ const {
   closeAcademicTerm,
   openAcademicTerm,
   closeAcademicYear,
+
+  // requests
+  request,
 } = paths.admin;
 
 // admin pages component
@@ -146,6 +150,9 @@ const ViewMonthlyAttendance = lazy(
 const ReportDetail = lazy(
   () => import("@/features/admins/pages/reports/report-details"),
 );
+const AcademicRecords = lazy(
+  () => import("@/features/admins/pages/reports/view-academic-records"),
+);
 
 // finance
 const FeesSetup = lazy(() => import("@/features/admins/pages/finance/setup"));
@@ -179,6 +186,9 @@ const OpenAcademicTerm = lazy(
 const CloseAcademicYear = lazy(
   () => import("@/features/admins/pages/session/close-academic-year"),
 );
+
+// request
+const Request = lazy(() => import("@/features/admins/pages/request"));
 
 // =============================================================================
 // guard helper
@@ -321,6 +331,10 @@ const adminRoutes: RouteObject[] = [
         element: guarded(stuAttReport.href, <ViewMonthlyAttendance />),
       },
       {
+        path: academicRecords.href,
+        element: guarded(academicRecords.href, <AcademicRecords />),
+      },
+      {
         path: stuReportDetail.href,
         element: guarded(stuReportDetail.href, <ReportDetail />),
       },
@@ -366,6 +380,10 @@ const adminRoutes: RouteObject[] = [
 
       // ── Profile (no permission guard — always accessible) ───────────────────
       { path: adminProfile.href, element: <Profile /> },
+      {
+        path: request.href,
+        element: <Request />,
+      },
     ],
   },
 ];

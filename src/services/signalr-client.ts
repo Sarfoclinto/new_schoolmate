@@ -161,6 +161,18 @@ export class SignalRClient {
       this.emit("receiveActiveYear", year);
     });
 
+    this.connection.on("receiveRequests", (request) => {
+      this.emit("receiveRequests", request);
+    });
+
+    this.connection.on("deleteRequests", (id) => {
+      this.emit("deleteRequests", id);
+    });
+
+    this.connection.on("updateRequestStatus", (requestId, status) => {
+      this.emit("updateRequestStatus", requestId, status);
+    });
+
     this.connection.on("error", (err) => this.emit("error", err));
   }
 

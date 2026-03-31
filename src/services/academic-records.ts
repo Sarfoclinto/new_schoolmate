@@ -36,18 +36,26 @@ export const getSublvelSubjectRecordsFn = async (
   assessId: string,
   sublevelId: string,
   subjectId: string,
+  academicYearId?: string,
+  academicTermId?: string,
 ) => {
   return getHelper<SubLevelSubjectAcademicRecordGet[]>(
     records.sublevelSubjectsRecords(assessId, sublevelId, subjectId),
+    {
+      academicTermId,
+      academicYearId,
+    },
   );
 };
 
 export const getSublevelRecords = async (
   sublevelId: string,
   assessId: string,
-  teacherId: string,
+  teacherId?: string,
 ) => {
-  return getHelper<ClassRecordsGet[]>(
-    records.sublevelAcademicRecords(sublevelId, assessId, teacherId),
-  );
+  return getHelper<ClassRecordsGet[]>(records.sublevelAcademicRecords, {
+    assessmentId: assessId,
+    subLevelId: sublevelId,
+    teacherId: teacherId,
+  });
 };

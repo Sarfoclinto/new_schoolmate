@@ -5,8 +5,9 @@ import api from "./axios";
 export const postHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
+  params?: object,
 ) => {
-  const res = await api.post(path, data);
+  const res = await api.post(path, data, { params });
   return res.data as T;
 };
 export const postWithFile = async <T = MdResponse>(
@@ -72,7 +73,18 @@ export const updateWithFile = async <T = MdResponse>(
 export const deleteHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
+  params?: object,
 ) => {
-  const res = await api.delete(path, { data });
+  const res = await api.delete(path, { data, params });
+  return res.data as T;
+};
+
+// patch
+export const patchHelper = async <T = MdResponse>(
+  path: string,
+  data?: unknown,
+  params?: object,
+) => {
+  const res = await api.patch(path, data, { params });
   return res.data as T;
 };
