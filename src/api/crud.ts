@@ -53,8 +53,9 @@ export const getSingle = async <T = unknown>(
 export const updateHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
+  params?: object,
 ) => {
-  const res = await api.put(path, data);
+  const res = await api.put(path, data, {params});
   return res.data as T;
 };
 export const updateWithFile = async <T = MdResponse>(

@@ -19,8 +19,6 @@ export const getUserDashboardRoute = (): string => {
   const user = useAuth.getState().user;
 
   if (!user?.dashboardType) {
-    console.log("user dashboard not found: ", user?.dashboardType);
-
     return paths.auth.login.href;
   }
 

@@ -45,7 +45,6 @@ export const getAllTermsFn = async () => {
 export const getTermByIdFn = async (id: string) => {
   return getHelper<AcademicTermGet>(term.getById(id));
 };
-// !NOT IN USE
 export const getTermsBySubIdFn = async (id: string) => {
   return getHelper<AcademicTermGet[]>(term.getBySubId(id));
 };

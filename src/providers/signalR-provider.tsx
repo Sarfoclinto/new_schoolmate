@@ -171,8 +171,6 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
       }, 2000);
     });
     client.on("receiveActiveTerms", (terms) => {
-      console.log("new terms: ", terms);
-
       if (enableToasts) {
         toast.success("Active terms updated. Update is in progress");
       }

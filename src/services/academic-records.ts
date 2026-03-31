@@ -32,6 +32,14 @@ export const getPassmarkFn = async (teacherId: string, sublevelId: string) => {
 export const addRecordFn = async (data: AcademicRecordPost) => {
   return postHelper(records.add, data);
 };
+
+type UpdatePayload = {
+  id: string;
+  data: AcademicRecordPost;
+};
+export const updateRecordFn = async ({ id, data }: UpdatePayload) => {
+  return updateHelper(records.update, data, { academicRecordId: id });
+};
 export const getSublvelSubjectRecordsFn = async (
   assessId: string,
   sublevelId: string,

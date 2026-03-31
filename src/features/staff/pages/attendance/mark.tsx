@@ -229,7 +229,6 @@ const MarkAttendance = () => {
     enabled: isReady,
   });
 
-  console.log("marked students: ", markedStudents);
 
   //   mutations
   const { mutate: mark, isPending: marking } = usePost({

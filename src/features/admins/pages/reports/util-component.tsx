@@ -332,10 +332,10 @@ interface ReportFooterProps {
 }
 
 const ReportFooter = ({
-  attendedDays,
-  schoolDays,
+  // attendedDays,
+  // schoolDays,
   headmasterRemarks,
-  notice,
+  // notice,
   gradingSystem,
   qrValue,
 }: ReportFooterProps) => (
@@ -349,7 +349,8 @@ const ReportFooter = ({
         <div className="rpt-cell rpt-br">
           <span className="rpt-label">Attendance: </span>
           <span className="rpt-value">
-            {attendedDays ?? "—"} / {schoolDays ?? "—"} days
+            {/* {attendedDays ?? "—"} / {schoolDays ?? "—"} days */}
+            {"--"}
           </span>
         </div>
         <div className="rpt-cell">
@@ -366,13 +367,13 @@ const ReportFooter = ({
         </div>
         <div className="rpt-cell">
           <span className="rpt-value">
-            {headmasterRemarks ?? "Not Provided"}
+            {/* {headmasterRemarks ?? "Not Provided"} */}--
           </span>
         </div>
       </div>
       <div className="rpt-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
         <div className="rpt-cell rpt-br">
-          <span className="rpt-label">Headmaster/Mistress Remark</span>
+          <span className="rpt-label">Class Teacher's Remark</span>
         </div>
         <div className="rpt-cell">
           <span className="rpt-value">
@@ -385,12 +386,12 @@ const ReportFooter = ({
     {/* Notice + Grading system + QR */}
     <div className="rpt-grid rpt-g51" style={{ gap: 12 }}>
       <div className="rpt-border">
-        <div className="rpt-section-bar">Notice</div>
+        {/* <div className="rpt-section-bar">Notice</div>
         <div
           className="rpt-cell"
           style={{ minHeight: 40, padding: "6px" }}
           dangerouslySetInnerHTML={{ __html: notice ?? "—" }}
-        />
+        /> */}
         <div className="rpt-section-bar" style={{ marginTop: 4 }}>
           Grade Interpretation
         </div>
@@ -502,7 +503,7 @@ export const ReportDocument = ({
       <ReportFooter
         attendedDays={data.studentAttendance.attendedDays}
         schoolDays={data.studentAttendance.schoolDays}
-        headmasterRemarks={vac?.headerMasterRemarks}
+        headmasterRemarks={data.remarks}
         notice={vac?.notice}
         gradingSystem={data.gradingSystem}
         qrValue={`${window.location.origin}/verify/report/${d.studentId}`}

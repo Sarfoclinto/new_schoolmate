@@ -6,12 +6,14 @@ import {
   subjectKeys,
 } from "@/config/query-keys";
 import { SetupPage } from "@/features/admins/components/setup-page";
+import { TableActions } from "@/features/admins/components/table-action";
 import useFetch from "@/hooks/api/use-fetch";
 import usePost from "@/hooks/api/use-post";
 import { useActiveTerm } from "@/hooks/use-active-term";
 import {
   addRecordFn,
   getSublvelSubjectRecordsFn,
+  updateRecordFn,
 } from "@/services/academic-records";
 import { getAssessmentsBySubIdFn } from "@/services/setup/assessment-n-grading";
 import {
@@ -44,12 +46,15 @@ type FormValues = {
 
 const AddRecords = () => {
   const user = useAuth((s) => s.user);
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const markedOver = Form.useWatch("MarkedOver", form);
   const qc = useQueryClient();
   const [sublevel, setSublevel] = useState<SelectTypes | null>(null);
   const [assessment, setAssessment] = useState<SelectTypes | null>(null);
   const [subject, setSubject] = useState<SelectTypes | null>(null);
+  const [record, setRecord] = useState<SubLevelSubjectAcademicRecordGet | null>(
+    null,
+  );
 
   const sublevelId = sublevel?.value;
   const assessmentId = assessment?.value;
@@ -140,8 +145,6 @@ const AddRecords = () => {
     return records;
   }, [records]);
 
-  console.log("datasource: ", dataSource);
-
   const sub = useMemo(
     () => sublevelData?.subLevels?.find((s) => s.subLevelId === sublevelId),
     [sublevelData?.subLevels, sublevelId],
@@ -176,6 +179,24 @@ const AddRecords = () => {
       });
     },
   });
+  const { mutate: updateRecord, isPending: updatingRecord } = usePost({
+    postFn: updateRecordFn,
+    mutationOptions: { mutationKey: ["record", "update"] },
+    onSuccess: async ({ responseCode, responseMessage }) => {
+      if (responseCode === 1) {
+        await qc.invalidateQueries({ queryKey: academicRecordsKeys.all });
+        form.resetFields();
+        toast.success(responseMessage);
+      } else {
+        toast.error(responseMessage);
+      }
+    },
+    onError: (err) => {
+      toast.error(`Failed to update record`, {
+        description: err?.message,
+      });
+    },
+  });
 
   const columns: ColumnsType<SubLevelSubjectAcademicRecordGet> = [
     {
@@ -201,6 +222,38 @@ const AddRecords = () => {
         </span>
       ),
     },
+    {
+      key: "action",
+      title: "",
+      render: (_, row) => (
+        <TableActions
+          onEdit={() => {
+            setRecord(row);
+            form.setFieldsValue({
+              SubLevelId: {
+                label: row.subLevelName,
+                value: row.subLevelId,
+              },
+              AssessmentId: {
+                label: capitalizeWords(row.assessmentName),
+                value: row.assessmentId,
+              },
+              SubjectId: {
+                label: row.subjectName,
+                value: row.subjectId,
+              },
+              MarkedOver: row.markedOver,
+              StudentId: {
+                label: row.studentFullName,
+                value: row.studentId,
+              },
+              Marks: row.marks,
+            });
+          }}
+          deleteDisabled
+        />
+      ),
+    },
   ];
 
   const onFinish = (values: FormValues) => {
@@ -217,7 +270,11 @@ const AddRecords = () => {
       Marks: Number(values?.Marks.toString().replace("%", "")),
       MarkedOver: Number(values.MarkedOver),
     };
-    addRecord(payload);
+    if (record && record.academicRecordId) {
+      updateRecord({ id: record.academicRecordId, data: payload });
+    } else {
+      addRecord(payload);
+    }
   };
 
   return (
@@ -226,9 +283,16 @@ const AddRecords = () => {
       breadcrumb={["Academic Records", "Add Record"]}
       icon={<PlusCircleIcon className="size-4" />}
       form={form}
+      record={record}
       onFinish={onFinish}
-      isPending={addingRecord}
-      pendingLabel={addingRecord ? "Adding..." : "Add Record"}
+      isPending={addingRecord || updatingRecord}
+      pendingLabel={
+        addingRecord
+          ? "Adding..."
+          : updatingRecord
+            ? "Updating..."
+            : "Add Record"
+      }
       tableProps={{
         columns,
         dataSource,

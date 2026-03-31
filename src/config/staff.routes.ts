@@ -55,6 +55,9 @@ const staffPaths = {
 
   // requests
   request: { label: "Requests", href: "/staff/requests" },
+
+  // remarks
+  remarks: { label: "Remarks", href: "/staff/remarks" },
 };
 
 export default staffPaths;

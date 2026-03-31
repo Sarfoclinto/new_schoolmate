@@ -160,7 +160,7 @@ const RegisterStudent = () => {
       data: { studentId },
     }) => {
       if (responseCode === 1) {
-        console.log("received student id: ", studentId);
+
         toast.success(responseMessage, {
           action: studentId
             ? {

@@ -248,6 +248,7 @@ const endpoints = {
     },
     records: {
       add: "/CreateAcademicRecord",
+      update: `/UpdateAcademicRecord`,
       sublevelSubjectsRecords: (
         assessId: string,
         sublevelId: string,
@@ -272,7 +273,12 @@ const endpoints = {
     list: "/GetRequests",
     create: "/SendRequest",
     delete: "/DeleteRequest",
-    update: "/UpdateRequestStatus"
+    update: "/UpdateRequestStatus",
+  },
+  remarks: {
+    list: "/GetRemarks",
+    create: "/CreateRemark",
+    delete: (id: string) => `/DeleteRemark/${id}`,
   },
 };
 

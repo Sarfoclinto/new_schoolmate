@@ -487,7 +487,7 @@ const CloseAcademicTerm = () => {
       ...(notice.trim() && { Notice: notice.trim() }),
     };
     closeTerms(payload);
-    console.log("payload: ", payload);
+
   };
 
   // ─────────────────────────────────────────────────────────────────────────

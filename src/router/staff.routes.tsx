@@ -33,6 +33,9 @@ const {
   // profile
   profile,
 
+  // remarks
+  remarks,
+
   // notification
   notification,
 } = staff;
@@ -75,6 +78,9 @@ const Notice = lazy(() => import("@/features/staff/pages/notice"));
 
 // request
 const Request = lazy(() => import("@/features/staff/pages/request"));
+
+// remarks
+const Remarks = lazy(() => import("@/features/staff/pages/remarks"));
 
 // notification
 const Notifications = lazy(() => import("@/features/staff/pages/notification"));
@@ -159,6 +165,12 @@ const staffRoutes: RouteObject[] = [
       {
         path: profile.href,
         element: <Profile />,
+      },
+
+      // remarks
+      {
+        path: remarks.href,
+        element: <Remarks />,
       },
 
       // notifications

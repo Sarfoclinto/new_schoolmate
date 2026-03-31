@@ -243,6 +243,7 @@ export interface StudentTerminalReportGet {
   studentAttendance: studentAttendance;
   vacation: VacationGet[];
   gradingSystem: GradeGet[];
+  remarks: string
 }
 
 export interface UpdateStudentEnrollment {

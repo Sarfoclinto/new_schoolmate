@@ -44,6 +44,9 @@ export const mappingsKeys = createQueryKeys("mappings");
 export const requestKeys = createQueryKeys("request");
 
 
+export const remarksKeys = createQueryKeys("remarks");
+
+
 
 
 

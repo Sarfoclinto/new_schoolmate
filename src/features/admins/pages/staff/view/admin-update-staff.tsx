@@ -87,8 +87,8 @@ const AdminUpdateStaff = ({ data, invalidate, staffId }: Props) => {
       staffMode: values.StaffMode,
       roleId: values.Role,
     };
-    console.log("payload: ", payload);
 
+    
     update({ data: payload, id: staffId });
   };
 

@@ -363,8 +363,8 @@ const OpenAcademicTerm = () => {
     }
   }, [allTerms, loadingTerms, selectedEduLevelId]);
 
-  console.log("lastClosed: ", lastClosed);
 
+  
   useEffect(() => {
     if (lastClosed) {
       setClosedTermId(lastClosed.closedTermId);
@@ -494,8 +494,8 @@ const OpenAcademicTerm = () => {
       }),
       ...(notice.trim() && { Notice: notice.trim() }),
     };
-    console.log("open payload: ", payload);
 
+    
     openTerm(payload);
   };
 

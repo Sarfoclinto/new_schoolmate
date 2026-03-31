@@ -217,7 +217,6 @@ const StaffAssignment = () => {
       ProgramId: preference === "ProgramId" ? values.ProgramId : undefined,
       SubjectIds: preference === "SubjectIds" ? (values.SubjectIds ?? []) : [],
     };
-    // console.log("payload: ", payload);
 
     mapTeacher(payload);
   };

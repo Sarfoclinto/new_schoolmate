@@ -39,6 +39,16 @@ export interface SubLevelSubjectAcademicRecordGet {
   studentFullName: string;
   marks: number;
   markedOver: number;
+  scaledMarks: number;
+
+  assessmentId: string;
+  assessmentName: string;
+
+  subjectId: string;
+  subjectName: string;
+
+  subLevelId: string;
+  subLevelName: string;
 }
 
 interface academicRec {

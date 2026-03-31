@@ -11,6 +11,7 @@ import {
   ClipboardListIcon,
   CalendarCheckIcon,
   UserCheckIcon,
+  MessageSquareTextIcon,
   SendIcon,
   AlertOctagon,
 } from "lucide-react";
@@ -168,6 +169,17 @@ const staffMenu: AppMenuItem[] = [
       </SidebarLabel>
     ),
     icon: <SendIcon className="size-3.5" />,
+  }),
+
+  // ── Remarks ────────────────────────────────────────────────────────────────
+  item({
+    key: staff.remarks.href,
+    label: (
+      <SidebarLabel type="link" to={staff.remarks.href}>
+        {staff.remarks.label}
+      </SidebarLabel>
+    ),
+    icon: <MessageSquareTextIcon className="size-3.5" />,
   }),
 ];
 
