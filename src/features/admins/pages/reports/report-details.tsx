@@ -23,8 +23,6 @@ import useFetch from "@/hooks/api/use-fetch";
 import { getStuReportFn } from "@/services/student";
 import type { ReportPaths } from "@/types/ui";
 import { studentKeys } from "@/config/query-keys";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import {
   BarChart2,
   BookOpen,
@@ -40,6 +38,7 @@ import {
 import { MotionDiv } from "@/components/custom/motion";
 import { ReportDocument, StatChip } from "./util-component";
 import { getOrdinal } from "@/utils/string";
+import { downloadReportPdf, printReport } from "./report-print-utils";
 
 // Inject once
 if (
@@ -112,96 +111,6 @@ const ReportDetails = () => {
     [assessmentMap],
   );
 
-  // ── Print: opens new window, copies just the report node HTML,
-  //    injects the shared rpt-* CSS, waits for images, then prints.
-  const handlePrint = () => {
-    const node = reportRef.current;
-    if (!node) return;
-
-    const win = window.open("", "_blank");
-    if (!win) return;
-
-    const styleContent =
-      document.getElementById("rpt-print-styles")?.textContent ?? "";
-
-    win.document.write(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Terminal Report</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; padding: 12mm; font-family: 'Times New Roman', serif; }
-    @page { size: A4 portrait; margin: 10mm 12mm; }
-    ${styleContent}
-  </style>
-</head>
-<body>${node.innerHTML}</body>
-</html>`);
-    win.document.close();
-
-    win.onload = () => {
-      const imgs = Array.from(win.document.images);
-      if (!imgs.length) {
-        win.print();
-        return;
-      }
-
-      let loaded = 0;
-      const tryPrint = () => {
-        if (++loaded === imgs.length) win.print();
-      };
-      imgs.forEach((img) => {
-        if (img.complete) tryPrint();
-        else {
-          img.onload = tryPrint;
-          img.onerror = tryPrint;
-        }
-      });
-    };
-  };
-
-  // ── PDF: captures just the report node (not the whole page)
-  const handleDownloadPdf = async () => {
-    const node = reportRef.current;
-    if (!node) return;
-
-    const canvas = await html2canvas(node, {
-      scale: 2, // 2× for sharper text
-      useCORS: true, // allow cross-origin images
-      backgroundColor: "#fff",
-      logging: false,
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const imgW = pageW;
-    const imgH = (canvas.height * imgW) / canvas.width;
-
-    // Multi-page support: split if content is taller than one A4 page
-    let yOffset = 0;
-    let pageRendered = 0;
-    while (yOffset < imgH) {
-      if (pageRendered > 0) pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, -yOffset, imgW, imgH);
-      yOffset += pageH;
-      pageRendered++;
-    }
-
-    const name = data?.studentDetails
-      ? `${data.studentDetails.firstName}_${data.studentDetails.surname}_Report.pdf`
-      : "Student_Terminal_Report.pdf";
-    pdf.save(name);
-  };
-
   // ── Loading state
   if (isLoading) {
     return (
@@ -259,7 +168,7 @@ const ReportDetails = () => {
         <div className="flex items-center gap-x-2.5">
           <button
             type="button"
-            onClick={handlePrint}
+            onClick={() => printReport(reportRef)}
             className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-[#0D1B2E] bg-white border border-slate-200 hover:border-[#1E3A5F] hover:bg-[#EEF2F8] transition-all cursor-pointer"
             style={{ boxShadow: "0 1px 4px rgba(13,27,46,0.06)" }}
           >
@@ -268,7 +177,12 @@ const ReportDetails = () => {
           </button>
           <button
             type="button"
-            onClick={handleDownloadPdf}
+            onClick={() => {
+              const name = data?.studentDetails
+                ? `${data.studentDetails.firstName}_${data.studentDetails.surname}_Report.pdf`
+                : "Student_Terminal_Report.pdf";
+              downloadReportPdf(reportRef, name);
+            }}
             className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
             style={{
               background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",

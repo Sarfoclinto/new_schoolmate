@@ -59,7 +59,7 @@ export const StatCard = ({
       </Link>
       {/* subtle accent line at the bottom */}
       <div
-        className={`h-1 w-8 rounded-full ${stat.accent.replace("bg-", "bg-").replace("-50", "-200")}`}
+        className={`h-1 w-8 rounded-full ${stat?.accent?.replace("bg-", "bg-")?.replace("-50", "-200")}`}
       />
     </div>
   </MotionDiv>

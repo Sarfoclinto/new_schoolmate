@@ -42,18 +42,20 @@ export const ReportHeader = ({
       marginBottom: "8px",
     }}
   >
-    {/* School logo */}
+    {/* Student photo */}
     <img
-      src={buildMediaUrl(logo)}
-      alt="School logo"
+      src={studentImage ? buildMediaUrl(studentImage) : "/man.png"}
+      alt="Student"
       style={{
         width: 150,
         height: 150,
         objectFit: "cover",
         objectPosition: "center",
+        // border: "1px solid #000",
+        marginLeft: "auto",
+        display: "block",
       }}
     />
-
     {/* Centre text */}
     <div style={{ textAlign: "center", lineHeight: 1.6 }}>
       <p
@@ -99,18 +101,15 @@ export const ReportHeader = ({
       </p>
     </div>
 
-    {/* Student photo */}
+    {/* School logo */}
     <img
-      src={studentImage ? buildMediaUrl(studentImage) : "/no-logo.png"}
-      alt="Student"
+      src={buildMediaUrl(logo)}
+      alt="School logo"
       style={{
         width: 150,
         height: 150,
         objectFit: "cover",
         objectPosition: "center",
-        border: "1px solid #000",
-        marginLeft: "auto",
-        display: "block",
       }}
     />
   </div>
@@ -254,7 +253,7 @@ const AssessmentTable = ({
         <th className="rpt-th rpt-th-left">Subject</th>
         {assessmentIds.map((id) => (
           <th key={id} className="rpt-th" style={{ minWidth: 60 }}>
-            {assessmentMap[id].AssessmentName}
+            {capitalizeWords(assessmentMap[id].AssessmentName ?? "")}
             <br />
             <span style={{ fontWeight: 400, fontSize: "9px" }}>
               ({assessmentMap[id].AssessmentPercentage}%)
@@ -305,7 +304,9 @@ const AssessmentTable = ({
           <td className="rpt-td" style={{ fontWeight: 700 }}>
             {row.gradings?.grade || "—"}
           </td>
-          <td className="rpt-td">{row.gradings?.remark || "—"}</td>
+          <td className="rpt-td">
+            {capitalizeWords(row.gradings?.remark ?? "") || "—"}
+          </td>
           <td className="rpt-td">{getInitials(row.teacherName)}</td>
         </tr>
       ))}
@@ -410,7 +411,7 @@ const ReportFooter = ({
               style={{ fontSize: "10px", whiteSpace: "nowrap" }}
             >
               <strong>{g.grade}</strong> ({g.from}–{g.to}):{" "}
-              {capitalizeWords(g.remark)}
+              {capitalizeWords(g.remark ?? "")}
             </span>
           ))}
         </div>
