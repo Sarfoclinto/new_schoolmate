@@ -8,6 +8,10 @@ export interface SubLevelGet {
   academicLevelId: string;
   academicLevelName: string;
   academicLevelAlias: string;
+  
+  educationalLevelId: string;
+  educationalLevelName: string;
+  educationalLevelAlias: string;
 }
 
 export interface SubLevelPost {

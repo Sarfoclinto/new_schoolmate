@@ -77,3 +77,19 @@ export interface ClassRecordsGet {
   John      70         60      80       90
 
 */
+interface assessment {
+  subjectId: string;
+  subjectName: string;
+  subjectTotalAssessment: number;
+  subjectPosition?: number;
+}
+export interface StudentRank {
+  studentId: string;
+  fullName: string;
+  otherName: string;
+  assessment: assessment[];
+  assessmentsTotal: number;
+  rank: number;
+}
+
+export type ClassRanking = StudentRank[];

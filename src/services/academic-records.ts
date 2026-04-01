@@ -2,6 +2,7 @@ import { deleteHelper, getHelper, postHelper, updateHelper } from "@/api/crud";
 import endpoints from "@/config/endpoints";
 import type {
   AcademicRecordPost,
+  ClassRanking,
   ClassRecordsGet,
   PassmarkGet,
   PassmarkPost,
@@ -60,10 +61,24 @@ export const getSublevelRecords = async (
   sublevelId: string,
   assessId: string,
   teacherId?: string,
+  academicTermId?: string,
 ) => {
   return getHelper<ClassRecordsGet[]>(records.sublevelAcademicRecords, {
     assessmentId: assessId,
     subLevelId: sublevelId,
     teacherId: teacherId,
+    academicTermId,
+  });
+};
+
+export const getClassRankingFn = async (
+  subLevelId: string,
+  academicTermId: string,
+  academicYearId?: string,
+) => {
+  return getHelper<ClassRanking>(records.classRanking, {
+    subLevelId,
+    academicYearId,
+    academicTermId,
   });
 };

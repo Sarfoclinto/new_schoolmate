@@ -401,6 +401,15 @@ const adminMenu: AppMenuItem[] = [
         permission: PERMISSIONS.REPORTS_READ,
       }),
       item({
+        key: admin.classRanking.href,
+        label: (
+          <SidebarLabel type="link" to={admin.classRanking.href}>
+            {admin.classRanking.label}
+          </SidebarLabel>
+        ),
+        icon: <ClipboardList className="size-3.5" />,
+      }),
+      item({
         key: admin.stuAttReport.href,
         label: (
           <SidebarLabel type="link" to={admin.stuAttReport.href}>

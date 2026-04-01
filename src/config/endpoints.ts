@@ -249,6 +249,7 @@ const endpoints = {
     records: {
       add: "/CreateAcademicRecord",
       update: `/UpdateAcademicRecord`,
+      classRanking: "/GetClassRanking",
       sublevelSubjectsRecords: (
         assessId: string,
         sublevelId: string,

@@ -43,6 +43,7 @@ import {
   educationKeys,
   eduKeys,
   subjectKeys,
+  termKeys,
 } from "@/config/query-keys";
 import type { SelectTypes } from "@/types/ui";
 import { getAssessmentsBySubIdFn } from "@/services/setup/assessment-n-grading";
@@ -57,6 +58,7 @@ import { cn } from "@/lib/utils";
 import { capitalizeWords } from "@/utils/string";
 import { getAllSubLevelsFn } from "@/services/setup/sublevel";
 import { getSublevelSubjectsFn } from "@/services/setup/study-module";
+import { getTermsBySubIdFn } from "@/services/setup/year-n-term";
 
 // ─── Stat chip ──────────────────────────────────────────────────────
 const StatChip = ({
@@ -275,6 +277,7 @@ const parsePct = (raw?: string): number | null => {
 const ViewRecords = () => {
   const [sublevel, setSublevel] = useState<SelectTypes | null>(null);
   const [assessment, setAssessment] = useState<SelectTypes | null>(null);
+  const [term, setTerm] = useState<SelectTypes | null>(null);
   const [search, setSearch] = useState("");
 
   const { collapsed } = useUIStore(
@@ -286,35 +289,36 @@ const ViewRecords = () => {
 
   const sublevelId = sublevel?.value;
   const assessmentId = assessment?.value;
+  const termId = term?.value;
 
   const { data: sublevels = [], isLoading: loadingSubLevels } = useFetch({
     queryFn: getAllSubLevelsFn,
     queryKeys: eduKeys.sublevels(),
   });
-
   const { data: subjectData = [] } = useFetch({
     queryFn: () => getSublevelSubjectsFn(sublevelId!),
     queryKeys: subjectKeys.custom("sublevel", { sublevelId }),
     enabled: !!sublevelId,
   });
-
-  // const { data: teacherMapping } = useFetch({
-  //   queryFn: () => getTeacherMappingFn(teacherId!),
-  //   queryKeys: mappingsKeys.custom("teacher", { teacherId }),
-  //   enabled: !!teacherId,
-  // });
   const { data: assessments, isLoading: loadingAssessments } = useFetch({
     queryFn: () => getAssessmentsBySubIdFn(sublevelId!),
     queryKeys: educationKeys.custom("assessment", { sublevelId }),
     enabled: !!sublevelId,
   });
   const { data: subLevelRecords, isLoading: loadingRecords } = useFetch({
-    queryFn: () => getSublevelRecords(sublevelId!, assessmentId!),
+    queryFn: () =>
+      getSublevelRecords(sublevelId!, assessmentId!, undefined, termId),
     queryKeys: academicRecordsKeys.custom("sublevel-records", {
       assessmentId,
       sublevelId,
+      termId,
     }),
     enabled: !!sublevelId && !!assessmentId,
+  });
+  const { data: terms = [], isLoading: loadingTerms } = useFetch({
+    queryKeys: termKeys.list({ selectedSublevel: sublevelId }),
+    queryFn: () => getTermsBySubIdFn(sublevelId!),
+    enabled: !!sublevelId,
   });
 
   // ── Select options ────────────────────────────────────────────────
@@ -323,10 +327,18 @@ const ViewRecords = () => {
       sublevels?.map((s) => ({
         label: s.subLevelName,
         value: s.subLevelId,
+        educationalLevelId: s.educationalLevelId,
       })) ?? [],
     [sublevels],
   );
-
+  const termsOptions = useMemo(() => {
+    return (
+      terms?.map((t) => ({
+        label: t.academicTermName,
+        value: t.academicTermId,
+      })) ?? []
+    );
+  }, [terms]);
   const assessmentOptions = useMemo(
     () =>
       assessments?.assessments?.map((a) => ({
@@ -475,7 +487,7 @@ const ViewRecords = () => {
           badge={assessment ? assessment.label : undefined}
         />
 
-        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Class / Sub-level */}
           <div>
             <p className="mb-1.5">
@@ -518,6 +530,28 @@ const ViewRecords = () => {
               value={assessment ?? undefined}
               onChange={(opt) =>
                 setAssessment({
+                  value: opt.value,
+                  label: opt.label as string,
+                })
+              }
+            />
+          </div>
+          {/* Term */}
+          <div>
+            <p className="mb-1.5">
+              <FL>Term</FL>
+            </p>
+            <Select
+              size="large"
+              labelInValue
+              placeholder={sublevel ? "Select term..." : "Pick a class first"}
+              className="w-full"
+              options={termsOptions}
+              loading={loadingTerms}
+              disabled={loadingTerms || !sublevel}
+              value={term ?? undefined}
+              onChange={(opt) =>
+                setTerm({
                   value: opt.value,
                   label: opt.label as string,
                 })

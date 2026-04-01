@@ -118,6 +118,10 @@ const adminPaths = {
     label: "Attendance",
     href: "/admin/reports/student-attendance-report",
   },
+  classRanking: {
+    label: "Class Ranking",
+    href: "/admin/reports/class-ranking",
+  },
 
   // finance
   finance: { label: "Finance", href: "/admin/finance" },

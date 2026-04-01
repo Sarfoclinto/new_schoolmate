@@ -47,6 +47,7 @@ const {
   stuAttReport,
   stuReportDetail,
   academicRecords,
+  classRanking,
 
   // finance
   fees,
@@ -152,6 +153,9 @@ const ReportDetail = lazy(
 );
 const AcademicRecords = lazy(
   () => import("@/features/admins/pages/reports/view-academic-records"),
+);
+const ClassRanking = lazy(
+  () => import("@/features/admins/pages/reports/class-ranking"),
 );
 
 // finance
@@ -337,6 +341,10 @@ const adminRoutes: RouteObject[] = [
       {
         path: stuReportDetail.href,
         element: guarded(stuReportDetail.href, <ReportDetail />),
+      },
+      {
+        path: classRanking.href,
+        element: guarded(classRanking.href, <ClassRanking />),
       },
 
       // ── Finance ─────────────────────────────────────────────────────────────
