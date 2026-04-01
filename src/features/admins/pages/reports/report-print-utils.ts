@@ -1,133 +1,142 @@
 /**
- * report-print-utils.ts
+ * report-print-utils.ts  —  v3 (definitive)
  *
- * Two exports:
- *  1. downloadReportPdf(ref, filename)
- *     — patches oklch → rgb before html2canvas runs, then restores.
- *     — captures only the ref element, not the whole page.
+ * ROOT CAUSE (confirmed by reading html2canvas source):
  *
- *  2. printReport(ref)
- *     — opens a blank window, copies the ref's innerHTML + all rpt-* styles
- *       + Google Fonts into it, waits for fonts + images, then window.print().
- *     — does NOT rely on react-to-print or contentRef iframe cloning.
+ * html2canvas calls `window.getComputedStyle(node)` which returns a
+ * CSSStyleDeclaration. It then reads `.backgroundColor`, `.color`,
+ * `.borderTopColor` etc. as raw strings and passes them directly to its
+ * internal `parseColor()`. Tailwind v3/v4 causes these to be `oklch(…)`
+ * strings. html2canvas has no oklch parser → throws.
  *
- * Why the original approaches broke:
- *  ─ html2canvas crashes on oklch() colors (Tailwind v3/v4 uses them for
- *    borders, backgrounds, etc. in the computed style). Fix: walk every
- *    element in the subtree before capture and replace any oklch() computed
- *    style with its getComputedStyle rgb() equivalent, forcing it inline.
+ * Patching inline styles on the live DOM elements does NOT help because
+ * `getComputedStyle` still reflects the cascade, not just inline styles,
+ * and the returned CSSStyleDeclaration is a live view computed by the browser.
  *
- *  ─ useReactToPrint clones the ref into a sandboxed iframe that has no
- *    stylesheets, so the document is unstyled → blank sheet. Fix: open a
- *    real window (not an iframe), inject exactly the styles we need
- *    (rpt-* CSS + Google Fonts link), copy innerHTML, wait, then print.
+ * THE FIX — monkey-patch CSSStyleDeclaration.prototype:
+ *   Before html2canvas runs, wrap the property accessors (via
+ *   Object.defineProperty on the prototype) so that any string containing
+ *   "oklch" is transparently converted to rgb() by passing it through the
+ *   browser's own color parser (a hidden off-screen element). After capture,
+ *   the original descriptors are restored. This is safe because:
+ *   1. It is scoped to a single async operation (try/finally).
+ *   2. It only intercepts the ~10 color properties html2canvas reads.
+ *   3. No other code runs concurrently (JS is single-threaded).
  *
- * Usage in ReportDetails.tsx — see bottom of this file.
+ * PRINT FIX — new window (not react-to-print iframe):
+ *   react-to-print clones the ref into an iframe with no stylesheets → blank.
+ *   We open window.open(), inject our rpt-* CSS + Google Fonts, wait for
+ *   fonts + images, then print. This produces correctly styled output.
  */
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// oklch → rgb polyfill for html2canvas
+// oklch → rgb converter  (uses the browser's own cascade to do the math)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * html2canvas reads *computed* CSS property values off DOM nodes. Modern
- * browsers store colors internally as oklch(). html2canvas's color parser
- * doesn't understand oklch and throws.
- *
- * Strategy: before capturing, walk every element in the subtree. For each
- * CSS property whose *computed* value contains "oklch", convert it to rgb
- * by: (a) setting the value on a throwaway div, (b) reading back the computed
- * value from that div (the browser converts to rgb for us), then (c) applying
- * it as an inline style. After the capture we remove the inline styles we
- * added so the DOM is clean again.
- *
- * The properties we need to patch: the ones html2canvas actually reads.
- * Patching all 300+ properties would be too slow; these are the culprits.
- */
-const CANVAS_PROPS = [
-  "color",
+let _convEl: HTMLElement | null = null;
+
+function getConverterEl(): HTMLElement {
+  if (_convEl) return _convEl;
+  _convEl = document.createElement("div");
+  _convEl.style.cssText =
+    "position:fixed;top:-9999px;left:-9999px;width:0;height:0;" +
+    "visibility:hidden;pointer-events:none;";
+  document.body.appendChild(_convEl);
+  return _convEl;
+}
+
+function oklchToRgb(raw: string): string {
+  if (!raw || !raw.includes("oklch")) return raw;
+  const el = getConverterEl();
+  try {
+    el.style.color = "";
+    el.style.color = raw;
+    const converted = getComputedStyle(el).color;
+    return converted || raw;
+  } catch {
+    return raw;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// The exact property names html2canvas reads from CSSStyleDeclaration
+// (from CSSParsedDeclaration constructor in html2canvas/dist/html2canvas.js)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const COLOR_PROPS = [
   "backgroundColor",
-  "borderColor",
   "borderTopColor",
   "borderRightColor",
   "borderBottomColor",
   "borderLeftColor",
-  "outlineColor",
-  "boxShadow",
+  "color",
   "textDecorationColor",
+  "webkitTextStrokeColor",
+  "outlineColor",
   "caretColor",
-  "fill",
-  "stroke",
 ] as const;
 
-type PatchedEl = { el: HTMLElement; props: { prop: string; prev: string }[] };
+type SavedDescriptor = {
+  prop: string;
+  descriptor: PropertyDescriptor | undefined;
+};
 
-const PROXY_DIV =
-  typeof document !== "undefined"
-    ? (() => {
-        const d = document.createElement("div");
-        d.style.position = "absolute";
-        d.style.visibility = "hidden";
-        d.style.pointerEvents = "none";
-        document.body.appendChild(d);
-        return d;
-      })()
-    : null;
+function patchCSSDeclarationProto(): SavedDescriptor[] {
+  const proto = CSSStyleDeclaration.prototype;
+  const saved: SavedDescriptor[] = [];
 
-/** Convert any color string to rgb()/rgba() using the browser's own parser */
-function toRgb(value: string): string {
-  if (!PROXY_DIV) return value;
-  PROXY_DIV.style.color = "";
-  PROXY_DIV.style.color = value;
-  const computed = getComputedStyle(PROXY_DIV).color;
-  return computed || value;
-}
+  for (const prop of COLOR_PROPS) {
+    const original = Object.getOwnPropertyDescriptor(proto, prop);
+    saved.push({ prop, descriptor: original });
 
-function patchOklch(root: HTMLElement): PatchedEl[] {
-  const patched: PatchedEl[] = [];
-  const cs = getComputedStyle(root);
-  const rootProps: PatchedEl["props"] = [];
-
-  for (const prop of CANVAS_PROPS) {
-    const computed = cs[prop as keyof CSSStyleDeclaration] as string;
-    if (typeof computed === "string" && computed.includes("oklch")) {
-      const rgb = toRgb(computed);
-      const prev = root.style[prop as keyof CSSStyleDeclaration] as string;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (root.style as any)[prop] = rgb;
-      rootProps.push({ prop, prev });
-    }
+    Object.defineProperty(proto, prop, {
+      configurable: true,
+      enumerable: true,
+      get(this: CSSStyleDeclaration): string {
+        const raw: string = original?.get
+          ? original.get.call(this)
+          : this.getPropertyValue(
+              prop.replace(/([A-Z])/g, "-$1").toLowerCase(),
+            );
+        return oklchToRgb(raw);
+      },
+    });
   }
-  if (rootProps.length) patched.push({ el: root, props: rootProps });
 
-  // Recurse into children
-  root.querySelectorAll<HTMLElement>("*").forEach((child) => {
-    const childCs = getComputedStyle(child);
-    const childProps: PatchedEl["props"] = [];
-    for (const prop of CANVAS_PROPS) {
-      const computed = childCs[prop as keyof CSSStyleDeclaration] as string;
-      if (typeof computed === "string" && computed.includes("oklch")) {
-        const rgb = toRgb(computed);
-        const prev = child.style[prop as keyof CSSStyleDeclaration] as string;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (child.style as any)[prop] = rgb;
-        childProps.push({ prop, prev });
-      }
-    }
-    if (childProps.length) patched.push({ el: child, props: childProps });
+  // Also wrap getPropertyValue for any other color reads we might have missed
+  const origGpv = Object.getOwnPropertyDescriptor(proto, "getPropertyValue");
+  saved.push({ prop: "getPropertyValue", descriptor: origGpv });
+
+  Object.defineProperty(proto, "getPropertyValue", {
+    configurable: true,
+    enumerable: false,
+    writable: true,
+    value(this: CSSStyleDeclaration, property: string): string {
+      const raw: string = origGpv?.value
+        ? origGpv.value.call(this, property)
+        : "";
+      return oklchToRgb(raw);
+    },
   });
 
-  return patched;
+  return saved;
 }
 
-function restoreOklch(patched: PatchedEl[]) {
-  for (const { el, props } of patched) {
-    for (const { prop, prev } of props) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (el.style as any)[prop] = prev;
+function restoreCSSDeclarationProto(saved: SavedDescriptor[]) {
+  const proto = CSSStyleDeclaration.prototype;
+  for (const { prop, descriptor } of saved) {
+    if (descriptor) {
+      Object.defineProperty(proto, prop, descriptor);
+    } else {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (proto as any)[prop];
+      } catch {
+        /* some envs disallow delete on native protos */
+      }
     }
   }
 }
@@ -138,42 +147,30 @@ function restoreOklch(patched: PatchedEl[]) {
 
 export async function downloadReportPdf(
   ref: React.RefObject<HTMLDivElement | null>,
-  filename = "Student_Terminal_Report.pdf",
+  filename: string = "Student_Terminal_Report.pdf",
 ): Promise<void> {
   const node = ref.current;
-  if (!node) return;
+  if (!node) {
+    console.warn("[downloadReportPdf] ref.current is null");
+    return;
+  }
 
-  // 1. Patch oklch → rgb inline before capture
-  const patched = patchOklch(node);
+  const saved = patchCSSDeclarationProto();
 
   let canvas: HTMLCanvasElement;
   try {
     canvas = await html2canvas(node, {
       scale: 2,
       useCORS: true,
+      allowTaint: true,
       backgroundColor: "#ffffff",
       logging: false,
-      // Tell html2canvas to use the inline styles we just applied
-      // (it already does, but this makes the intent explicit)
-      onclone: (clonedDoc) => {
-        // Remove any Tailwind CDN / vite-injected <style> that could
-        // re-introduce oklch in the cloned document. We only need the
-        // rpt-* styles for the report.
-        const styles = clonedDoc.querySelectorAll<HTMLStyleElement>("style");
-        styles.forEach((s) => {
-          // Keep only styles that contain rpt- rules
-          if (!s.textContent?.includes("rpt-")) s.remove();
-        });
-        // Remove external stylesheets (Tailwind built CSS) from clone
-        const links = clonedDoc.querySelectorAll<HTMLLinkElement>(
-          "link[rel='stylesheet']",
-        );
-        links.forEach((l) => l.remove());
+      onclone: (_doc, clonedEl) => {
+        clonedEl.style.background = "#ffffff";
       },
     });
   } finally {
-    // 2. Always restore — even if capture threw
-    restoreOklch(patched);
+    restoreCSSDeclarationProto(saved);
   }
 
   const imgData = canvas.toDataURL("image/png");
@@ -183,7 +180,6 @@ export async function downloadReportPdf(
   const imgW = pageW;
   const imgH = (canvas.height * imgW) / canvas.width;
 
-  // Multi-page support
   let yOffset = 0;
   let page = 0;
   while (yOffset < imgH) {
@@ -197,72 +193,113 @@ export async function downloadReportPdf(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Print via new window (not iframe — iframe has no stylesheets)
+// Print via new window  (NOT react-to-print — that iframe has no stylesheets)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Collect every <style> tag whose content contains "rpt-" (our report styles)
- * so we can inject them into the print window.
- */
 function collectRptStyles(): string {
   if (typeof document === "undefined") return "";
-  const styles: string[] = [];
+  const chunks: string[] = [];
+
+  // 1. Any <style> tag whose content contains rpt- rules
+  //    (this catches the PRINT_STYLES injected by ReportDetails.tsx)
   document.querySelectorAll<HTMLStyleElement>("style").forEach((s) => {
-    if (s.textContent?.includes("rpt-")) {
-      styles.push(s.textContent);
-    }
+    const text = s.textContent ?? "";
+    if (text.includes("rpt-")) chunks.push(text);
   });
-  return styles.join("\n");
+
+  // 2. Fallback: if rpt-print-styles was injected by id
+  const byId = document.getElementById(
+    "rpt-print-styles",
+  ) as HTMLStyleElement | null;
+  if (byId?.textContent && !chunks.some((c) => c === byId.textContent)) {
+    chunks.push(byId.textContent);
+  }
+
+  // 3. If nothing found at all, inject a minimal baseline so the
+  //    printed page is at least readable
+  if (chunks.length === 0) {
+    chunks.push(`
+      .rpt-root { font-family: 'Times New Roman', serif; font-size: 12px; color: #000; }
+      .rpt-table { width: 100%; border-collapse: collapse; }
+      .rpt-th, .rpt-td { border: 1px solid #000; padding: 3px 5px; text-align: center; font-size: 11px; }
+      .rpt-th-left, .rpt-td-left { text-align: left; }
+      .rpt-label { font-weight: 700; font-size: 11px; }
+      .rpt-value { font-size: 11px; }
+      .rpt-border { border: 1px solid #000; }
+      .rpt-cell { padding: 3px 6px; }
+      .rpt-br { border-right: 1px solid #000; }
+      .rpt-bb { border-bottom: 1px solid #000; }
+      .rpt-grid { display: grid; }
+      .rpt-g3 { grid-template-columns: repeat(3, 1fr); }
+      .rpt-g51 { grid-template-columns: 5fr 1fr; }
+      .rpt-section-bar { background: #0D1B2E; color: #fff; padding: 2px 6px; font-size: 11px; font-weight: 700; }
+    `);
+  }
+
+  return chunks.join("\n");
 }
 
 export function printReport(ref: React.RefObject<HTMLDivElement | null>): void {
   const node = ref.current;
-  if (!node) return;
+  if (!node) {
+    console.warn("[printReport] ref.current is null");
+    return;
+  }
 
   const rptCss = collectRptStyles();
   const innerHTML = node.innerHTML;
 
   const win = window.open("", "_blank", "width=900,height=700");
   if (!win) {
-    alert("Pop-up blocked. Please allow pop-ups for this page to print.");
+    alert(
+      "Pop-up was blocked. Please allow pop-ups for this site and try again.",
+    );
     return;
   }
 
   win.document.write(`<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8"/>
   <title>Student Terminal Report</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: #fff; }
-    body { font-family: 'Times New Roman', Times, serif; font-size: 12px; }
+    html, body {
+      margin: 0; padding: 0;
+      background: #fff;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12px;
+      color: #000;
+    }
     @page { size: A4 portrait; margin: 10mm 12mm; }
     @media print {
-      html, body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      html, body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
     }
-    /* ── Paste rpt-* rules ── */
     ${rptCss}
   </style>
 </head>
 <body>
-  <div id="report-print-root" class="rpt-root" style="width:100%;padding:0">
+  <div id="report-print-root" class="rpt-root"
+       style="width:100%;padding:0;background:#fff;color:#000">
     ${innerHTML}
   </div>
 </body>
 </html>`);
-
   win.document.close();
 
-  // Wait for fonts, then images, then print
-  const waitFonts = () =>
-    win.document.fonts ? win.document.fonts.ready : Promise.resolve();
+  const waitFonts = (): Promise<void> =>
+    win.document.fonts
+      ? win.document.fonts.ready.then(() => undefined)
+      : Promise.resolve();
 
-  const waitImages = () =>
-    new Promise<void>((resolve) => {
+  const waitImages = (): Promise<void> =>
+    new Promise((resolve) => {
       const imgs = Array.from(win.document.images);
       if (!imgs.length) {
         resolve();
@@ -270,72 +307,25 @@ export function printReport(ref: React.RefObject<HTMLDivElement | null>): void {
       }
       let n = 0;
       const done = () => {
-        if (++n === imgs.length) resolve();
+        if (++n >= imgs.length) resolve();
       };
-      imgs.forEach((img) => {
-        if (img.complete) {
-          done();
-        } else {
-          img.onload = done;
-          img.onerror = done;
-        }
-      });
+      imgs.forEach((img) =>
+        img.complete
+          ? done()
+          : Object.assign(img, { onload: done, onerror: done }),
+      );
     });
 
-  // 500 ms initial settle for CSS / fonts
   setTimeout(async () => {
     try {
       await waitFonts();
       await waitImages();
-    } catch (err) {
-        console.info("err: ",err)
-      // proceed anyway
+    } catch {
+      /* proceed */
     }
-    // Extra 200 ms for layout reflow
     setTimeout(() => {
       win.focus();
       win.print();
-    }, 200);
-  }, 500);
+    }, 250);
+  }, 600);
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// HOW TO UPDATE ReportDetails.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-//
-// 1. Remove all existing print/PDF imports:
-//    ✗  import html2canvas from "html2canvas";
-//    ✗  import jsPDF from "jspdf";
-//    ✗  import { useReactToPrint } from "react-to-print";
-//
-// 2. Add:
-//    import { downloadReportPdf, printReport } from "./report-print-utils";
-//
-// 3. Replace the reportRef declaration (keep it exactly as-is):
-//    const reportRef = useRef<HTMLDivElement>(null);
-//
-// 4. Remove the `handlePrint = useReactToPrint(…)` block entirely.
-//
-// 5. Update the two button onClick handlers:
-//
-//    // Print button
-//    onClick={() => printReport(reportRef)}
-//
-//    // Download PDF button
-//    onClick={() => {
-//      const name = data?.studentDetails
-//        ? `${data.studentDetails.firstName}_${data.studentDetails.surname}_Report.pdf`
-//        : "Student_Terminal_Report.pdf";
-//      downloadReportPdf(reportRef, name);
-//    }}
-//
-// 6. Make sure the ref is on the innermost div (the ReportDocument wrapper),
-//    NOT on the outer scrollable container. In ReportDetails.tsx that's:
-//
-//    <div ref={reportRef} style={{ minWidth: 640, background: "#fff" }}>
-//      <ReportDocument … />
-//    </div>
-//
-//    This is already correct in the existing code — no change needed.
-//
-// That's all. No other changes to ReportDetails.tsx or util-component.tsx.

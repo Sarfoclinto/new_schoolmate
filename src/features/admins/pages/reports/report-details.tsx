@@ -36,9 +36,10 @@ import {
   User,
 } from "lucide-react";
 import { MotionDiv } from "@/components/custom/motion";
-import { ReportDocument, StatChip } from "./util-component";
+import { ReportDocument, StatChip } from "./util-component-2";
 import { getOrdinal } from "@/utils/string";
-import { downloadReportPdf, printReport } from "./report-print-utils";
+import { downloadReportPdf, printReport } from "./util-fn-2";
+// import { useReactToPrint } from "react-to-print";
 
 // Inject once
 if (
@@ -168,7 +169,10 @@ const ReportDetails = () => {
         <div className="flex items-center gap-x-2.5">
           <button
             type="button"
-            onClick={() => printReport(reportRef)}
+            onClick={() => {
+              printReport(reportRef);
+              // handlePrint();
+            }}
             className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-[#0D1B2E] bg-white border border-slate-200 hover:border-[#1E3A5F] hover:bg-[#EEF2F8] transition-all cursor-pointer"
             style={{ boxShadow: "0 1px 4px rgba(13,27,46,0.06)" }}
           >
@@ -265,19 +269,25 @@ const ReportDetails = () => {
         {/* The actual report document — this div is captured for PDF/print */}
         <div className="p-6 overflow-x-auto">
           <div
-            ref={reportRef}
             style={{
-              minWidth: 640,
-              background: "#fff",
+              position: "relative",
             }}
           >
-            <ReportDocument
-              data={data}
-              normalizedSubjects={normalizedSubjects}
-              assessmentIds={assessmentIds}
-              assessmentMap={assessmentMap}
-              averageMark={averageMark}
-            />
+            <div
+              ref={reportRef}
+              style={{
+                minWidth: 640,
+                background: "#fff",
+              }}
+            >
+              <ReportDocument
+                data={data}
+                normalizedSubjects={normalizedSubjects}
+                assessmentIds={assessmentIds}
+                assessmentMap={assessmentMap}
+                averageMark={averageMark}
+              />
+            </div>
           </div>
         </div>
       </MotionDiv>
