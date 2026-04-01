@@ -15,7 +15,7 @@ import type {
 } from "@/types/api/student";
 import { round2 } from "./util-fn";
 import { capitalizeWords, getInitials, getOrdinal } from "@/utils/string";
-import { QRCode } from "antd";
+// import { QRCode } from "antd";
 import { buildMediaUrl } from "@/utils/media";
 import { formatDate } from "@/utils/date-n-time";
 
@@ -420,7 +420,7 @@ const sectionBar: React.CSSProperties = {
 const ReportFooter = ({
   headmasterRemarks,
   gradingSystem,
-  qrValue,
+  // qrValue,
 }: ReportFooterProps) => (
   <>
     {/* Attendance + Headmaster block */}
@@ -469,7 +469,7 @@ const ReportFooter = ({
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "5fr 1fr",
+        gridTemplateColumns: "1fr",
         gap: "12px",
         backgroundColor: BG,
       }}
@@ -499,7 +499,7 @@ const ReportFooter = ({
       </div>
 
       {/* QR code */}
-      <div
+      {/* <div
         style={{
           display: "flex",
           flexDirection: "column",
@@ -519,7 +519,7 @@ const ReportFooter = ({
         >
           Scan to verify
         </span>
-      </div>
+      </div> */}
     </div>
   </>
 );
@@ -582,8 +582,10 @@ export const ReportDocument = ({
         endYear={d.endYear}
         subLevelName={d.subLevelName}
         academicTermName={d.academicTermName}
-        vacationDate={vac?.vacationDate}
-        reopeningDate={vac?.reopeningDate}
+        // vacationDate={vac?.vacationDate}
+        // reopeningDate={vac?.reopeningDate}
+        vacationDate={data.dates.vacationTermDate}
+        reopeningDate={data.dates.reopeningTermDate}
         programName={d.programName}
         averageMark={averageMark}
         numberOfStudents={d.numberOfStudentInSublevel}

@@ -187,43 +187,43 @@ export async function downloadReportPdf(
 // Print
 // ─────────────────────────────────────────────────────────────────────────────
 
-function collectRptStyles(): string {
-  if (typeof document === "undefined") return "";
-  const chunks: string[] = [];
+// function collectRptStyles(): string {
+//   if (typeof document === "undefined") return "";
+//   const chunks: string[] = [];
 
-  document.querySelectorAll<HTMLStyleElement>("style").forEach((s) => {
-    const text = s.textContent ?? "";
-    if (text.includes("rpt-")) chunks.push(text);
-  });
+//   document.querySelectorAll<HTMLStyleElement>("style").forEach((s) => {
+//     const text = s.textContent ?? "";
+//     if (text.includes("rpt-")) chunks.push(text);
+//   });
 
-  const byId = document.getElementById(
-    "rpt-print-styles",
-  ) as HTMLStyleElement | null;
-  if (byId?.textContent && !chunks.some((c) => c === byId.textContent)) {
-    chunks.push(byId.textContent);
-  }
+//   const byId = document.getElementById(
+//     "rpt-print-styles",
+//   ) as HTMLStyleElement | null;
+//   if (byId?.textContent && !chunks.some((c) => c === byId.textContent)) {
+//     chunks.push(byId.textContent);
+//   }
 
-  if (chunks.length === 0) {
-    chunks.push(`
-      .rpt-root { font-family: 'Times New Roman', serif; font-size: 12px; color: #000; }
-      .rpt-table { width: 100%; border-collapse: collapse; }
-      .rpt-th, .rpt-td { border: 1px solid #000; padding: 3px 5px; text-align: center; font-size: 11px; }
-      .rpt-th-left, .rpt-td-left { text-align: left; }
-      .rpt-label { font-weight: 700; font-size: 11px; }
-      .rpt-value { font-size: 11px; }
-      .rpt-border { border: 1px solid #000; }
-      .rpt-cell { padding: 3px 6px; }
-      .rpt-br { border-right: 1px solid #000; }
-      .rpt-bb { border-bottom: 1px solid #000; }
-      .rpt-grid { display: grid; }
-      .rpt-g3 { grid-template-columns: repeat(3, 1fr); }
-      .rpt-g51 { grid-template-columns: 5fr 1fr; }
-      .rpt-section-bar { background: #0D1B2E; color: #fff; padding: 2px 6px; font-size: 11px; font-weight: 700; }
-    `);
-  }
+//   if (chunks.length === 0) {
+//     chunks.push(`
+//       .rpt-root { font-family: 'Times New Roman', serif; font-size: 12px; color: #000; }
+//       .rpt-table { width: 100%; border-collapse: collapse; }
+//       .rpt-th, .rpt-td { border: 1px solid #000; padding: 3px 5px; text-align: center; font-size: 11px; }
+//       .rpt-th-left, .rpt-td-left { text-align: left; }
+//       .rpt-label { font-weight: 700; font-size: 11px; }
+//       .rpt-value { font-size: 11px; }
+//       .rpt-border { border: 1px solid #000; }
+//       .rpt-cell { padding: 3px 6px; }
+//       .rpt-br { border-right: 1px solid #000; }
+//       .rpt-bb { border-bottom: 1px solid #000; }
+//       .rpt-grid { display: grid; }
+//       .rpt-g3 { grid-template-columns: repeat(3, 1fr); }
+//       .rpt-g51 { grid-template-columns: 5fr 1fr; }
+//       .rpt-section-bar { background: #0D1B2E; color: #fff; padding: 2px 6px; font-size: 11px; font-weight: 700; }
+//     `);
+//   }
 
-  return chunks.join("\n");
-}
+//   return chunks.join("\n");
+// }
 
 export function printReport(ref: React.RefObject<HTMLDivElement | null>): void {
   const node = ref.current;
@@ -232,7 +232,7 @@ export function printReport(ref: React.RefObject<HTMLDivElement | null>): void {
     return;
   }
 
-  const rptCss = collectRptStyles();
+  // const rptCss = collectRptStyles();
   const innerHTML = node.innerHTML;
 
   const win = window.open("", "_blank", "width=900,height=700");
@@ -246,9 +246,6 @@ export function printReport(ref: React.RefObject<HTMLDivElement | null>): void {
 <head>
   <meta charset="utf-8"/>
   <title>Student Terminal Report</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body {
@@ -265,7 +262,7 @@ export function printReport(ref: React.RefObject<HTMLDivElement | null>): void {
         -webkit-print-color-adjust: exact;
       }
     }
-    ${rptCss}
+    
   </style>
 </head>
 <body>

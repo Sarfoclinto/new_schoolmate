@@ -243,7 +243,11 @@ export interface StudentTerminalReportGet {
   studentAttendance: studentAttendance;
   vacation: VacationGet[];
   gradingSystem: GradeGet[];
-  remarks: string
+  remarks: string;
+  dates: {
+    vacationTermDate: string;
+    reopeningTermDate: string;
+  };
 }
 
 export interface UpdateStudentEnrollment {
