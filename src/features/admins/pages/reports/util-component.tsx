@@ -502,11 +502,11 @@ export const ReportDocument = ({
       />
 
       <ReportFooter
-        attendedDays={data.studentAttendance.attendedDays}
-        schoolDays={data.studentAttendance.schoolDays}
+        attendedDays={data.attendance.attendedDays}
+        schoolDays={data.attendance.schoolDays}
         headmasterRemarks={data.remarks}
         notice={vac?.notice}
-        gradingSystem={data.gradingSystem}
+        gradingSystem={data.gradingSystems}
         qrValue={`${window.location.origin}/verify/report/${d.studentId}`}
       />
     </div>
