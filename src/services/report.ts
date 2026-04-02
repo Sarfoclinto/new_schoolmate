@@ -23,9 +23,14 @@ export const getClassReport = async (params: ClassReportParam) => {
   );
 };
 
-export const getStudentReport = async (
-  params: ClassReportParam & { studentId: string },
-) => {
+type StudentReportParam = Omit<
+  ClassReportParam,
+  "mode" | "subLevelIds" | "studentIds"
+> & {
+  studentId: string;
+  subLevelId: string;
+};
+export const getStudentReport = async (params: StudentReportParam) => {
   return getFileHelper<{ blob: Blob; fileName: string }>(
     reports.singleReport,
     params,

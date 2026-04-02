@@ -18,7 +18,7 @@
 
 import { useLocation } from "react-router-dom";
 import { normalizeSubjects, PRINT_STYLES } from "./util-fn";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useFetch from "@/hooks/api/use-fetch";
 import { getAllSubLevelStuFn, getStuReportFn } from "@/services/student";
 import type { ReportPaths, SelectTypes } from "@/types/ui";
@@ -39,13 +39,18 @@ import {
 import { MotionDiv } from "@/components/custom/motion";
 import { ReportDocument, StatChip } from "./util-component-2";
 import { getOrdinal } from "@/utils/string";
-import { downloadReportPdf, printReport } from "./util-fn-2";
+import { printReport } from "./util-fn-2";
 import { useDisclosure } from "@/hooks/use-disclosure";
 import { Button, Drawer, Form, Select } from "antd";
 import { getAllEduLevelsFn } from "@/services/setup/educational-level";
 import { getAcaByEduIdFn } from "@/services/setup/academic-level";
 import { getSubLevelsByAcaIdFn } from "@/services/setup/sublevel";
 import { getAllYearsFn, getTermsByEduIdFn } from "@/services/setup/year-n-term";
+import { useMutation } from "@tanstack/react-query";
+import { getStudentReport } from "@/services/report";
+import { toast } from "sonner";
+import type { AxiosError } from "axios";
+import { useSignalRStore } from "@/store/signalr.store";
 // import { useReactToPrint } from "react-to-print";
 
 // Inject once
@@ -61,6 +66,7 @@ if (
 
 const ReportDetails = () => {
   const location = useLocation();
+  const yearId = useSignalRStore((s) => s.academicYear)?.academicYearId;
   const { studentId, subLevelId, year, term } = location.state || {};
   const reportRef = useRef<HTMLDivElement>(null);
   const [form] = Form.useForm();
@@ -77,6 +83,8 @@ const ReportDetails = () => {
     academicYearId: year,
     subLevelId,
   });
+  const [label, setLabel] = useState<string>("");
+  const downloadLinkRef = useRef<HTMLAnchorElement>(null);
 
   const reqPy = useMemo(() => params, [params]);
   useEffect(() => {
@@ -133,6 +141,65 @@ const ReportDetails = () => {
     queryFn: getAllYearsFn,
     queryKeys: yearKeys.list(),
   });
+  const generatePdf = useMutation({
+    mutationFn: getStudentReport,
+    onMutate: ({ academicTermId, subLevelId, studentId }) => {
+      const termName =
+        academicTerms?.find((t) => t.academicTermId === academicTermId)
+          ?.academicTermName ?? "";
+      const studentName =
+        students?.find((t) => t.studentId === studentId)?.fullName ?? "";
+      const sublevelName =
+        subLevels?.find((t) => t.subLevelId === subLevelId)?.subLevelName ?? "";
+
+      const label = `${studentName}_${termName}_${sublevelName}_Report.pdf`;
+      setLabel(label);
+    },
+    onSuccess: (result) => {
+      try {
+        const { blob, fileName } = result;
+        const url = URL.createObjectURL(blob);
+        if (!url || !downloadLinkRef.current) return;
+        const a = downloadLinkRef.current;
+        a.href = url;
+        a.download = label
+          ? `${label.replace(/[^a-zA-Z0-9_\-. ]/g, "_")}.pdf`
+          : `${fileName}.pdf`;
+
+        a.click();
+        // Cleanup memory after download
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 1000);
+        toast.success("Reports generated — click Download.");
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    onError: (err: AxiosError) => {
+      const msg = err.message || "An error occurred";
+
+      toast.error("Report generation failed", { description: msg });
+    },
+  });
+
+  const handlePdf = useCallback(() => {
+    if (!reportRef.current) return;
+    if (!yearId) return;
+    generatePdf.mutate({
+      academicTermId: reqPy.academicTermId,
+      academicYearId: reqPy.academicYearId,
+      subLevelId: reqPy.subLevelId,
+      studentId: reqPy.studentId,
+    });
+  }, [
+    yearId,
+    generatePdf,
+    reqPy.academicTermId,
+    reqPy.academicYearId,
+    reqPy.subLevelId,
+    reqPy.studentId,
+  ]);
 
   const normalizedSubjects = useMemo(
     () => normalizeSubjects(data?.subjectReports ?? []),
@@ -246,6 +313,8 @@ const ReportDetails = () => {
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-2">
+      {/* Hidden download anchor */}
+      <a ref={downloadLinkRef} className="hidden" aria-hidden="true" />
       {/* ── Page header ──────────────────────────────── */}
       <MotionDiv
         initial={{ opacity: 0, y: -8 }}
@@ -277,7 +346,7 @@ const ReportDetails = () => {
               printReport(reportRef);
               // handlePrint();
             }}
-            className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-[#0D1B2E] bg-white border border-slate-200 hover:border-[#1E3A5F] hover:bg-[#EEF2F8] transition-all cursor-pointer"
+            className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-[#0D1B2E] bg-white border border-slate-200 hover:border-[#1E3A5F] hover:bg-[#EEF2F8] transition-all"
             style={{ boxShadow: "0 1px 4px rgba(13,27,46,0.06)" }}
           >
             <Printer className="w-3.5 h-3.5 text-[#1E3A5F]" />
@@ -285,13 +354,9 @@ const ReportDetails = () => {
           </button>
           <button
             type="button"
-            onClick={() => {
-              const name = data?.studentDetails
-                ? `${data.studentDetails.firstName}_${data.studentDetails.surname}_Report.pdf`
-                : "Student_Terminal_Report.pdf";
-              downloadReportPdf(reportRef, name);
-            }}
-            className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
+            onClick={handlePdf}
+            disabled={generatePdf.isPending}
+            className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer  disabled:cursor-not-allowed disabled:opacity-45"
             style={{
               background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
             }}
