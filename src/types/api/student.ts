@@ -240,9 +240,9 @@ export interface StudentTerminalReportGet {
   studentDetails: studentDetails;
   subjectReports: SubjectReport[];
   subLevelPosition: StudentSubLevelPosition;
-  studentAttendance: studentAttendance;
+  attendance: studentAttendance;
   vacation: VacationGet[];
-  gradingSystem: GradeGet[];
+  gradingSystems: GradeGet[];
   remarks: string;
   dates: {
     vacationTermDate: string;

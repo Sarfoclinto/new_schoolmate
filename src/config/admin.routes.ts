@@ -122,6 +122,10 @@ const adminPaths = {
     label: "Class Ranking",
     href: "/admin/reports/class-ranking",
   },
+  bulkReportPrint: {
+    label: "Bulk Report Print",
+    href: "/admin/reports/bulk-report-print",
+  },
 
   // finance
   finance: { label: "Finance", href: "/admin/finance" },

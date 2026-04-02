@@ -281,6 +281,10 @@ const endpoints = {
     create: "/CreateRemark",
     delete: (id: string) => `/DeleteRemark/${id}`,
   },
+  reports: {
+    classBulkReport: "/GenerateClassReport",
+    singleReport: "/GenerateSingleReport"
+  }
 };
 
 export default endpoints;

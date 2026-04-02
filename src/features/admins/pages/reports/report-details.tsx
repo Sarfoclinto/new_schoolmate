@@ -18,16 +18,17 @@
 
 import { useLocation } from "react-router-dom";
 import { normalizeSubjects, PRINT_STYLES } from "./util-fn";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useFetch from "@/hooks/api/use-fetch";
-import { getStuReportFn } from "@/services/student";
-import type { ReportPaths } from "@/types/ui";
-import { studentKeys } from "@/config/query-keys";
+import { getAllSubLevelStuFn, getStuReportFn } from "@/services/student";
+import type { ReportPaths, SelectTypes } from "@/types/ui";
+import { eduKeys, studentKeys, termKeys, yearKeys } from "@/config/query-keys";
 import {
   BarChart2,
   BookOpen,
   CalendarDays,
   ChevronRight,
+  ClipboardCheck,
   Download,
   GraduationCap,
   Hash,
@@ -39,6 +40,12 @@ import { MotionDiv } from "@/components/custom/motion";
 import { ReportDocument, StatChip } from "./util-component-2";
 import { getOrdinal } from "@/utils/string";
 import { downloadReportPdf, printReport } from "./util-fn-2";
+import { useDisclosure } from "@/hooks/use-disclosure";
+import { Button, Drawer, Form, Select } from "antd";
+import { getAllEduLevelsFn } from "@/services/setup/educational-level";
+import { getAcaByEduIdFn } from "@/services/setup/academic-level";
+import { getSubLevelsByAcaIdFn } from "@/services/setup/sublevel";
+import { getAllYearsFn, getTermsByEduIdFn } from "@/services/setup/year-n-term";
 // import { useReactToPrint } from "react-to-print";
 
 // Inject once
@@ -56,16 +63,33 @@ const ReportDetails = () => {
   const location = useLocation();
   const { studentId, subLevelId, year, term } = location.state || {};
   const reportRef = useRef<HTMLDivElement>(null);
+  const [form] = Form.useForm();
+  const [selectedEdu, setSelectedEdu] = useState<SelectTypes | null>(null);
+  const [selectedAca, setSelectedAca] = useState<SelectTypes | null>(null);
+  const [selectedSub, setSelectedSub] = useState<SelectTypes | null>(null);
+  const eduId = selectedEdu?.value;
+  const acaId = selectedAca?.value;
+  const subId = selectedSub?.value;
+  const { isOpen, open, close } = useDisclosure();
+  const [params, setParams] = useState<ReportPaths>({
+    studentId,
+    academicTermId: term,
+    academicYearId: year,
+    subLevelId,
+  });
 
-  const reqPy: ReportPaths = useMemo(
-    () => ({
-      studentId,
-      academicTermId: term,
-      academicYearId: year,
-      subLevelId,
-    }),
-    [studentId, subLevelId, term, year],
-  );
+  const reqPy = useMemo(() => params, [params]);
+  useEffect(() => {
+    if (studentId && subLevelId && year && term) {
+      form.setFieldsValue({
+        studentId,
+        subLevelId,
+        year,
+        term,
+      });
+    }
+  }, [studentId, subLevelId, year, term, form]);
+
   const { data, isLoading } = useFetch({
     queryFn: () => getStuReportFn(reqPy),
     queryKeys: studentKeys.custom("terminal-report", reqPy),
@@ -74,6 +98,40 @@ const ReportDetails = () => {
       !!reqPy.subLevelId &&
       !!reqPy.academicTermId &&
       !!reqPy.academicYearId,
+  });
+  //   queries
+  //   get all educational levels for dropdown
+  const { data: eduLevels, isLoading: loadingEduLevels } = useFetch({
+    queryFn: getAllEduLevelsFn,
+    queryKeys: eduKeys.levels(),
+  });
+  // get all academic levels
+  const { data: acaLevels, isLoading: loadingAcaLevels } = useFetch({
+    queryFn: () => getAcaByEduIdFn(eduId!),
+    queryKeys: eduKeys.academicLevels(eduId),
+    enabled: !!eduId,
+  });
+  //   get all sublevels of that academic level
+  const { data: subLevels, isLoading: loadingSubLevels } = useFetch({
+    queryFn: () => getSubLevelsByAcaIdFn(acaId!),
+    queryKeys: eduKeys.sublevels({ acaId }),
+    enabled: !!acaId,
+  });
+  const { data: students, isLoading: loadingStudents } = useFetch({
+    queryFn: () => getAllSubLevelStuFn(subId!),
+    queryKeys: studentKeys.custom("by-sub-level", {
+      subId,
+    }),
+    enabled: !!subId,
+  });
+  const { data: academicTerms, isLoading: loadingAcademicTerms } = useFetch({
+    queryFn: () => getTermsByEduIdFn(eduId!),
+    queryKeys: termKeys.custom("edu-terms", { eduId }),
+    enabled: !!eduId,
+  });
+  const { data: academicYears, isLoading: loadingYears } = useFetch({
+    queryFn: getAllYearsFn,
+    queryKeys: yearKeys.list(),
   });
 
   const normalizedSubjects = useMemo(
@@ -111,6 +169,52 @@ const ReportDetails = () => {
     () => Object.keys(assessmentMap),
     [assessmentMap],
   );
+
+  // memoized values
+  const eduOptions = useMemo(() => {
+    if (!eduLevels) return [];
+    return eduLevels.map((e) => ({
+      label: e.educationalLevelName,
+      value: e.educationalLevelId,
+    }));
+  }, [eduLevels]);
+  const acaOptions = useMemo(() => {
+    if (!acaLevels) return [];
+    return acaLevels.map((a) => ({
+      label: a.academicLevelName,
+      value: a.academicLevelId,
+    }));
+  }, [acaLevels]);
+  const subLevelOptions = useMemo(() => {
+    if (!subLevels) return [];
+    return [...subLevels]
+      .sort((a, b) => a.subLevelName.localeCompare(b.subLevelName))
+      .map((s) => ({
+        label: s.subLevelName,
+        value: s.subLevelId,
+      }));
+  }, [subLevels]);
+  const termOptions = useMemo(() => {
+    if (!academicTerms) return [];
+    return academicTerms.map((t) => ({
+      label: t.academicTermName,
+      value: t.academicTermId,
+    }));
+  }, [academicTerms]);
+  const yearOptions = useMemo(() => {
+    if (!academicYears) return [];
+    return academicYears.map((y) => ({
+      label: `${y.startYear}-${y.endYear}`,
+      value: y.academicYearId,
+    }));
+  }, [academicYears]);
+  const studentsOptions = useMemo(() => {
+    if (!students) return [];
+    return students.map((s) => ({
+      label: `${s.fullName} ${s.otherName ?? ""}`,
+      value: s.studentId,
+    }));
+  }, [students]);
 
   // ── Loading state
   if (isLoading) {
@@ -194,6 +298,17 @@ const ReportDetails = () => {
           >
             <Download className="w-3.5 h-3.5 text-[#C9A84C]" />
             Download PDF
+          </button>
+          <button
+            type="button"
+            onClick={open}
+            className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
+            style={{
+              background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
+            }}
+          >
+            <ClipboardCheck className="w-3.5 h-3.5 text-[#C9A84C]" />
+            New Report
           </button>
         </div>
       </MotionDiv>
@@ -291,6 +406,133 @@ const ReportDetails = () => {
           </div>
         </div>
       </MotionDiv>
+
+      {/* New report form drawer */}
+      <Drawer
+        open={isOpen}
+        onClose={close}
+        placement="right"
+        title="New Report"
+        size={400}
+      >
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={(values) => {
+            const payload = {
+              studentId: values.studentId,
+              subLevelId: values.subLevelId,
+              academicYearId: values.year,
+              academicTermId: values.term,
+            };
+
+            setParams(payload); // THIS triggers refetch
+            close(); // optional: close drawer
+          }}
+        >
+          <Form.Item
+            label="Educational Level"
+            name="eduId"
+            rules={[{ required: true }]}
+          >
+            <Select
+              placeholder="Select an educational level"
+              options={eduOptions}
+              loading={loadingEduLevels}
+              onChange={() => {
+                setSelectedAca(null);
+                setSelectedSub(null);
+              }}
+              onSelect={(_, opt) => setSelectedEdu(opt as SelectTypes)}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Academic Level"
+            name="acaId"
+            rules={[{ required: true }]}
+          >
+            <Select
+              placeholder={
+                eduId
+                  ? "Select an academic level"
+                  : "Select an educational level"
+              }
+              options={acaOptions}
+              loading={loadingAcaLevels}
+              disabled={!eduId}
+              onChange={() => setSelectedSub(null)}
+              onSelect={(_, opt) => setSelectedAca(opt as SelectTypes)}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Class (Sub-Level)"
+            name="subLevelId"
+            rules={[{ required: true }]}
+          >
+            <Select
+              placeholder={
+                acaId
+                  ? "Select a class (sub-level)"
+                  : "Select an academic level"
+              }
+              options={subLevelOptions}
+              loading={loadingSubLevels}
+              disabled={!acaId}
+              onSelect={(_, opt) => setSelectedSub(opt as SelectTypes)}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Academic Year"
+            name="year"
+            rules={[{ required: true }]}
+          >
+            <Select
+              placeholder="Select an academic year"
+              options={yearOptions}
+              loading={loadingYears}
+            />
+          </Form.Item>
+
+          <Form.Item label="Term" name="term" rules={[{ required: true }]}>
+            <Select
+              placeholder={
+                eduId ? "Select a term" : "Select an educational level"
+              }
+              options={termOptions}
+              loading={loadingAcademicTerms}
+              disabled={!eduId}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Student"
+            name="studentId"
+            rules={[{ required: true }]}
+          >
+            <Select
+              showSearch
+              options={studentsOptions}
+              loading={loadingStudents}
+              disabled={!subId}
+              placeholder={
+                subId ? "Select a student" : "Select a class (sub-level)"
+              }
+            />
+          </Form.Item>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            className="mt-4 h-10 bg-[#0D1B2E]"
+          >
+            Generate Report
+          </Button>
+        </Form>
+      </Drawer>
     </div>
   );
 };

@@ -26,9 +26,39 @@ export const postWithFile = async <T = MdResponse>(
 export const getHelper = async <T = unknown>(
   path: string,
   params: object = {},
+  responseType: "json" | "blob" = "json",
 ) => {
-  const { data } = await api.get(path, { params });
+  const { data } = await api.get(path, { params, responseType });
   return data as T;
+};
+export const getFileHelper = async <T = unknown>(
+  path: string,
+  params: object = {},
+  responseType: "json" | "blob" = "json",
+): Promise<T> => {
+  const response = await api.get(path, {
+    params,
+    responseType,
+  });
+
+  // Handle blob responses (PDF downloads)
+  if (responseType === "blob") {
+    const contentDisposition = response.headers["content-disposition"];
+
+    let fileName = "report.pdf";
+
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?(.+)"?/);
+      if (match?.[1]) fileName = match[1];
+    }
+
+    return {
+      blob: response.data,
+      fileName,
+    } as T;
+  }
+
+  return response.data as T;
 };
 export const getSingle = async <T = unknown>(
   path: string,

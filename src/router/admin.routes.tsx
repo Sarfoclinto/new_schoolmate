@@ -48,6 +48,7 @@ const {
   stuReportDetail,
   academicRecords,
   classRanking,
+  bulkReportPrint,
 
   // finance
   fees,
@@ -156,6 +157,9 @@ const AcademicRecords = lazy(
 );
 const ClassRanking = lazy(
   () => import("@/features/admins/pages/reports/class-ranking"),
+);
+const BulkReportPrint = lazy(
+  () => import("@/features/admins/pages/reports/bulk"),
 );
 
 // finance
@@ -345,6 +349,10 @@ const adminRoutes: RouteObject[] = [
       {
         path: classRanking.href,
         element: guarded(classRanking.href, <ClassRanking />),
+      },
+      {
+        path: bulkReportPrint.href,
+        element: guarded(bulkReportPrint.href, <BulkReportPrint />),
       },
 
       // ── Finance ─────────────────────────────────────────────────────────────

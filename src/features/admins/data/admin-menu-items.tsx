@@ -34,6 +34,7 @@ import {
   ShieldCheck,
   ClipboardList,
   CoinsIcon,
+  PrinterIcon,
   SendIcon,
 } from "lucide-react";
 
@@ -409,6 +410,16 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <ClipboardList className="size-3.5" />,
       }),
+      item({
+        key: admin.bulkReportPrint.href,
+        label: (
+          <SidebarLabel type="link" to={admin.bulkReportPrint.href}>
+            {admin.bulkReportPrint.label}
+          </SidebarLabel>
+        ),
+        icon: <PrinterIcon className="size-3.5" />,
+      }),
+
       item({
         key: admin.stuAttReport.href,
         label: (
