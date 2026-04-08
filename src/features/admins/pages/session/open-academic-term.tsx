@@ -786,7 +786,7 @@ const OpenAcademicTerm = () => {
           Optional Messages
         </p>
         <div className="flex flex-col gap-y-4">
-          <div>
+          {/* <div>
             <FL optional>Headmaster Remarks</FL>
             <TextArea
               value={headmasterRemarks}
@@ -796,7 +796,7 @@ const OpenAcademicTerm = () => {
               rows={3}
               disabled={isPending}
             />
-          </div>
+          </div> */}
           <div>
             <FL optional>Notice to Students / Parents</FL>
             <TextArea

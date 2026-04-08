@@ -589,12 +589,12 @@ const AdministrativePermissions = () => {
             className="text-xl font-bold text-[#0D1B2E] leading-none mb-1"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Permission Management
+            Control Management
           </h1>
           <nav className="flex items-center gap-x-1.5 text-xs text-slate-400 font-medium">
             <span className="text-[#1E3A5F] font-semibold">Administration</span>
             <ChevronRight className="w-3 h-3" />
-            <span>Manage Administrative Permissions</span>
+            <span>Manage Administrative Controls</span>
           </nav>
         </div>
 
@@ -738,7 +738,7 @@ const AdministrativePermissions = () => {
                     {/* Current permissions count by group */}
                     <div className="p-4 flex flex-col gap-y-1.5">
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
-                        Current permissions
+                        Current controls
                       </p>
                       {ADMIN_PERMISSION_GROUPS.map((g) => {
                         const activeInG = g.permissions.filter((p) =>

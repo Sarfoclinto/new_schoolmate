@@ -42,10 +42,13 @@ const FeesSetup = () => {
   const [record, setRecord] = useState<TuitionGet | null>(null);
   const [selectedEdu, setSelectedEdu] = useState<SelectTypes | null>(null);
   const [selectedAca, setSelectedAca] = useState<SelectTypes | null>(null);
-
-  const eduId = selectedEdu?.value;
   const [selectedYear, setSelectedYear] = useState<string | undefined>();
   const [selectedTerm, setSelectedTerm] = useState<string | undefined>();
+
+  const eduId = selectedEdu?.value;
+  const academicLevelId = selectedAca?.value;
+  const academicYearId = selectedYear;
+  const academicTermId = selectedTerm;
 
   const qc = useQueryClient();
 
@@ -73,8 +76,19 @@ const FeesSetup = () => {
     queryKeys: yearKeys.list(),
   });
   const { data: fees, isLoading: loadingFees } = useFetch({
-    queryFn: getFeesFn,
-    queryKeys: financeKeys.custom("fees"),
+    queryFn: () =>
+      getFeesFn({
+        educationalLevelId: eduId,
+        academicLevelId,
+        academicYearId,
+        academicTermId,
+      }),
+    queryKeys: financeKeys.custom("fees", {
+      educationalLevelId: eduId,
+      academicLevelId,
+      academicYearId,
+      academicTermId,
+    }),
   });
 
   useEffect(() => {
@@ -339,49 +353,48 @@ const FeesSetup = () => {
       formContent={
         <>
           <Form.Item
-            name="slCode"
-            label="Sub Ledger"
+            name="educationalLevelId"
+            label="Educational Level"
             rules={[
               {
                 required: true,
-                message: "Sub-leger is required",
+                message: "Educational level is required",
               },
             ]}
           >
             <Select
-              placeholder="Select Sub Ledger"
+              placeholder="Select Educational Level"
+              options={eduOptions}
+              loading={loadingEduLevels}
+              disabled={loadingEduLevels}
+              value={selectedEdu}
+              labelInValue
               showSearch
-              options={subLedgerOptions}
-              loading={loadingSubLedgers}
-              disabled={loadingSubLedgers}
               allowClear
+              onChange={(opt) => {
+                setSelectedEdu({ value: opt.value, label: opt.label });
+                form.resetFields(["academicLevelId"]);
+              }}
             />
           </Form.Item>
-
           <div className="grid w-full grid-cols-2 gap-x-1">
             <Form.Item
-              name="educationalLevelId"
-              label="Educational Level"
+              name="slCode"
+              label="Sub Ledger"
               rules={[
                 {
                   required: true,
-                  message: "Educational level is required",
+                  message: "Sub-leger is required",
                 },
               ]}
             >
               <Select
-                placeholder="Select Educational Level"
-                options={eduOptions}
-                loading={loadingEduLevels}
-                disabled={loadingEduLevels}
-                value={selectedEdu}
-                labelInValue
+                placeholder="Select Sub Ledger"
                 showSearch
+                options={subLedgerOptions}
+                loading={loadingSubLedgers}
+                disabled={loadingSubLedgers}
                 allowClear
-                onChange={(opt) => {
-                  setSelectedEdu({ value: opt.value, label: opt.label });
-                  form.resetFields(["academicLevelId"]);
-                }}
               />
             </Form.Item>
             <Form.Item
@@ -405,6 +418,9 @@ const FeesSetup = () => {
                 labelInValue
                 loading={loadingAcaLevels}
                 disabled={loadingAcaLevels || !selectedEdu?.value}
+                onChange={(opt) => {
+                  setSelectedAca({ value: opt.value, label: opt.label });
+                }}
                 showSearch
                 allowClear
               />

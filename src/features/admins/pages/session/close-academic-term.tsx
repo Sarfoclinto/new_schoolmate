@@ -176,7 +176,7 @@ export const TextArea = ({
     />
     {maxLength && (
       <span className="absolute bottom-2.5 right-3 text-[10px] text-slate-300 font-medium pointer-events-none">
-        {value.length}/{maxLength}
+        {value?.length || 0}/{maxLength}
       </span>
     )}
   </div>
@@ -487,7 +487,6 @@ const CloseAcademicTerm = () => {
       ...(notice.trim() && { Notice: notice.trim() }),
     };
     closeTerms(payload);
-
   };
 
   // ─────────────────────────────────────────────────────────────────────────

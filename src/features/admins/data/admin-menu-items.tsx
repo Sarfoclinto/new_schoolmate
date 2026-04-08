@@ -446,16 +446,6 @@ const adminMenu: AppMenuItem[] = [
     type: "submenu",
     children: [
       item({
-        key: admin.fees.href,
-        label: (
-          <SidebarLabel type="link" to={admin.fees.href}>
-            {admin.fees.label}
-          </SidebarLabel>
-        ),
-        icon: <ReceiptIcon className="size-3.5" />,
-        permission: PERMISSIONS.FINANCE_WRITE,
-      }),
-      item({
         key: admin.subLedgers.href,
         label: (
           <SidebarLabel type="link" to={admin.subLedgers.href}>
@@ -463,6 +453,16 @@ const adminMenu: AppMenuItem[] = [
           </SidebarLabel>
         ),
         icon: <CoinsIcon className="size-3.5" />,
+        permission: PERMISSIONS.FINANCE_WRITE,
+      }),
+      item({
+        key: admin.fees.href,
+        label: (
+          <SidebarLabel type="link" to={admin.fees.href}>
+            {admin.fees.label}
+          </SidebarLabel>
+        ),
+        icon: <ReceiptIcon className="size-3.5" />,
         permission: PERMISSIONS.FINANCE_WRITE,
       }),
     ],

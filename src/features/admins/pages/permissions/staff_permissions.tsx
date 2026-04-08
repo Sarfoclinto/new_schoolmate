@@ -585,12 +585,12 @@ const StaffPermissions = () => {
             className="text-xl font-bold text-[#0D1B2E] leading-none mb-1"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Permission Management
+            Control Management
           </h1>
           <nav className="flex items-center gap-x-1.5 text-xs text-slate-400 font-medium">
             <span className="text-[#1E3A5F] font-semibold">Administration</span>
             <ChevronRight className="w-3 h-3" />
-            <span>Manage Staff Permissions</span>
+            <span>Manage Staff Controls</span>
           </nav>
         </div>
 

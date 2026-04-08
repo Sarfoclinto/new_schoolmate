@@ -36,6 +36,12 @@ export const updateFeesFn = async (update: TuitionUpdate) => {
 export const deleteFeesFn = async (id: string) => {
   return deleteHelper(fees.delete(id));
 };
-export const getFeesFn = async () => {
-  return getHelper<TuitionGet[]>(fees.getAll);
+type FeesParams = {
+  educationalLevelId?: string;
+  academicLevelId?: string;
+  academicTermId?: string;
+  academicYearId?: string;
+};
+export const getFeesFn = async (params: FeesParams) => {
+  return getHelper<TuitionGet[]>(fees.getAll, params);
 };

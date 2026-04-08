@@ -152,13 +152,13 @@ const adminPaths = {
   },
 
   // permisions
-  permissions: { label: "Permissions", href: "/admin/permissions" },
+  permissions: { label: "Controls", href: "/admin/permissions" },
   admin_permissions: {
-    label: "Admins. Permissions",
+    label: "Admins. Controls",
     href: "/admin/administrative_permissions",
   },
   staff_permissions: {
-    label: "Staff Permissions",
+    label: "Staff Controls",
     href: "/admin/staff_permissions",
   },
 
