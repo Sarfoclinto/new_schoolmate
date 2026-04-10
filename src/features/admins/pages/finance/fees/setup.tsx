@@ -1,5 +1,5 @@
 import { ReceiptCent } from "lucide-react";
-import { SetupPage } from "../../components/setup-page";
+import { SetupPage } from "../../../components/setup-page";
 import { Form, InputNumber, Select } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import type { SelectTypes } from "@/types/ui";
@@ -29,7 +29,7 @@ import type { ColumnsType } from "antd/es/table";
 import type { TuitionGet, TuitionPost } from "@/types/api/finance";
 import type { AcademicTermGet } from "@/types/api/setup/year-n-term";
 import { formatCurrency } from "@/services/currency";
-import { TableActions } from "../../components/table-action";
+import { TableActions } from "../../../components/table-action";
 
 type FormValues = Omit<TuitionPost, "id"> & {
   educationalLevelId: { value: string; label: string };
@@ -326,7 +326,8 @@ const FeesSetup = () => {
   return (
     <SetupPage
       title="Fees Setup"
-      breadcrumb={["Finance Setup", "Fees Setup"]}
+      showClock={false}
+      showTitle={false}
       icon={<ReceiptCent className="w-4 h-4" />}
       hint={{
         note: "Setup all the various fees categories you can in the school",
@@ -349,6 +350,8 @@ const FeesSetup = () => {
               ? "Adding…"
               : "Add Fees"
       }
+      showFormsHeader={false}
+      showTableHeader={false}
       tableProps={{ columns, dataSource, rowKey: "id", loading: loadingFees }}
       formContent={
         <>

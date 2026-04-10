@@ -34,6 +34,9 @@ interface SetupPageProps<T extends object> {
   pendingLabel?: string;
   submitLabel?: string;
 
+  showFormsHeader?: boolean;
+  showTableHeader?: boolean;
+
   tableTitle?: React.ReactNode | (() => React.ReactNode);
 
   tableProps: Pick<
@@ -94,6 +97,8 @@ export function SetupPage<T extends object>({
   clockProps,
   headerNode,
   showForm = true,
+  showFormsHeader = true,
+  showTableHeader = true,
 }: SetupPageProps<T>) {
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-3">
@@ -148,39 +153,42 @@ export function SetupPage<T extends object>({
             style={{ boxShadow: "0 2px 12px rgba(13,27,46,0.06)" }}
           >
             {/* Form header */}
-            <div
-              className="flex items-center justify-between gap-x-3 px-6 py-4 border-b border-slate-100"
-              style={{
-                background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
-              }}
-            >
-              <div className="flex items-center gap-x-3">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
-                  {icon}
+            {showFormsHeader && (
+              <div
+                className="flex items-center justify-between gap-x-3 px-6 py-4 border-b border-slate-100"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
+                }}
+              >
+                <div className="flex items-center gap-x-3">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+                    {icon}
+                  </div>
+                  <span className="text-white font-semibold text-sm">
+                    {record
+                      ? `Edit ${title?.replace(/s$/, "")}`
+                      : `Add ${title?.replace(/s$/, "")}`}
+                  </span>
                 </div>
-                <span className="text-white font-semibold text-sm">
-                  {record
-                    ? `Edit ${title?.replace(/s$/, "")}`
-                    : `Add ${title?.replace(/s$/, "")}`}
-                </span>
-              </div>
 
-              {/* Editing badge + clear */}
-              <AnimatePresence>
-                {record && (
-                  <MotionButton
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    type="button"
-                    onClick={onClearRecord}
-                    className="flex items-center gap-x-1.5 text-[10px] font-bold tracking-widest uppercase bg-[#C9A84C]/20 text-[#C9A84C] px-2.5 py-1 rounded-full hover:bg-white/20 transition-colors cursor-pointer"
-                  >
-                    Editing <X className="w-3 h-3" />
-                  </MotionButton>
-                )}
-              </AnimatePresence>
-            </div>
+                {/* Editing badge + clear */}
+                <AnimatePresence>
+                  {record && (
+                    <MotionButton
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      type="button"
+                      onClick={onClearRecord}
+                      className="flex items-center gap-x-1.5 text-[10px] font-bold tracking-widest uppercase bg-[#C9A84C]/20 text-[#C9A84C] px-2.5 py-1 rounded-full hover:bg-white/20 transition-colors cursor-pointer"
+                    >
+                      Editing <X className="w-3 h-3" />
+                    </MotionButton>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
 
             <div className="p-6">
               {/* Hint box */}
@@ -238,29 +246,31 @@ export function SetupPage<T extends object>({
           className="bg-white rounded-2xl border border-slate-100 overflow-hidden"
           style={{ boxShadow: "0 2px 12px rgba(13,27,46,0.06)" }}
         >
-          <div
-            className="flex items-center gap-x-3 px-6 py-4 border-b border-slate-100"
-            style={{
-              background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
-            }}
-          >
-            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
-              {icon}
+          {showTableHeader && (
+            <div
+              className="flex items-center gap-x-3 px-6 py-4 border-b border-slate-100"
+              style={{
+                background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
+              }}
+            >
+              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+                {icon}
+              </div>
+              <span className="text-white font-semibold text-sm">
+                {title} Overview
+              </span>
+              {!replaceCount && tableProps.dataSource && (
+                <span className="ml-auto text-[10px] font-bold tracking-widest text-[#C9A84C] bg-white/10 px-2.5 py-0.5 rounded-full">
+                  {(tableProps.dataSource as any[]).length} total
+                </span>
+              )}
+              {replaceCount && countReplacement && (
+                <span className="ml-auto text-[10px] font-bold tracking-widest text-[#C9A84C] bg-white/10 px-2.5 py-0.5 rounded-full">
+                  {countReplacement}
+                </span>
+              )}
             </div>
-            <span className="text-white font-semibold text-sm">
-              {title} Overview
-            </span>
-            {!replaceCount && tableProps.dataSource && (
-              <span className="ml-auto text-[10px] font-bold tracking-widest text-[#C9A84C] bg-white/10 px-2.5 py-0.5 rounded-full">
-                {(tableProps.dataSource as any[]).length} total
-              </span>
-            )}
-            {replaceCount && countReplacement && (
-              <span className="ml-auto text-[10px] font-bold tracking-widest text-[#C9A84C] bg-white/10 px-2.5 py-0.5 rounded-full">
-                {countReplacement}
-              </span>
-            )}
-          </div>
+          )}
 
           {/* Optional extra title row (e.g. filter chips) */}
           {tableTitle && (

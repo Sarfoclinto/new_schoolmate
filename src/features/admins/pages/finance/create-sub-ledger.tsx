@@ -58,7 +58,7 @@ const CreateSubLedger = () => {
 
   // fns
   const invalidate = async () => {
-    await qc.invalidateQueries({ queryKey: ledgerKeys.custom("sub") });
+    qc.invalidateQueries({ queryKey: ledgerKeys.custom("sub") });
   };
 
   const onReset = () => {
@@ -78,10 +78,23 @@ const CreateSubLedger = () => {
       title: "Ledger",
       dataIndex: "sl",
       render: (v: string) => (
-        <span className="font-semibold capitalize! text-xs text-[#0D1B2E]">
+        <span className="font-semibold text-xs text-[#0D1B2E] uppercase">
           {v}
         </span>
       ),
+      width: "40%",
+    },
+    {
+      key: "description",
+      title: "Description",
+      dataIndex: "description",
+      render: (v: string) => (
+        <span className="font-semibold capitalize text-xs text-[#0D1B2E]">
+          {v ?? "-"}
+        </span>
+      ),
+      width: "60%",
+      align: "center",
     },
   ];
 
@@ -118,6 +131,22 @@ const CreateSubLedger = () => {
               size="large"
               className="rounded-xl!"
               placeholder="e.g. School Fees, Canteen Fees, Transportation Fees, etc"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="description"
+            label="Description"
+            extra={
+              <span className="text-xs font-mono">
+                Add a detailed description of the sub-ledger...
+              </span>
+            }
+          >
+            <Input.TextArea
+              size="large"
+              className="rounded-xl!"
+              placeholder="Description eg. Sports fee of GHS 50 for a complete PE-Kit"
             />
           </Form.Item>
         </>

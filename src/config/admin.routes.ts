@@ -134,6 +134,7 @@ const adminPaths = {
     label: "Subsidiary Ledgers",
     href: "/admin/finance/subsidiary-ledgers",
   },
+  bills: { label: "Bills", href: "/admin/finance/bills" },
 
   // events & notice
   notice: { label: "Notices", href: "/admin/notices" },

@@ -40,6 +40,7 @@ export type SubsidiaryLedger = {
   slCode: string;
   sl: string;
   glCode: string; // 100
+  description: string;
 };
 
 export type SubsidiaryLedgerPost = Pick<SubsidiaryLedger, "sl">;

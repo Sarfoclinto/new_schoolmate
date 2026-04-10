@@ -25,6 +25,7 @@ export type TeacherAssignments =
   | "sublevel-teachers";
 
   export type BulkReportTab = "generate" | "list-n-download"
+  export type Fees = "set" | "view"
 
 // staff
 export type ClassesnSubjects = "classes" | "subjects" | "sublevel-subject";

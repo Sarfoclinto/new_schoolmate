@@ -34,6 +34,7 @@ import {
   ShieldCheck,
   ClipboardList,
   CoinsIcon,
+  FileStackIcon,
   PrinterIcon,
   SendIcon,
 } from "lucide-react";
@@ -463,6 +464,16 @@ const adminMenu: AppMenuItem[] = [
           </SidebarLabel>
         ),
         icon: <ReceiptIcon className="size-3.5" />,
+        permission: PERMISSIONS.FINANCE_WRITE,
+      }),
+      item({
+        key: admin.bills.href,
+        label: (
+          <SidebarLabel type="link" to={admin.bills.href}>
+            {admin.bills.label}
+          </SidebarLabel>
+        ),
+        icon: <FileStackIcon className="size-3.5" />,
         permission: PERMISSIONS.FINANCE_WRITE,
       }),
     ],

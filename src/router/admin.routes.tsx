@@ -53,6 +53,7 @@ const {
   // finance
   fees,
   subLedgers,
+  bills,
 
   // events & notice
   notice,
@@ -163,10 +164,11 @@ const BulkReportPrint = lazy(
 );
 
 // finance
-const FeesSetup = lazy(() => import("@/features/admins/pages/finance/setup"));
+const Fees = lazy(() => import("@/features/admins/pages/finance/fees"));
 const SubLedgers = lazy(
   () => import("@/features/admins/pages/finance/create-sub-ledger"),
 );
+const Bills = lazy(() => import("@/features/admins/pages/finance/bills"));
 
 // events & notices
 const Notice = lazy(() => import("@/features/admins/pages/notice"));
@@ -356,11 +358,12 @@ const adminRoutes: RouteObject[] = [
       },
 
       // ── Finance ─────────────────────────────────────────────────────────────
-      { path: fees.href, element: guarded(fees.href, <FeesSetup />) },
+      { path: fees.href, element: guarded(fees.href, <Fees />) },
       {
         path: subLedgers.href,
         element: guarded(subLedgers.href, <SubLedgers />),
       },
+      { path: bills.href, element: guarded(bills.href, <Bills />) },
 
       // ── Events & Notices ────────────────────────────────────────────────────
       { path: allEvents.href, element: guarded(allEvents.href, <AllEvents />) },
