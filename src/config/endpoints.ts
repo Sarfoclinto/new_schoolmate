@@ -237,6 +237,9 @@ const endpoints = {
       update: (id: string) => `/UpdateTuitionSetup/${id}`,
       delete: (id: string) => `/DeleteTuitionSetup/${id}`,
     },
+    bills: {
+      class: "/GetClassBill",
+    },
   },
   academicRecords: {
     passmark: {
@@ -283,8 +286,8 @@ const endpoints = {
   },
   reports: {
     classBulkReport: "/GenerateClassReport",
-    singleReport: "/GenerateSingleReport"
-  }
+    singleReport: "/GenerateSingleReport",
+  },
 };
 
 export default endpoints;

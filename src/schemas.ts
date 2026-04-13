@@ -36,6 +36,7 @@ export const UserSchema = z.object({
   email: z.string(),
   createdAt: z.string(),
   staffId: z.string(),
+  imageUrl: z.string().nullable(),
 
   // ── New fields the backend now returns ──────────────────────────────────────
   /**

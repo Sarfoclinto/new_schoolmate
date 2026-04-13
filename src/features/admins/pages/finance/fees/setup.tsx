@@ -184,7 +184,7 @@ const FeesSetup = () => {
       if (responseCode === 1) {
         invalidate();
         toast.success(responseMessage);
-        onReset();
+        form.resetFields(["amount", "slCode"]);
       } else {
         toast.error(responseMessage);
       }
@@ -382,6 +382,48 @@ const FeesSetup = () => {
           </Form.Item>
           <div className="grid w-full grid-cols-2 gap-x-1">
             <Form.Item
+              name="academicYearId"
+              label="Academic Year"
+              rules={[
+                {
+                  required: true,
+                  message: "Year is required",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Academic Year"
+                options={yearOptions}
+                loading={loadingYears}
+                value={selectedYear}
+                onChange={setSelectedYear}
+              />
+            </Form.Item>
+            <Form.Item
+              name="academicTermId"
+              label="Academic Term"
+              rules={[
+                {
+                  required: true,
+                  message: "Term is required",
+                },
+              ]}
+            >
+              <Select
+                placeholder={
+                  selectedEdu ? "Select Term" : "Select edu level first"
+                }
+                options={termOptions}
+                loading={loadingAcademicTerms}
+                disabled={!selectedEdu}
+                value={selectedTerm}
+                onChange={setSelectedTerm}
+              />
+            </Form.Item>
+          </div>
+
+          <div className="grid w-full grid-cols-2 gap-x-1">
+            <Form.Item
               name="slCode"
               label="Sub Ledger"
               rules={[
@@ -430,47 +472,6 @@ const FeesSetup = () => {
             </Form.Item>
           </div>
 
-          <div className="grid w-full grid-cols-2 gap-x-1">
-            <Form.Item
-              name="academicYearId"
-              label="Academic Year"
-              rules={[
-                {
-                  required: true,
-                  message: "Year is required",
-                },
-              ]}
-            >
-              <Select
-                placeholder="Academic Year"
-                options={yearOptions}
-                loading={loadingYears}
-                value={selectedYear}
-                onChange={setSelectedYear}
-              />
-            </Form.Item>
-            <Form.Item
-              name="academicTermId"
-              label="Academic Term"
-              rules={[
-                {
-                  required: true,
-                  message: "Term is required",
-                },
-              ]}
-            >
-              <Select
-                placeholder={
-                  selectedEdu ? "Select Term" : "Select edu level first"
-                }
-                options={termOptions}
-                loading={loadingAcademicTerms}
-                disabled={!selectedEdu}
-                value={selectedTerm}
-                onChange={setSelectedTerm}
-              />
-            </Form.Item>
-          </div>
           <Form.Item
             name="amount"
             label="Amount"

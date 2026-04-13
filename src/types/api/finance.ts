@@ -49,3 +49,35 @@ export type SubsidiaryLedgerUpdate = {
   id: string;
   data: SubsidiaryLedgerPost;
 };
+
+
+
+/**
+ * endpoint: /GetClassBill
+ * 
+ * queryParams:
+ * subLevelId: string
+ * academicYearId?: string;
+ * academicTermId?: string;
+ */
+
+
+export interface SubLedgerBill {
+  slCode: string;
+  sl: string;
+  debit: number;
+  credit: number;
+  balance: number;
+}
+
+export interface StudentBill {
+  studentId: string;
+  fullName: string;
+  otherName: string;
+  subLedgerBill: SubLedgerBill[];
+  totalDebit: number;
+  totalCredit: number;
+  balance: number;
+}
+
+export type ClassBill = StudentBill[];

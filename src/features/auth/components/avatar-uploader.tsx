@@ -14,7 +14,7 @@
  * Everything else in UserProfile stays the same.
  */
 
-import { Upload } from "antd";
+import { Upload, Image } from "antd";
 import type { UploadFile } from "antd/es/upload";
 import { Camera } from "lucide-react";
 import { useState } from "react";
@@ -76,7 +76,7 @@ const AvatarUploader = ({
           }}
         >
           {displayUrl ? (
-            <img
+            <Image
               key={displayUrl} /* force re-mount when URL changes */
               src={displayUrl}
               alt={name}

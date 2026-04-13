@@ -363,8 +363,6 @@ const OpenAcademicTerm = () => {
     }
   }, [allTerms, loadingTerms, selectedEduLevelId]);
 
-
-  
   useEffect(() => {
     if (lastClosed) {
       setClosedTermId(lastClosed.closedTermId);
@@ -489,13 +487,12 @@ const OpenAcademicTerm = () => {
         PublishReport: settings.publishReport,
         BillStudents: settings.billStudents,
       },
-      ...(headmasterRemarks.trim() && {
-        HeadMasterRemarks: headmasterRemarks.trim(),
-      }),
-      ...(notice.trim() && { Notice: notice.trim() }),
+      // ...(headmasterRemarks.trim() && {
+      //   HeadMasterRemarks: headmasterRemarks.trim(),
+      // }),
+      // ...(notice.trim() && { Notice: notice.trim() }),
     };
 
-    
     openTerm(payload);
   };
 

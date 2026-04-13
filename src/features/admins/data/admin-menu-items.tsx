@@ -16,6 +16,7 @@ import {
   Building,
   UsersIcon,
   UserPlusIcon,
+  LayersIcon,
   UsersRoundIcon,
   Clock10,
   BriefcaseIcon,
@@ -474,6 +475,16 @@ const adminMenu: AppMenuItem[] = [
           </SidebarLabel>
         ),
         icon: <FileStackIcon className="size-3.5" />,
+        permission: PERMISSIONS.FINANCE_WRITE,
+      }),
+      item({
+        key: admin.classBill.href,
+        label: (
+          <SidebarLabel type="link" to={admin.classBill.href}>
+            {admin.classBill.label}
+          </SidebarLabel>
+        ),
+        icon: <LayersIcon className="size-3.5" />,
         permission: PERMISSIONS.FINANCE_WRITE,
       }),
     ],

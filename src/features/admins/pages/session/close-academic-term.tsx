@@ -35,6 +35,7 @@ import { AnimatePresence } from "motion/react";
 import type { CloseTermPayload } from "@/types/api/setup/year-n-term";
 import usePost from "@/hooks/api/use-post";
 import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
+import { redactString } from "@/utils/string";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // PRIMITIVES
@@ -219,7 +220,7 @@ const ActiveTermChip = ({
         <p className="text-[11px] text-slate-500 mt-0.5">{yearName}</p>
       )}
       <p className="text-[10px] text-slate-400 font-mono mt-0.5 truncate">
-        {termId}
+        {redactString(termId, { visibleStart: 5 })}
       </p>
     </div>
   </MotionDiv>

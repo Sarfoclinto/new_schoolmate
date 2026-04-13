@@ -90,3 +90,30 @@ export const copyToClipboard = async (text?: string) => {
     toast.error("Failed to copy to clipboard");
   }
 };
+
+/**
+ * Redacts a string by keeping a specified number of characters at the start and end.
+ */
+export interface RedactOptions {
+  visibleStart?: number;
+  visibleEnd?: number;
+  maskChar?: string;
+}
+
+export const redactString = (
+  str: string | null | undefined,
+  options: RedactOptions = {},
+): string => {
+  if (!str) return "";
+  const { visibleStart = 2, visibleEnd = 1, maskChar = "*" } = options;
+
+  if (str.length <= visibleStart + visibleEnd) {
+    return str;
+  }
+
+  const start = str.slice(0, visibleStart);
+  const end = str.slice(-visibleEnd);
+  const mask = maskChar.repeat(str.length - (visibleStart + visibleEnd));
+
+  return `${start}${mask}${end}`;
+};

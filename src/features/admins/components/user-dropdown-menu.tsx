@@ -28,7 +28,15 @@ const UserMenu = () => {
               fontFamily: "'DM Sans', sans-serif",
             }}
           >
-            {getInitials(user?.name)}
+            {user?.imageUrl ? (
+              <img
+                src={user?.imageUrl}
+                className="size-full rounded-full"
+                alt="avatar"
+              />
+            ) : (
+              getInitials(user?.name)
+            )}
           </div>
           <div className="hidden md:block text-left leading-none">
             <p
