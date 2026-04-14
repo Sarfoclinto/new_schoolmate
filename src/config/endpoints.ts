@@ -239,6 +239,10 @@ const endpoints = {
     },
     bills: {
       class: "/GetClassBill",
+      billStatus: "/BillingStatusReport",
+      manualLevel: "/billing/level",
+      manualStudent: "/billing/student",
+      unbilledStudents: "/billing/unbilled",
     },
   },
   academicRecords: {
