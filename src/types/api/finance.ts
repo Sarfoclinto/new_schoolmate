@@ -115,7 +115,7 @@ export interface BillingStatusReport {
 export interface ManualLevelBillingPayload {
   academicYearId: string;
   academicTermId: string;
-  educationalLevelIds: string[];
+  academicLevelIds: string[];
   subLedgerCodes?: string[];
   userId: string;
 }

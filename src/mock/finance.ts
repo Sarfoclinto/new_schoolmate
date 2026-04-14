@@ -5,7 +5,7 @@ import type {
   ClassBill,
   StudentBill,
   BillingStatusReport,
-  AcaLevelBillingStatus,
+  // AcaLevelBillingStatus,
   UnbilledStudent,
   BilledSubLedger,
   SubLevelBillingStatus,
@@ -175,7 +175,7 @@ export function generateMockBillingStatus(): BillingStatusReport {
                 { slCode: "006", sl: "ABACUS", amount: 100 },
               ]
             : [];
-
+      // ----
       // Billed sub-ledgers with actual charge counts
       const billedSubLedgers: BilledSubLedger[] =
         billingStatus === "fully_billed"
@@ -258,8 +258,8 @@ export function generateMockUnbilledStudents(
       studentId: `student-unbilled-${i + 1}`,
       fullName: `${nameData.first} ${nameData.last}`,
       otherName: nameData.other,
-      subLevelId: subLevel.id,
-      subLevelName: subLevel.name,
+      subLevelId: typeof subLevel === "object" ? subLevel.id : "-" + i,
+      subLevelName: typeof subLevel === "object" ? subLevel.name : "n" + i,
       admittedOn: new Date(2024, 0, Math.floor(Math.random() * 28) + 1)
         .toISOString()
         .split("T")[0],

@@ -1,18 +1,18 @@
 import {
   isRouteErrorResponse,
   Navigate,
-  useNavigate,
+  // useNavigate,
   useRouteError,
 } from "react-router-dom";
 import { Button } from "antd";
 import Section from "@/components/custom/section";
 import { AlertOctagonIcon } from "lucide-react";
-import { getUserDashboardRoute } from "@/utils/auth";
+// import { getUserDashboardRoute } from "@/utils/auth";
 import paths from "@/config/routes";
 
 const PageError = () => {
-  const navigate = useNavigate();
-  const to = getUserDashboardRoute();
+  // const navigate = useNavigate();
+  // const to = getUserDashboardRoute();
 
   const path = window.location.pathname;
 
@@ -68,7 +68,7 @@ const PageError = () => {
         danger
         onClick={() => {
           window.location.reload();
-          navigate(to);
+          // navigate(to);
         }}
       >
         Retry

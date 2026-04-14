@@ -172,8 +172,8 @@ const FeesSetup = () => {
   }, [academicYears]);
 
   // fns
-  const invalidate = async () => {
-    await qc.invalidateQueries({ queryKey: financeKeys.all });
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: financeKeys.all });
   };
 
   // mutations

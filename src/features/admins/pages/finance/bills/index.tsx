@@ -82,6 +82,9 @@ import { getAllYearsFn, getTermsByEduIdFn } from "@/services/setup/year-n-term";
 import { eduKeys, termKeys, yearKeys } from "@/config/query-keys";
 import { getAllEduLevelsFn } from "@/services/setup/educational-level";
 import { useAuth } from "@/store/auth.store";
+import { Link } from "react-router-dom";
+import paths from "@/config/routes";
+import { getAllSubLevelsFn } from "@/services/setup/sublevel";
 
 // ─── Currency fmt ─────────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -515,7 +518,7 @@ const LevelBillingDrawer = ({
     billLevel.mutate({
       academicYearId: yearId,
       academicTermId: termId,
-      educationalLevelIds: [level.academicLevelId],
+      academicLevelIds: [level.academicLevelId],
       subLedgerCodes: Array.from(selectedSls),
       userId: currentUserId,
     });
@@ -535,7 +538,7 @@ const LevelBillingDrawer = ({
       afterOpenChange={(isOpen) => {
         if (isOpen) handleOpen();
       }}
-      width={520}
+      size={520}
       styles={{
         header: {
           background: "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
@@ -749,6 +752,21 @@ const LevelBillingDrawer = ({
                     No fees have been set for this educational level. Go to the
                     fees setup page first to configure sub-ledger amounts.
                   </p>
+                  <div className="w-full flex items-center justify-between">
+                    <div />
+                    <Link
+                      to={{
+                        pathname: paths.admin.fees.href,
+                      }}
+                      state={{
+                        levelId: level.academicLevelId,
+                        levelName: level.academicLevelName,
+                      }}
+                      className="text-xs px-5 py-1.5 rounded-md cursor-pointer hover:scale-105 transition-all duration-150 active:scale-95 bg-rose-500! text-white! font-medium"
+                    >
+                      Go to Settings
+                    </Link>
+                  </div>
                 </div>
               </div>
             )}
@@ -975,7 +993,12 @@ const IndividualBillingSection = ({
         termId,
         subLevelId: subFilter ?? undefined,
       }),
-    enabled: !!yearId && !!termId && open,
+    enabled: !!yearId && !!termId && open && !!subFilter,
+  });
+
+  const { data: subLevels = [], isLoading: slLoading } = useFetch({
+    queryFn: getAllSubLevelsFn,
+    queryKeys: eduKeys.sublevels(),
   });
 
   const billStudents = useMutation({
@@ -992,11 +1015,18 @@ const IndividualBillingSection = ({
     onError: (e: AxiosError) => toast.error(e.message),
   });
 
-  const uniqueSubLevels = useMemo(() => {
-    const map = new Map<string, string>();
-    unbilled.forEach((s) => map.set(s.subLevelId, s.subLevelName));
-    return Array.from(map.entries())?.map(([id, name]) => ({ id, name }));
-  }, [unbilled]);
+  // const uniqueSubLevels = useMemo(() => {
+  //   const map = new Map<string, string>();
+  //   unbilled.forEach((s) => map.set(s.subLevelId, s.subLevelName));
+  //   return Array.from(map.entries())?.map(([id, name]) => ({ id, name }));
+  // }, [unbilled]);
+
+  const subOptions = useMemo(() => {
+    return subLevels.map((s) => ({
+      label: s.subLevelName,
+      value: s.subLevelId,
+    }));
+  }, [subLevels]);
 
   const REASON_LABELS: Record<string, string> = {
     new_admission: "New admission",
@@ -1128,10 +1158,9 @@ const IndividualBillingSection = ({
                 className="min-w-45"
                 allowClear
                 placeholder="All classes…"
-                options={uniqueSubLevels?.map((s) => ({
-                  label: s.name,
-                  value: s.id,
-                }))}
+                loading={slLoading}
+                disabled={slLoading}
+                options={subOptions}
                 value={subFilter ?? undefined}
                 onChange={(v) => setSubFilter(v ?? null)}
               />

@@ -13,13 +13,6 @@ import type {
   ManualStudentBillingPayload,
   UnbilledStudent,
 } from "@/types/api/finance";
-import {
-  // generateMockBillingStatus,
-  // generateMockClassBill,
-  generateMockUnbilledStudents,
-  delayMs,
-} from "@/mock/finance";
-
 const {
   finance: { fees, ledgers, bills },
 } = endpoints;
@@ -63,9 +56,6 @@ export const getClassBillFn = async (_p: {
   academicYearId?: string;
   academicTermId?: string;
 }): Promise<ClassBill> => {
-  // TODO: Remove and switch to real API when backend is ready
-  // await delayMs(1200); // Simulate network latency
-  // return generateMockClassBill();
   return getHelper<ClassBill>(bills.class, _p);
 };
 
@@ -74,8 +64,6 @@ export const getBillingStatusFn = async (_p: {
   termId: string;
   eduId: string | null;
 }): Promise<BillingStatusReport> => {
-  // await delayMs(1500); // Simulate network latency
-  // return generateMockBillingStatus();
   return getHelper<BillingStatusReport>(bills.billStatus, {
     academicYearId: _p.yearId,
     academicTermId: _p.termId,
@@ -83,8 +71,9 @@ export const getBillingStatusFn = async (_p: {
   });
 };
 
-export const manualLevelBillingFn = async (_p: ManualLevelBillingPayload) =>
-  postHelper(bills.manualLevel, _p);
+export const manualLevelBillingFn = async (_p: ManualLevelBillingPayload) => {
+  return postHelper(bills.manualLevel, _p);
+};
 export const manualStudentBillingFn = async (_p: ManualStudentBillingPayload) =>
   postHelper(bills.manualStudent, _p);
 
@@ -93,7 +82,9 @@ export const getUnbilledStudentsFn = async (_p: {
   termId: string;
   subLevelId?: string;
 }): Promise<UnbilledStudent[]> => {
-  // TODO: Remove and switch to real API when backend is ready
-  await delayMs(1200); // Simulate network latency
-  return generateMockUnbilledStudents(_p.subLevelId);
+  return getHelper<UnbilledStudent[]>(bills.unbilledStudents, {
+    academicYearId: _p.yearId,
+    academicTermId: _p.termId,
+    subLevelId: _p.subLevelId,
+  });
 };
