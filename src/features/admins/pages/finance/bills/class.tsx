@@ -66,6 +66,8 @@ import { eduKeys, financeKeys, termKeys, yearKeys } from "@/config/query-keys";
 import { getAllYearsFn, getTermsBySubIdFn } from "@/services/setup/year-n-term";
 import { getClassBillFn } from "@/services/finance";
 import type { StudentBill } from "@/types/api/finance";
+import PaymentModal from "@/features/admins/components/finance/payment-modal";
+import { usePayment } from "@/store/payment.store";
 
 // ─── Currency formatter ────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -420,6 +422,13 @@ type SortDir = "asc" | "desc";
 
 const ClassFeesOverview = () => {
   const navigate = useNavigate();
+  const {
+    open,
+    setStudentId,
+    setStudentName,
+    setAmount,
+    setStudentSubLedgers,
+  } = usePayment();
 
   // ── Filter state ─────────────────────────────────────────────────────────────
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
@@ -622,7 +631,7 @@ const ClassFeesOverview = () => {
   };
 
   const handleViewStudent = (student: StudentBill) => {
-    navigate("/admin/finance/student-ledger", {
+    navigate("", {
       state: {
         studentId: student.studentId,
         studentName: student.fullName,
@@ -632,10 +641,18 @@ const ClassFeesOverview = () => {
       },
     });
   };
+  const handlePayment = (student: StudentBill) => {
+    setStudentSubLedgers(student.subLedgerBill);
+    setStudentId(student.studentId);
+    setStudentName(student.fullName);
+    setAmount(student.balance);
+    open();
+  };
 
-  // Table min width
+  // Table min width (+56 --> +86)
+  const actionCoWidth = 56 + 30;
   const tableMinW =
-    44 + 200 + allSubLedgers.length * 120 + 100 + 100 + 100 + 56;
+    44 + 200 + allSubLedgers.length * 120 + 100 + 100 + 100 + actionCoWidth;
 
   // ─────────────────────────────────────────────────────────────────────────────
   return (
@@ -1338,8 +1355,8 @@ const ClassFeesOverview = () => {
                       right: 0,
                       zIndex: 3,
                       background: "#EEF2F8",
-                      width: 56,
-                      minWidth: 56,
+                      width: actionCoWidth,
+                      minWidth: actionCoWidth,
                       padding: "10px 8px",
                       borderBottom: "1px solid #E2E8F0",
                       borderLeft: "1px solid #D0DCF0",
@@ -1351,7 +1368,7 @@ const ClassFeesOverview = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    View
+                    Pay / View
                   </th>
                 </tr>
               </thead>
@@ -1714,10 +1731,12 @@ const ClassFeesOverview = () => {
                           background: rowBg,
                           width: 56,
                           minWidth: 56,
-                          padding: "6px 8px",
+                          padding: "6px 3px",
                           borderBottom: "1px solid #F1F5F9",
                           borderLeft: "1px solid #D0DCF0",
                           textAlign: "center",
+                          display: "flex",
+                          columnGap: "2px",
                         }}
                       >
                         <button
@@ -1731,6 +1750,18 @@ const ClassFeesOverview = () => {
                           }}
                         >
                           <Eye className="w-3.5 h-3.5 text-[#C9A84C]" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handlePayment(student)}
+                          title={`Pay ${student.fullName}'s ledger`}
+                          className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto transition-all cursor-pointer hover:scale-110"
+                          style={{
+                            background:
+                              "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
+                          }}
+                        >
+                          <CircleDollarSign className="w-3.5 h-3.5 text-[#C9A84C]" />
                         </button>
                       </td>
                     </tr>
@@ -1910,6 +1941,8 @@ const ClassFeesOverview = () => {
           )}
         </MotionDiv>
       )}
+
+      <PaymentModal />
     </div>
   );
 };

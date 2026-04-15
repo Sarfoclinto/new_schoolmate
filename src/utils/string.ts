@@ -2,6 +2,7 @@ import { DEFAULT_ROLES } from "@/config/constants";
 import paths from "@/config/routes";
 import { useAuth } from "@/store/auth.store";
 import { toast } from "sonner";
+import dayjs from "@/lib/dayjs";
 
 export const sanitizeInput = (input: string) => {
   const sanitized = input.replace(/<[^>]*>/g, ""); // Remove HTML tags
@@ -14,6 +15,18 @@ export const capitalizeWords = (str: string) => {
 
 export const sanitizePhoneNumber = (str: string) => {
   return str.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+};
+export const sanitizePhone = (raw: string): string => {
+  // 1. Remove all non-digit characters
+  const digitsOnly = raw.replace(/\D/g, "");
+
+  // 2. Remove a single leading "0", if present
+  const withoutLeadingZero = digitsOnly.startsWith("0")
+    ? digitsOnly.slice(1)
+    : digitsOnly;
+
+  // 3. Prefix with "233"
+  return `233${withoutLeadingZero}`;
 };
 
 export const truncateString = (str: string, value: number) => {
@@ -29,15 +42,30 @@ export const getPageRange = (pageNumber: number, pageSize: number): string => {
   return `${startItem} - ${endItem}`;
 };
 
-export const generateRandomString = (length = 8) => {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,/|{}';:!@#$%^&*()_+=-][";
+/**
+ * Generates a unique reference string.
+ * Default pattern: DDMMYYYY_HHMMSS_RANDOM
+ * @param length Length of the random suffix
+ * @param prefix Optional custom prefix
+ */
+export const generateReference = (
+  length = 5,
+  prefix?: string,
+  includeTimestamp = true,
+): string => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let result = "";
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return result;
+
+  const timestamp = includeTimestamp
+    ? dayjs().format("DDMMYYYY_HHmmss")
+    : "";
+
+  return [prefix, timestamp, result].filter(Boolean).join("_");
 };
+
 
 export function getOrdinal(position: number): string {
   const suffixes: { [key: number]: string } = {

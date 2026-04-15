@@ -89,6 +89,7 @@ const FeesSetup = () => {
       academicYearId,
       academicTermId,
     }),
+    queryOptions: { placeholderData: (prev) => prev },
   });
 
   useEffect(() => {

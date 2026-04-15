@@ -1,4 +1,10 @@
-import { deleteHelper, getHelper, postHelper, updateHelper } from "@/api/crud";
+import {
+  deleteHelper,
+  getHelper,
+  paymentPost,
+  postHelper,
+  updateHelper,
+} from "@/api/crud";
 import endpoints from "@/config/endpoints";
 import type {
   ClassBill,
@@ -12,9 +18,14 @@ import type {
   ManualLevelBillingPayload,
   ManualStudentBillingPayload,
   UnbilledStudent,
+  DebitObj,
+  VerifyResponse,
+  DetailsResponse,
+  TransStatRes,
+  PaymentPost,
 } from "@/types/api/finance";
 const {
-  finance: { fees, ledgers, bills },
+  finance: { fees, ledgers, bills, payment },
 } = endpoints;
 
 // ledgers
@@ -87,4 +98,31 @@ export const getUnbilledStudentsFn = async (_p: {
     academicTermId: _p.termId,
     subLevelId: _p.subLevelId,
   });
+};
+
+// ---------------- PAYMENTS ------------------------
+export const verifyPhoneFn = async (data: {
+  network: string;
+  msisdn: string;
+}) => {
+  return paymentPost<VerifyResponse>(payment.verify, data);
+};
+
+export const getDetailsFn = async (data: {
+  network: string;
+  msisdn: string;
+}) => {
+  return paymentPost<DetailsResponse>(payment.getName, data);
+};
+
+export const debitFn = async (payload: DebitObj) => {
+  return paymentPost(payment.debit, payload);
+};
+
+export const checkStatusFn = async (payload: { refNo: string }) => {
+  return paymentPost<TransStatRes>(payment.checkStatus, payload);
+};
+
+export const savePaymentFn = async (payload: PaymentPost) => {
+  return postHelper(payment.save, payload);
 };

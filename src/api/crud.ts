@@ -5,9 +5,22 @@ import api from "./axios";
 export const postHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
-  params?: object,
+  params: object = {},
 ) => {
   const res = await api.post(path, data, { params });
+  return res.data as T;
+};
+export const paymentPost = async <T = MdResponse>(
+  path: string,
+  data?: unknown,
+  params: object = {},
+) => {
+  const url = import.meta.env.VITE_PAYMENT_URL;
+  if (!url) throw new Error("No payment url provided");
+  const res = await api.post(path, data, {
+    params: { ...params, PSP: "SMPAY" },
+    baseURL: url,
+  });
   return res.data as T;
 };
 export const postWithFile = async <T = MdResponse>(
@@ -85,7 +98,7 @@ export const updateHelper = async <T = MdResponse>(
   data?: unknown,
   params?: object,
 ) => {
-  const res = await api.put(path, data, {params});
+  const res = await api.put(path, data, { params });
   return res.data as T;
 };
 export const updateWithFile = async <T = MdResponse>(

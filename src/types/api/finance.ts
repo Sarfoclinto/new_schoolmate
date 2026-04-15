@@ -1,4 +1,5 @@
 import type { AcademicTermGet, AcademicYearGet } from "./setup/year-n-term";
+import { z } from "zod";
 
 export type TuitionPost = {
   id: string;
@@ -137,3 +138,58 @@ export interface UnbilledStudent {
   admittedOn: string;
   reason?: "new_admission" | "omitted" | "unknown";
 }
+
+export type PaymentMethod = "split" | "cash" | "cheque" | "mobile_money";
+
+export interface SplitEntry {
+  method: "cash" | "cheque" | "mobile_money" | "other";
+  amount: number;
+  referenceNumber?: string;
+}
+
+export type VerifyResponse = {
+  responseCode: "01" | "100";
+};
+
+export type DetailsResponse = {
+  name: string;
+};
+
+export type UseVerifyResult = {
+  valid: boolean;
+  name: string | null;
+  isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+};
+
+export interface DebitObj {
+  refNo: string;
+  msisdn: string;
+  amount: number;
+  network: string;
+  narration: string;
+}
+
+export type TransStatRes = {
+  responseCode: string | "03";
+  responseMessage: string;
+};
+
+export const PaymentPostSchema = z.object({
+  studentId: z.string().min(1, "Student is required"),
+  sl: z.string().optional(),
+  amount: z.number().positive("Amount must be greater than 0"),
+  paymentMode: z.enum(["split", "cash", "cheque", "mobile_money"]),
+  payer: z.string().min(1, "Payer name is required"),
+  reference: z.string().optional(),
+  userId: z.string().min(1, "User ID is required"),
+  description: z.string().min(1, "Description is required"),
+});
+
+export type PaymentPost = z.infer<typeof PaymentPostSchema>;
+
+export type SavePaymentProps = {
+  save: boolean;
+  payload: PaymentPost;
+};

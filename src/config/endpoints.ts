@@ -244,6 +244,13 @@ const endpoints = {
       manualStudent: "/ManualStudentBilling",
       unbilledStudents: "/GetUnbilledStudents",
     },
+    payment: {
+      verify: "/ValidateAccount",
+      getName: "/AccountHoldName",
+      debit: "/DebitCustomer",
+      checkStatus: "/CheckTransactionStatus",
+      save: "/SaveTransaction",
+    },
   },
   academicRecords: {
     passmark: {

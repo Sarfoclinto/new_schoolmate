@@ -28,7 +28,7 @@
  */
 
 import { Drawer, Select, Popconfirm } from "antd";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -85,6 +85,7 @@ import { useAuth } from "@/store/auth.store";
 import { Link } from "react-router-dom";
 import paths from "@/config/routes";
 import { getAllSubLevelsFn } from "@/services/setup/sublevel";
+import type { SubLevelGet } from "@/types/api/setup/sublevel";
 
 // ─── Currency fmt ─────────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -844,7 +845,7 @@ const LevelBillingDrawer = ({
                     <button
                       type="button"
                       onClick={() => {
-                        if (selectedSls.size === actionSls.length)
+                        if (selectedSls.size === actionSls?.length)
                           setSelectedSls(new Set());
                         else
                           setSelectedSls(
@@ -853,7 +854,7 @@ const LevelBillingDrawer = ({
                       }}
                       className="text-[11px] font-bold text-[#1E3A5F] hover:text-[#C9A84C] transition-colors cursor-pointer"
                     >
-                      {selectedSls.size === actionSls.length
+                      {selectedSls.size === actionSls?.length
                         ? "Deselect all"
                         : "Select all"}
                     </button>
@@ -968,11 +969,15 @@ const IndividualBillingSection = ({
   termId,
   allSubLedgers,
   currentUserId,
+  setSelectedSub,
+  invalidate,
 }: {
   yearId: string;
   termId: string;
   allSubLedgers: SubLedgerConfig[];
   currentUserId?: string;
+  invalidate: () => void;
+  setSelectedSub: React.Dispatch<React.SetStateAction<SubLevelGet | undefined>>;
 }) => {
   const [open, setOpen] = useState(false);
   const [subFilter, setSubFilter] = useState<string | null>(null);
@@ -1001,6 +1006,12 @@ const IndividualBillingSection = ({
     queryKeys: eduKeys.sublevels(),
   });
 
+  useEffect(() => {
+    if (subFilter && subLevels && subLevels.length > 0) {
+      setSelectedSub(subLevels.find((l) => l.subLevelId === subFilter));
+    }
+  }, [setSelectedSub, subFilter, subLevels]);
+
   const billStudents = useMutation({
     mutationFn: (p: ManualStudentBillingPayload) => manualStudentBillingFn(p),
     onSuccess: ({ responseCode, responseMessage }) => {
@@ -1010,6 +1021,7 @@ const IndividualBillingSection = ({
         toast.info(responseMessage);
       }
       setSelected(new Set());
+      invalidate();
       refetch();
     },
     onError: (e: AxiosError) => toast.error(e.message),
@@ -1407,6 +1419,9 @@ const BillingCenter = () => {
   const [healthFilter, setHealthFilter] = useState<BillingHealth | "all">(
     "all",
   );
+  const [selectedSub, setSelectedSub] = useState<SubLevelGet | undefined>(
+    undefined,
+  );
 
   const { data: eduLevels = [], isLoading: loadingEdu } = useFetch({
     queryFn: getAllEduLevelsFn,
@@ -1451,6 +1466,10 @@ const BillingCenter = () => {
     }));
   }, [eduLevels]);
 
+  const invalidate = useCallback(() => {
+    qc.invalidateQueries({ queryKey: ["billingStatus"] });
+  }, [qc]);
+
   const stats = useMemo(() => {
     if (!levels.length) return null;
     return {
@@ -1470,11 +1489,16 @@ const BillingCenter = () => {
   // All configured sub-ledgers across all levels (for individual billing)
   const allSubLedgers = useMemo((): SubLedgerConfig[] => {
     const map = new Map<string, SubLedgerConfig>();
-    levels.forEach((l) =>
-      l.configuredSubLedgers.forEach((sl) => map.set(sl.slCode, sl)),
-    );
+    levels
+      .filter((l) => {
+        if (!selectedSub) return true;
+        return l.academicLevelId === selectedSub?.academicLevelId;
+      })
+      .forEach((l) =>
+        l.configuredSubLedgers.forEach((sl) => map.set(sl.slCode, sl)),
+      );
     return Array.from(map.values());
-  }, [levels]);
+  }, [levels, selectedSub]);
 
   const filteredLevels = useMemo(
     () =>
@@ -1794,6 +1818,8 @@ const BillingCenter = () => {
             termId={selectedTermId!}
             allSubLedgers={allSubLedgers}
             currentUserId={currentUserId}
+            setSelectedSub={setSelectedSub}
+            invalidate={invalidate}
           />
         </>
       )}
