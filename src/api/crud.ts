@@ -6,31 +6,38 @@ export const postHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
   params: object = {},
+  signal?: AbortSignal,
 ) => {
-  const res = await api.post(path, data, { params });
+  const res = await api.post(path, data, { params, signal });
   return res.data as T;
 };
 export const paymentPost = async <T = MdResponse>(
   path: string,
   data?: unknown,
   params: object = {},
+  signal?: AbortSignal,
 ) => {
   const url = import.meta.env.VITE_PAYMENT_URL;
   if (!url) throw new Error("No payment url provided");
   const res = await api.post(path, data, {
+    // params: { ...params, PSP: "FTE-5255" },
     params: { ...params, PSP: "SMPAY" },
     baseURL: url,
+    signal,
   });
   return res.data as T;
 };
+
 export const postWithFile = async <T = MdResponse>(
   path: string,
   data: FormData,
+  signal?: AbortSignal,
 ) => {
   const res = await api.post(path, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    signal,
   });
   return res.data as T;
 };
@@ -40,18 +47,22 @@ export const getHelper = async <T = unknown>(
   path: string,
   params: object = {},
   responseType: "json" | "blob" = "json",
+  signal?: AbortSignal,
 ) => {
-  const { data } = await api.get(path, { params, responseType });
+  const { data } = await api.get(path, { params, responseType, signal });
   return data as T;
 };
+
 export const getFileHelper = async <T = unknown>(
   path: string,
   params: object = {},
   responseType: "json" | "blob" = "json",
+  signal?: AbortSignal,
 ): Promise<T> => {
   const response = await api.get(path, {
     params,
     responseType,
+    signal,
   });
 
   // Handle blob responses (PDF downloads)
@@ -78,6 +89,7 @@ export const getSingle = async <T = unknown>(
   id: string | number,
   options: GetSingleOptions,
   params: Record<string, unknown> = {},
+  signal?: AbortSignal,
 ) => {
   let finalPath = path;
   let finalParams = params;
@@ -88,7 +100,7 @@ export const getSingle = async <T = unknown>(
     finalParams = { ...finalParams, [options.paramKey]: id };
   }
 
-  const res = await api.get(finalPath, { params: finalParams });
+  const res = await api.get(finalPath, { params: finalParams, signal });
   return Array.isArray(res.data) ? (res.data[0] as T) : (res.data as T);
 };
 
@@ -97,18 +109,21 @@ export const updateHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
   params?: object,
+  signal?: AbortSignal,
 ) => {
-  const res = await api.put(path, data, { params });
+  const res = await api.put(path, data, { params, signal });
   return res.data as T;
 };
 export const updateWithFile = async <T = MdResponse>(
   path: string,
   data: FormData,
+  signal?: AbortSignal,
 ) => {
   const res = await api.put(path, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    signal,
   });
   return res.data as T;
 };
@@ -118,8 +133,9 @@ export const deleteHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
   params?: object,
+  signal?: AbortSignal,
 ) => {
-  const res = await api.delete(path, { data, params });
+  const res = await api.delete(path, { data, params, signal });
   return res.data as T;
 };
 
@@ -128,7 +144,8 @@ export const patchHelper = async <T = MdResponse>(
   path: string,
   data?: unknown,
   params?: object,
+  signal?: AbortSignal,
 ) => {
-  const res = await api.patch(path, data, { params });
+  const res = await api.patch(path, data, { params, signal });
   return res.data as T;
 };

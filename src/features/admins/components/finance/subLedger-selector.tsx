@@ -1,5 +1,5 @@
 import { usePayment } from "@/store/payment.store";
-import { Select } from "antd";
+import { Form, Select } from "antd";
 import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
@@ -18,13 +18,19 @@ const SubledgerSelector = () => {
 
   return (
     <>
-      <div className="flex flex-col w-full">
-        <p
-          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          SubLedger
-        </p>
+      <Form.Item
+        name="subledger"
+        label={
+          <p
+            className="text-xs font-bold text-slate-500 uppercase tracking-wide my-0! py-0!"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
+            SubLedger
+          </p>
+        }
+        className="flex flex-col w-full my-0! py-0!"
+        labelCol={{ style: { paddingBottom: 0, marginBottom: 0 } }}
+      >
         <Select
           size="large"
           allowClear
@@ -33,7 +39,7 @@ const SubledgerSelector = () => {
           value={selected}
           onChange={(v) => setSubLegder(v)}
         />
-      </div>
+      </Form.Item>
     </>
   );
 };

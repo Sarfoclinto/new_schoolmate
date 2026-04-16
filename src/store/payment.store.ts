@@ -43,6 +43,9 @@ interface PaymentState {
   studentName: string | null;
   setStudentId: (studentId: string | null) => void;
   setStudentName: (studentName: string | null) => void;
+
+  //resets
+  reset: () => void;
 }
 
 // ── Store ──────────────────────────────────────────────────────────────────────
@@ -89,6 +92,22 @@ export const usePayment = create<PaymentState>()(
       studentName: null,
       setStudentId: (studentId) => set({ studentId }),
       setStudentName: (studentName) => set({ studentName }),
+
+      //resets
+      reset: () => {
+        set({
+          amount: 0,
+          network: "mtn",
+          phone: "",
+          payer: "",
+          description: "",
+          reference: "",
+          studentSubLedgers: [],
+          selectedSubLedger: undefined,
+          studentId: null,
+          studentName: null,
+        });
+      },
     }),
     {
       name: "schoolmate-payment",

@@ -1,3 +1,4 @@
+import type { MdResponse } from "../api";
 import type { AcademicTermGet, AcademicYearGet } from "./setup/year-n-term";
 import { z } from "zod";
 
@@ -178,13 +179,19 @@ export type TransStatRes = {
 
 export const PaymentPostSchema = z.object({
   studentId: z.string().min(1, "Student is required"),
-  sl: z.string().optional(),
+  slCode: z.string().optional(),
   amount: z.number().positive("Amount must be greater than 0"),
-  paymentMode: z.enum(["split", "cash", "cheque", "mobile_money"]),
+  paymentMode: z.enum(["split", "cash", "cheque", "momo"]),
   payer: z.string().min(1, "Payer name is required"),
   reference: z.string().optional(),
   userId: z.string().min(1, "User ID is required"),
   description: z.string().min(1, "Description is required"),
+  chequeReference: z
+    .object({
+      chequeNumber: z.string().min(1, "Cheque number is required"),
+      accountNumber: z.string().min(1, "Account number is required"),
+    })
+    .optional(),
 });
 
 export type PaymentPost = z.infer<typeof PaymentPostSchema>;
@@ -192,4 +199,5 @@ export type PaymentPost = z.infer<typeof PaymentPostSchema>;
 export type SavePaymentProps = {
   save: boolean;
   payload: PaymentPost;
+  onSuccessSave?: (payload: MdResponse) => void
 };

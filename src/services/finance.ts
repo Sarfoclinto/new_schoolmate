@@ -119,8 +119,11 @@ export const debitFn = async (payload: DebitObj) => {
   return paymentPost(payment.debit, payload);
 };
 
-export const checkStatusFn = async (payload: { refNo: string }) => {
-  return paymentPost<TransStatRes>(payment.checkStatus, payload);
+export const checkStatusFn = async (
+  payload: { refNo: string },
+  signal?: AbortSignal,
+) => {
+  return paymentPost<TransStatRes>(payment.checkStatus, payload, {}, signal);
 };
 
 export const savePaymentFn = async (payload: PaymentPost) => {

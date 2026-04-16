@@ -44,7 +44,8 @@ export const detectNetwork = (phone: string): Network => {
   if (
     cleaned.startsWith("054") ||
     cleaned.startsWith("024") ||
-    cleaned.startsWith("050")
+    cleaned.startsWith("050") ||
+    cleaned.startsWith("055")
   ) {
     return "mtn";
   }
@@ -53,7 +54,7 @@ export const detectNetwork = (phone: string): Network => {
     return "telecel";
   }
 
-  if (cleaned.startsWith("055") || cleaned.startsWith("056")) {
+  if (cleaned.startsWith("056")) {
     return "airteltigo";
   }
 

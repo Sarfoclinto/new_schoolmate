@@ -1,7 +1,16 @@
 import { formatCurrency } from "@/services/currency";
 import { usePayment } from "@/store/payment.store";
 import type { DebitObj, PaymentMethod, SplitEntry } from "@/types/api/finance";
-import { Button, Input, InputNumber, Modal, Select, Tooltip } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Tooltip,
+  type FormInstance,
+} from "antd";
 import {
   ArrowLeft,
   Banknote,
@@ -16,10 +25,14 @@ import {
   Trash2,
   Plus,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import NetworkSelector from "./network-selector";
 import useVerifyPhone from "@/hooks/payment/use-phone-verify";
-import { generateReference, sanitizePhone } from "@/utils/string";
+import {
+  capitalizeWords,
+  generateReference,
+  sanitizePhone,
+} from "@/utils/string";
 import { useDebit } from "@/hooks/payment/use-debit";
 import dayjs from "dayjs";
 import useSavePayment from "@/hooks/payment/use-save-payment";
@@ -28,10 +41,10 @@ import usePost from "@/hooks/api/use-post";
 import { savePaymentFn } from "@/services/finance";
 import SubledgerSelector from "./subLedger-selector";
 import PayerNDescription from "./payer-n-description";
-
-const buildPayload = () => {
-  return {};
-};
+import AmountTendered from "./amount-tendered";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { financeKeys } from "@/config/query-keys";
 
 // ── Method tiles ──────────────────────────────────────────────────────────────
 const METHOD_TILES: {
@@ -53,14 +66,14 @@ const METHOD_TILES: {
     label: "Cheque",
     icon: <ReceiptText className="w-6 h-6" />,
     color: "#2563eb",
-    disabled: true,
+    disabled: false,
   },
   {
     key: "mobile_money",
     label: "Mobile Money",
     icon: <Smartphone className="w-6 h-6" />,
     color: "#7c3aed",
-    disabled: true,
+    disabled: false,
   },
   {
     key: "split",
@@ -76,15 +89,24 @@ const CashFlow = ({
   total,
   onConfirm,
   loading,
+  form,
 }: {
   total: number;
   onConfirm: (tendered: number) => void;
   loading: boolean;
+  form?: FormInstance;
 }) => {
   const [tendered, setTendered] = useState<number>(total);
 
   return (
-    <div className="flex flex-col gap-5">
+    <Form
+      form={form}
+      onFinish={(values) => {
+        onConfirm(values.tendered);
+      }}
+      layout="vertical"
+      className="flex flex-col gap-5"
+    >
       <div
         className="flex items-center justify-between px-5 py-4 rounded-2xl"
         style={{
@@ -106,46 +128,31 @@ const CashFlow = ({
         <Banknote className="w-10 h-10 text-emerald-300" strokeWidth={1} />
       </div>
 
-      <div>
-        <p
-          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Amount Tendered
-        </p>
-        <InputNumber
-          className="w-full!"
-          size="large"
-          min={0}
-          precision={2}
-          value={tendered}
-          onChange={(v) => setTendered(v ?? 0)}
-        />
-      </div>
-
+      <AmountTendered tendered={tendered} setTendered={setTendered} required />
       <SubledgerSelector />
       <PayerNDescription />
 
       <Button
         type="primary"
         size="large"
+        htmlType="submit"
         className="w-full h-12! text-base! font-bold!"
         loading={loading}
-        disabled={tendered < total}
-        onClick={() => onConfirm(tendered)}
+        disabled={loading}
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         Save Transaction
       </Button>
-      {tendered < total && (
+
+      {/* {tendered < total && (
         <p
-          className="text-xs text-center text-red-400 -mt-3 m-0"
+          className="text-xs my-0! py-0! text-yellow-400"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
           Tendered amount is less than total
         </p>
-      )}
-    </div>
+      )} */}
+    </Form>
   );
 };
 
@@ -156,10 +163,16 @@ const ChequeFlow = ({
   loading,
 }: {
   total: number;
-  onConfirm: (ref?: string) => void;
+  onConfirm: (
+    chequeNumber: string,
+    accountNumber: string,
+    tendered: number,
+  ) => void;
   loading: boolean;
 }) => {
-  const [ref, setRef] = useState("");
+  const [tendered, setTendered] = useState<number>(total);
+  const [chequeNum, setChequeNum] = useState("");
+  const [accountNum, setAccountNum] = useState("");
 
   return (
     <div className="flex flex-col gap-5">
@@ -172,7 +185,7 @@ const ChequeFlow = ({
       >
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 m-0">
-            Charge to Card
+            Charge to Cheque
           </p>
           <p
             className="text-3xl font-bold text-blue-700 m-0 leading-none mt-1"
@@ -189,14 +202,41 @@ const ChequeFlow = ({
           className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
-          Reference Number (optional)
+          Amount
+        </p>
+        <InputNumber
+          size="large"
+          placeholder="Enter amount eg. 800.00"
+          value={tendered}
+          onChange={(v) => setTendered(v ?? 0)}
+        />
+      </div>
+      <div>
+        <p
+          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
+          style={{ fontFamily: "'DM Sans', sans-serif" }}
+        >
+          Cheque Number
         </p>
         <Input
           size="large"
-          placeholder="Card approval / reference number"
-          value={ref}
-          onChange={(e) => setRef(e.target.value)}
-          onPressEnter={() => onConfirm(ref || undefined)}
+          placeholder="Cheque number"
+          value={chequeNum}
+          onChange={(e) => setChequeNum(e.target.value)}
+        />
+      </div>
+      <div>
+        <p
+          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
+          style={{ fontFamily: "'DM Sans', sans-serif" }}
+        >
+          Amount
+        </p>
+        <Input
+          size="large"
+          placeholder="Account numner"
+          value={accountNum}
+          onChange={(e) => setAccountNum(e.target.value)}
         />
       </div>
 
@@ -205,10 +245,10 @@ const ChequeFlow = ({
         size="large"
         className="w-full h-12! text-base! font-bold!"
         loading={loading}
-        onClick={() => onConfirm(ref || undefined)}
+        onClick={() => onConfirm(chequeNum, accountNum, tendered)}
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
-        Confirm Debit
+        Save Transaction
       </Button>
     </div>
   );
@@ -217,32 +257,40 @@ const ChequeFlow = ({
 // ── MoMo Flow (Paystack) ──────────────────────────────────────────────────────
 const MoMoFlow = ({
   total,
-  onConfirmManual,
-  loading,
+  // onConfirmManual,
+  form,
 }: {
   total: number;
-  onSuccess?: (ref: string) => void;
   onConfirmManual: (ref?: string) => void;
-  loading: boolean;
+  form: FormInstance;
 }) => {
   const userId = useAuth((s) => s.user?.userId);
   const {
-    amount,
     network,
     phone,
     setPhone,
     studentId,
     setNetwork,
-    setAmount,
     selectedSubLedger,
+    reference,
+    setReference,
+    reset,
+    close,
   } = usePayment();
   const [status, setStatus] = useState<
     "idle" | "pending" | "success" | "failed"
-  >("idle");
-  const [description, setDescription] = useState("");
-  const [payer, setPayer] = useState("");
-  const ref = useMemo(() => generateReference(), []);
+  >("failed");
+  const [tendered, setTendered] = useState(total);
 
+  // Generate reference once when component mounts (if not already set)
+  useEffect(() => {
+    if (!reference) {
+      setReference(generateReference());
+    }
+  }, [reference, setReference]);
+
+  const payer = usePayment((s) => s.payer);
+  const description = usePayment((s) => s.description);
   const sanitizedPhone = useMemo(() => sanitizePhone(phone), [phone]);
 
   const {
@@ -256,32 +304,57 @@ const MoMoFlow = ({
     mutate: debit,
     isDebiting: debiting,
     isChecking,
+    isPolling,
     transRes,
     stopPolling,
     pollAttempt,
-  } = useDebit({ refNo: ref });
+    pollError,
+    hasExceededTimeout,
+    hasExceededMaxAttempts,
+  } = useDebit({
+    refNo: reference,
+    onSuccessFn: () => {
+      setStatus("pending");
+    },
+  });
+
+  useEffect(() => {
+    if((hasExceededTimeout || hasExceededMaxAttempts) && !isPolling){
+      setStatus("failed")
+    }
+  },[hasExceededTimeout,hasExceededMaxAttempts,isPolling])
 
   useSavePayment({
     save: transRes?.responseMessage === "Successfully Processed Transaction",
     payload: {
       studentId: studentId!,
-      sl: selectedSubLedger,
+      slCode: selectedSubLedger,
       userId: userId!,
-      amount: total,
-      reference: ref,
-      paymentMode: "mobile_money",
+      amount: tendered,
+      reference: reference,
+      paymentMode: "momo",
       description: description ?? ``,
       payer,
     },
+    onSuccessSave: ({ responseCode }) => {
+      if (responseCode === 1) {
+        setStatus("success");
+        setPhone("");
+        reset();
+        form.resetFields();
+      } else {
+        setStatus("failed");
+      }
+    },
   });
 
-  const handleCharge = () => {
+  const onFinish = (values: { tendered: number }) => {
     const payload: DebitObj = {
-      network: network,
+      network: capitalizeWords(network),
       msisdn: sanitizePhone(phone),
-      amount: amount,
-      narration: `Debiting Customer ${sanitizedPhone} for Merchant ${username} on ${dayjs().format("DDMMYYY_HHmmss")}`,
-      refNo: ref,
+      amount: values.tendered,
+      narration: `Debiting ${sanitizedPhone} on ${dayjs().format("DDMMYYY")}`,
+      refNo: reference,
     };
     debit(payload);
   };
@@ -309,28 +382,64 @@ const MoMoFlow = ({
             Customer should approve on their phone ·{" "}
             {formatCurrency<"GHS">(total, "GHS", { type: "currency" })}
           </p>
-          <p className="text-[10px] text-slate-300 m-0 mt-2">
-            Checking ({pollAttempt}/20)...
-          </p>
+          {pollError && (
+            <p className="text-[10px] text-red-500 m-0 mt-1">
+              ⚠️ {pollError.message}
+            </p>
+          )}
+          {!hasExceededTimeout && !hasExceededMaxAttempts && (
+            <p className="text-[10px] text-slate-300 m-0 mt-2">
+              Checking ({pollAttempt}/20)...
+            </p>
+          )}
+          {hasExceededTimeout && (
+            <p className="text-[10px] text-red-500 m-0 mt-2 font-semibold">
+              ⏱️ Polling timeout - payment may have been processed
+            </p>
+          )}
+          {hasExceededMaxAttempts && (
+            <p className="text-[10px] text-red-500 m-0 mt-2 font-semibold">
+              ❌ Max polling attempts exceeded
+            </p>
+          )}
         </div>
-        <button
-          onClick={() => {
-            stopPolling();
-            setStatus("idle");
-            // clearInterval(pollRef.current);
-          }}
-          className="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Cancel request
-        </button>
+
+        {/* Stop button only shown when actively polling */}
+        {isPolling && (
+          <button
+            onClick={() => {
+              stopPolling();
+              setStatus("idle");
+            }}
+            className="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
+            ✕ Stop polling
+          </button>
+        )}
+
+        {/* Recovery options when polling exceeded limits */}
+        {/* {(hasExceededTimeout || hasExceededMaxAttempts) && !isPolling && (
+          <div className="flex gap-2 w-full">
+            <Button
+              icon={<RefreshCw className="w-3.5 h-3.5" />}
+              onClick={() => {
+                // setStatus("idle");
+                close()
+              }}
+              className="flex-1 flex items-center gap-1"
+            >
+              Close
+            </Button>
+          </div>
+        )} */}
       </div>
     );
   }
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center gap-4 py-6">
+      <div className="flex flex-col items-center gap-4 py-4">
         <div className="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center">
           <CheckCircle2 className="w-8 h-8 text-emerald-500" />
         </div>
@@ -338,7 +447,9 @@ const MoMoFlow = ({
           <p className="text-sm font-bold text-emerald-700 m-0">
             Payment confirmed!
           </p>
-          <p className="text-xs text-slate-400 m-0 mt-1">Completing sale...</p>
+          <Button onClick={close} className="mt-5 w-full!" block type="primary">
+            Close
+          </Button>
         </div>
       </div>
     );
@@ -354,9 +465,6 @@ const MoMoFlow = ({
           <p className="text-sm font-bold text-red-600 m-0">
             Payment failed or timed out
           </p>
-          <p className="text-xs text-slate-400 m-0 mt-1">
-            You can retry or confirm manually if payment was received.
-          </p>
         </div>
         <div className="flex gap-2 w-full">
           <Button
@@ -368,21 +476,18 @@ const MoMoFlow = ({
           >
             Retry
           </Button>
-          <Button
-            type="primary"
-            onClick={() => onConfirmManual(ref || undefined)}
-            loading={loading}
-            className="flex-1"
-          >
-            Confirm Manually
-          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <Form
+      layout="vertical"
+      form={form}
+      onFinish={onFinish}
+      className="flex flex-col gap-5"
+    >
       <div
         className="flex items-center justify-between px-5 py-4 rounded-2xl"
         style={{
@@ -443,20 +548,7 @@ const MoMoFlow = ({
 
       <SubledgerSelector />
 
-      <div className="flex flex-col w-full">
-        <p
-          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Amount
-        </p>
-        <InputNumber
-          size="large"
-          placeholder="0.00"
-          value={phone}
-          onChange={(e) => setAmount(Number(e))}
-        />
-      </div>
+      <AmountTendered setTendered={setTendered} />
 
       <PayerNDescription />
 
@@ -464,9 +556,9 @@ const MoMoFlow = ({
         type="primary"
         size="large"
         className="w-full h-12! text-base! font-bold!"
-        disabled={verifying || !username || debiting || isChecking}
+        disabled={verifying || !username || debiting || isPolling || isChecking}
         loading={debiting || isChecking}
-        onClick={handleCharge}
+        htmlType="submit"
         style={{
           background: "linear-gradient(135deg,#7c3aed,#6d28d9)",
           border: "none",
@@ -475,11 +567,11 @@ const MoMoFlow = ({
       >
         {debiting
           ? "Requesting..."
-          : isChecking
+          : isPolling || isChecking
             ? `Polling Transaction Status (Attempt #${pollAttempt})`
             : "Send Payment Request"}
       </Button>
-    </div>
+    </Form>
   );
 };
 
@@ -623,7 +715,17 @@ const SplitFlow = ({
   );
 };
 
-const PaymentModal = () => {
+type Props = {
+  selectedSubId: string;
+  selectedYearId?: string;
+  selectedTermId?: string;
+};
+
+const PaymentModal = ({
+  selectedSubId,
+  selectedTermId,
+  selectedYearId,
+}: Props) => {
   const {
     isOpen,
     close,
@@ -632,28 +734,52 @@ const PaymentModal = () => {
     studentId,
     selectedSubLedger,
     payer,
-    setPayer,
     description,
-    setDescription,
   } = usePayment();
   const [method, setMethod] = useState<PaymentMethod | null>(null);
+  const reset = usePayment((s) => s.reset);
   const userId = useAuth((s) => s.user?.userId);
+  const [form] = Form.useForm();
+  const qc = useQueryClient();
 
   const { mutate, isPending } = usePost({
     mutationOptions: { mutationKey: ["savepayment"] },
     postFn: savePaymentFn,
+    onSuccess: async ({ responseCode, responseMessage }) => {
+      if (responseCode === 1) {
+        toast.success(responseMessage);
+        await qc.invalidateQueries({
+          queryKey: financeKeys.custom("classBill", {
+            selectedSubId,
+            selectedYearId,
+            selectedTermId,
+          }),
+        });
+        setMethod(null);
+        reset();
+        form.resetFields();
+        close();
+      } else {
+        toast.error(responseMessage);
+      }
+    },
+    onError: (err) => {
+      toast.error("Failed to save", { description: err.message });
+    },
   });
 
   const handleClose = useCallback(() => {
     if (isPending) return;
-    close();
     setMethod(null);
-  }, [close, isPending]);
+    reset();
+    form.resetFields();
+    close();
+  }, [close, form, isPending, reset]);
 
   const handleCash = (tendered: number) => {
     mutate({
       studentId: studentId!,
-      sl: selectedSubLedger,
+      slCode: selectedSubLedger,
       amount: tendered,
       paymentMode: "cash",
       payer,
@@ -662,44 +788,41 @@ const PaymentModal = () => {
     });
   };
 
-  const handleCheque = (ref?: string) => {
-    //   saleMutation.mutate(
-    //     buildPayload({
-    //       method: "card",
-    //       amount: totals.total,
-    //       referenceNumber: ref,
-    //     }),
-    //   );
-  };
-
-  const handleMoMoSuccess = (ref: string) => {
-    //   saleMutation.mutate(
-    //     buildPayload({
-    //       method: "mobile_money",
-    //       amount: totals.total,
-    //       referenceNumber: ref,
-    //     }),
-    //   );
+  const handleCheque = (
+    chequeNumber: string,
+    accountNumber: string,
+    tendered: number,
+  ) => {
+    mutate({
+      studentId: studentId!,
+      slCode: selectedSubLedger,
+      amount: tendered,
+      paymentMode: "cheque",
+      payer,
+      description,
+      userId: userId ?? "",
+      chequeReference: {
+        accountNumber,
+        chequeNumber,
+      },
+    });
   };
 
   const handleMoMoManual = (ref?: string) => {
-    //   saleMutation.mutate(
-    //     buildPayload({
-    //       method: "mobile_money",
-    //       amount: totals.total,
-    //       referenceNumber: ref,
-    //     }),
-    //   );
+    mutate({
+      studentId: studentId!,
+      slCode: selectedSubLedger,
+      amount,
+      paymentMode: "momo",
+      payer,
+      description,
+      userId: userId ?? "",
+      reference: ref,
+    });
   };
 
   const handleSplit = (splits: SplitEntry[]) => {
-    //   saleMutation.mutate(
-    //     buildPayload({
-    //       method: "split",
-    //       amount: totals.total,
-    //       splits: splits as PaymentSplit[],
-    //     }),
-    //   );
+    console.log(splits);
   };
 
   return (
@@ -760,7 +883,8 @@ const PaymentModal = () => {
                 <button
                   key={tile.key}
                   onClick={() => setMethod(tile.key)}
-                  className="flex flex-col items-center gap-2.5 py-5 px-4 rounded-2xl border-2 border-slate-100 bg-white hover:border-[#1E3A5F] hover:bg-[rgba(30,58,95,0.03)] transition-all group"
+                  disabled={tile.disabled}
+                  className="flex flex-col items-center gap-2.5 py-5 px-4 rounded-2xl border-2 border-slate-100 bg-white hover:border-[#1E3A5F] hover:bg-[rgba(30,58,95,0.03)] transition-all group disabled:opacity-35 disabled:cursor-not-allowed"
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center transition-all group-hover:scale-110"
@@ -797,18 +921,30 @@ const PaymentModal = () => {
             </div>
           </div>
         ) : method === "cash" ? (
-          <CashFlow total={amount} onConfirm={handleCash} loading={false} />
+          <CashFlow
+            total={amount}
+            onConfirm={handleCash}
+            form={form}
+            loading={isPending}
+          />
         ) : method === "cheque" ? (
-          <ChequeFlow total={amount} onConfirm={handleCheque} loading={false} />
+          <ChequeFlow
+            total={amount}
+            onConfirm={handleCheque}
+            loading={isPending}
+          />
         ) : method === "mobile_money" ? (
           <MoMoFlow
+            form={form}
             total={amount}
-            onSuccess={handleMoMoSuccess}
             onConfirmManual={handleMoMoManual}
-            loading={false}
           />
         ) : (
-          <SplitFlow total={amount} onConfirm={handleSplit} loading={false} />
+          <SplitFlow
+            total={amount}
+            onConfirm={handleSplit}
+            loading={isPending}
+          />
         )}
       </div>
     </Modal>

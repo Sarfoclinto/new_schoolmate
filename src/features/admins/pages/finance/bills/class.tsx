@@ -68,6 +68,7 @@ import { getClassBillFn } from "@/services/finance";
 import type { StudentBill } from "@/types/api/finance";
 import PaymentModal from "@/features/admins/components/finance/payment-modal";
 import { usePayment } from "@/store/payment.store";
+import { useShallow } from "zustand/react/shallow";
 
 // ─── Currency formatter ────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -428,12 +429,26 @@ const ClassFeesOverview = () => {
     setStudentName,
     setAmount,
     setStudentSubLedgers,
-  } = usePayment();
+  } = usePayment(
+    useShallow((s) => ({
+      open: s.open,
+      setStudentId: s.setStudentId,
+      setStudentName: s.setStudentName,
+      setAmount: s.setAmount,
+      setStudentSubLedgers: s.setStudentSubLedgers,
+    })),
+  );
 
   // ── Filter state ─────────────────────────────────────────────────────────────
-  const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
-  const [selectedYearId, setSelectedYearId] = useState<string | null>(null);
-  const [selectedTermId, setSelectedTermId] = useState<string | null>(null);
+  const [selectedSubId, setSelectedSubId] = useState<string | undefined>(
+    undefined,
+  );
+  const [selectedYearId, setSelectedYearId] = useState<string | undefined>(
+    undefined,
+  );
+  const [selectedTermId, setSelectedTermId] = useState<string | undefined>(
+    undefined,
+  );
 
   // Secondary filters
   const [search, setSearch] = useState("");
@@ -447,14 +462,6 @@ const ClassFeesOverview = () => {
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   // ── Queries ───────────────────────────────────────────────────────────────────
-  //   const { data: eduLevels = [], isLoading: loadingEdu } = useQuery<
-  //     EduLevel[],
-  //     AxiosError
-  //   >({
-  //     queryKey: ["eduLevels"],
-  //     queryFn: getAllEduLevelsFn,
-  //   });
-
   const { data: subLevels = [], isLoading: loadingSubs } = useFetch({
     queryFn: getAllSubLevelsFn,
     queryKeys: eduKeys.sublevels(),
@@ -777,7 +784,7 @@ const ClassFeesOverview = () => {
                   value={selectedYearId ?? undefined}
                   onChange={(id) => {
                     setSelectedYearId(id ?? null);
-                    setSelectedTermId(null);
+                    setSelectedTermId(undefined);
                   }}
                 />
               </div>
@@ -1396,6 +1403,7 @@ const ClassFeesOverview = () => {
                   const balHeat = balanceColor(student.balance);
                   const isFullyPaid = student.balance <= 0;
                   const isOverpaid = student.balance < 0;
+                  const overrideCollors = isFullyPaid || isOverpaid;
                   const initials = student.fullName
                     .split(" ")
                     .slice(0, 2)
@@ -1571,7 +1579,7 @@ const ClassFeesOverview = () => {
                             {found && typeof bal === "number" ? (
                               <div>
                                 <span
-                                  className={`inline-flex items-center justify-center px-2 py-0.5 rounded-lg text-[11px] font-bold border ${heat!.bg} ${heat!.text} ${heat!.border}`}
+                                  className={`inline-flex items-center justify-center px-2 py-0.5 rounded-lg text-[11px] font-bold border ${overrideCollors ? "bg-emerald-50" : heat!.bg} ${overrideCollors ? "text-emerald-700" : heat!.text} ${overrideCollors ? "border-emerald-200" : heat!.border}`}
                                 >
                                   {fmt(bal)}
                                 </span>
@@ -1601,9 +1609,12 @@ const ClassFeesOverview = () => {
                                     style={{
                                       height: "100%",
                                       borderRadius: 4,
-                                      width: `${barPct}%`,
-                                      background:
-                                        barPct >= 100
+                                      width: overrideCollors
+                                        ? "100%"
+                                        : `${barPct}%`,
+                                      background: overrideCollors
+                                        ? "#10B981"
+                                        : barPct >= 100
                                           ? "#10B981"
                                           : barPct >= 60
                                             ? "#F59E0B"
@@ -1685,7 +1696,7 @@ const ClassFeesOverview = () => {
                         }}
                       >
                         <div
-                          className={`inline-flex items-center justify-center flex-col gap-1 px-2.5 py-1.5 rounded-lg border ${balHeat.bg} ${balHeat.text} ${balHeat.border}`}
+                          className={`inline-flex items-center justify-center flex-col gap-1. px-2.5 py-1.5. rounded-lg border ${balHeat.bg} ${balHeat.text} ${balHeat.border}`}
                           style={{
                             minWidth: "80px",
                           }}
@@ -1729,13 +1740,16 @@ const ClassFeesOverview = () => {
                           right: 0,
                           zIndex: 1,
                           background: rowBg,
-                          width: 56,
-                          minWidth: 56,
-                          padding: "6px 3px",
+                          width: actionCoWidth,
+                          minWidth: actionCoWidth,
+                          padding: "8px 3px",
                           borderBottom: "1px solid #F1F5F9",
                           borderLeft: "1px solid #D0DCF0",
                           textAlign: "center",
                           display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          height: "60px",
                           columnGap: "2px",
                         }}
                       >
@@ -1743,7 +1757,7 @@ const ClassFeesOverview = () => {
                           type="button"
                           onClick={() => handleViewStudent(student)}
                           title={`View ${student.fullName}'s ledger`}
-                          className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto transition-all cursor-pointer hover:scale-110"
+                          className="w-8 h-8 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer hover:scale-110"
                           style={{
                             background:
                               "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
@@ -1755,7 +1769,7 @@ const ClassFeesOverview = () => {
                           type="button"
                           onClick={() => handlePayment(student)}
                           title={`Pay ${student.fullName}'s ledger`}
-                          className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto transition-all cursor-pointer hover:scale-110"
+                          className="w-8 h-8 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer hover:scale-110"
                           style={{
                             background:
                               "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
@@ -1942,7 +1956,11 @@ const ClassFeesOverview = () => {
         </MotionDiv>
       )}
 
-      <PaymentModal />
+      <PaymentModal
+        selectedSubId={selectedSubId!}
+        selectedYearId={selectedTermId}
+        selectedTermId={selectedTermId}
+      />
     </div>
   );
 };

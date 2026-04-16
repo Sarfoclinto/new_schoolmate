@@ -7,7 +7,8 @@ type VerifyProps = {
   network: string;
 };
 
-const useVerifyPhone = ({ network, phone }: VerifyProps) => {
+const useVerifyPhone = ({ network: net, phone }: VerifyProps) => {
+  const network = net.toUpperCase()
   const {
     isSuccess: vPSucsess,
     data: vData,
