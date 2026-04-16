@@ -6,11 +6,11 @@ type Props = {
   required?: boolean;
 };
 
-const AmountTendered = ({ setTendered, tendered, required = false }: Props) => {
+const AmountTendered = ({ setTendered, tendered, required = true }: Props) => {
   return (
     <Form.Item
       name="tendered"
-      rules={[{ required }]}
+      rules={[{ required, message: "Amount tendered is required" }]}
       label={
         <p
           className="text-xs font-bold text-slate-500 uppercase tracking-wide my-0!"
@@ -21,6 +21,7 @@ const AmountTendered = ({ setTendered, tendered, required = false }: Props) => {
       }
       className="my-0! py-0!"
       labelCol={{ style: { paddingBottom: 0, marginBottom: 0 } }}
+      initialValue={tendered || 0.0}
     >
       <InputNumber
         className="w-full!"

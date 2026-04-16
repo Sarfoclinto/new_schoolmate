@@ -161,6 +161,7 @@ const ChequeFlow = ({
   total,
   onConfirm,
   loading,
+  form,
 }: {
   total: number;
   onConfirm: (
@@ -169,14 +170,20 @@ const ChequeFlow = ({
     tendered: number,
   ) => void;
   loading: boolean;
+  form: FormInstance;
 }) => {
   const [tendered, setTendered] = useState<number>(total);
-  const [chequeNum, setChequeNum] = useState("");
-  const [accountNum, setAccountNum] = useState("");
 
   return (
-    <div className="flex flex-col gap-5">
-      <div
+    <Form
+      form={form}
+      onFinish={(values) => {
+        onConfirm(values.chequeNumber, values.accountNumber, values.tendered);
+      }}
+      layout="vertical"
+      className="flex flex-col gap-5"
+    >
+      {/* <div
         className="flex items-center justify-between px-5 py-4 rounded-2xl"
         style={{
           background: "rgba(37,99,235,0.06)",
@@ -195,69 +202,63 @@ const ChequeFlow = ({
           </p>
         </div>
         <ReceiptText className="w-10 h-10 text-blue-300" strokeWidth={1} />
-      </div>
+      </div> */}
 
-      <div>
-        <p
-          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Amount
-        </p>
-        <InputNumber
-          size="large"
-          placeholder="Enter amount eg. 800.00"
-          value={tendered}
-          onChange={(v) => setTendered(v ?? 0)}
-        />
-      </div>
-      <div>
-        <p
-          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Cheque Number
-        </p>
-        <Input
-          size="large"
-          placeholder="Cheque number"
-          value={chequeNum}
-          onChange={(e) => setChequeNum(e.target.value)}
-        />
-      </div>
-      <div>
-        <p
-          className="text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Amount
-        </p>
-        <Input
-          size="large"
-          placeholder="Account numner"
-          value={accountNum}
-          onChange={(e) => setAccountNum(e.target.value)}
-        />
-      </div>
+      <AmountTendered tendered={tendered} setTendered={setTendered} />
+      <Form.Item
+        name="chequeNumber"
+        labelCol={{ style: { paddingBottom: 0, marginBottom: 0 } }}
+        className="my-0! py-0!"
+        label={
+          <p
+            className="text-xs font-bold text-slate-500 uppercase tracking-wide"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
+            Cheque Number
+          </p>
+        }
+        rules={[
+          { required: true, message: "Unique cheque number is required" },
+        ]}
+      >
+        <Input.OTP length={6} size="large" />
+      </Form.Item>
+      <Form.Item
+        name="accountNumber"
+        labelCol={{ style: { paddingBottom: 0, marginBottom: 0 } }}
+        className="my-0! py-0!"
+        label={
+          <p
+            className="text-xs font-bold text-slate-500 uppercase tracking-wide"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
+            Amount
+          </p>
+        }
+        rules={[{ required: true, message: "Account number is required" }]}
+      >
+        <Input size="large" placeholder="Account number" />
+      </Form.Item>
+      <SubledgerSelector />
+      <PayerNDescription />
 
       <Button
         type="primary"
         size="large"
         className="w-full h-12! text-base! font-bold!"
         loading={loading}
-        onClick={() => onConfirm(chequeNum, accountNum, tendered)}
+        htmlType="submit"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         Save Transaction
       </Button>
-    </div>
+    </Form>
   );
 };
 
 // ── MoMo Flow (Paystack) ──────────────────────────────────────────────────────
 const MoMoFlow = ({
   total,
-  // onConfirmManual,
   form,
 }: {
   total: number;
@@ -279,7 +280,7 @@ const MoMoFlow = ({
   } = usePayment();
   const [status, setStatus] = useState<
     "idle" | "pending" | "success" | "failed"
-  >("failed");
+  >("idle");
   const [tendered, setTendered] = useState(total);
 
   // Generate reference once when component mounts (if not already set)
@@ -296,7 +297,6 @@ const MoMoFlow = ({
   const {
     name: username,
     isLoading: verifying,
-    // isError: vIsError,
     error: vErr,
   } = useVerifyPhone({ network, phone: sanitizedPhone });
 
@@ -319,10 +319,11 @@ const MoMoFlow = ({
   });
 
   useEffect(() => {
-    if((hasExceededTimeout || hasExceededMaxAttempts) && !isPolling){
-      setStatus("failed")
+    if ((hasExceededTimeout || hasExceededMaxAttempts) && !isPolling) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus("failed");
     }
-  },[hasExceededTimeout,hasExceededMaxAttempts,isPolling])
+  }, [hasExceededTimeout, hasExceededMaxAttempts, isPolling]);
 
   useSavePayment({
     save: transRes?.responseMessage === "Successfully Processed Transaction",
@@ -353,7 +354,7 @@ const MoMoFlow = ({
       network: capitalizeWords(network),
       msisdn: sanitizePhone(phone),
       amount: values.tendered,
-      narration: `Debiting ${sanitizedPhone} on ${dayjs().format("DDMMYYY")}`,
+      narration: `Debiting ${sanitizedPhone} on ${dayjs().format("Do MMM, YYYY")}`,
       refNo: reference,
     };
     debit(payload);
@@ -470,7 +471,10 @@ const MoMoFlow = ({
           <Button
             icon={<RefreshCw className="w-3.5 h-3.5" />}
             onClick={() => {
-              setStatus("idle");
+              setPhone("");
+              reset();
+              form.resetFields();
+              close();
             }}
             className="flex-1 flex items-center gap-1"
           >
@@ -488,7 +492,7 @@ const MoMoFlow = ({
       onFinish={onFinish}
       className="flex flex-col gap-5"
     >
-      <div
+      {/* <div
         className="flex items-center justify-between px-5 py-4 rounded-2xl"
         style={{
           background: "rgba(124,58,237,0.06)",
@@ -507,7 +511,7 @@ const MoMoFlow = ({
           </p>
         </div>
         <Smartphone className="w-10 h-10 text-purple-300" strokeWidth={1} />
-      </div>
+      </div> */}
 
       {/* Network Selector */}
       <NetworkSelector value={network} onChange={setNetwork} phone={phone} />
@@ -528,19 +532,22 @@ const MoMoFlow = ({
         <span className="flex flex-col md:flex-row md:items-center md:justify-between">
           <span className=" flex flex-col">
             {vErr ? (
-              <span className="font-medium text-xs text-red-500">
+              <span className="font-medium text-[10px] text-red-500">
                 Error verifying phone number
               </span>
             ) : null}
           </span>
           {verifying ? (
             <span className="flex items-center gap-x-3">
-              <span className="text-xs font-medium">Please wait</span>
+              <span className="text-[10px] font-medium">Please wait</span>
               <Loader className="size-2.5 animate-spin" />
             </span>
           ) : (
-            <span className="font-medium text-xs pt-1">
-              Name: <span>{username ?? "N/A"}</span>
+            <span className="font-medium text-[10px] pt-1">
+              Name:{" "}
+              <span className="text-emerald-500 text-[10px] font-medium">
+                {username ?? "N/A"}
+              </span>
             </span>
           )}
         </span>
@@ -929,6 +936,7 @@ const PaymentModal = ({
           />
         ) : method === "cheque" ? (
           <ChequeFlow
+            form={form}
             total={amount}
             onConfirm={handleCheque}
             loading={isPending}
