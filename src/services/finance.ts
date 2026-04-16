@@ -1,6 +1,7 @@
 import {
   deleteHelper,
   getHelper,
+  patchHelper,
   paymentPost,
   postHelper,
   updateHelper,
@@ -23,6 +24,8 @@ import type {
   DetailsResponse,
   TransStatRes,
   PaymentPost,
+  PaymentGet,
+  UpdateStatusPayload,
 } from "@/types/api/finance";
 const {
   finance: { fees, ledgers, bills, payment },
@@ -128,4 +131,27 @@ export const checkStatusFn = async (
 
 export const savePaymentFn = async (payload: PaymentPost) => {
   return postHelper(payment.save, payload);
+};
+
+export const getStudentPaymentHistoryFn = async (_p: {
+  studentId: string;
+  academicYearId?: string;
+  academicTermId?: string;
+}): Promise<PaymentGet[]> => {
+  return getHelper<PaymentGet[]>(payment.studentHistory, {
+    studentId: _p.studentId,
+    academicYearId: _p.academicYearId,
+    academicTermId: _p.academicTermId,
+  });
+};
+
+export const updatePaymentStatusFn = async (_p: UpdateStatusPayload) => {
+  return patchHelper(
+    payment.update,
+    {},
+    {
+      paymentId: _p.paymentId,
+      status: _p.status,
+    },
+  );
 };

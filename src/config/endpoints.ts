@@ -250,6 +250,8 @@ const endpoints = {
       debit: "/DebitCustomer",
       checkStatus: "/CheckTransactionStatus",
       save: "/SaveTransaction",
+      studentHistory: "/GetStudentPaymentHistory",
+      update: "/UpdatePaymentStatus"
     },
   },
   academicRecords: {

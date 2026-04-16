@@ -31,7 +31,6 @@
 
 import { Select } from "antd";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
 import {
   ChevronRight,
@@ -69,6 +68,7 @@ import type { StudentBill } from "@/types/api/finance";
 import PaymentModal from "@/features/admins/components/finance/payment-modal";
 import { usePayment } from "@/store/payment.store";
 import { useShallow } from "zustand/react/shallow";
+import StudentPaymentDrawer from "@/features/admins/components/finance/payment-drawer";
 
 // ─── Currency formatter ────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -422,7 +422,6 @@ const ScopeBadge = ({
 type SortDir = "asc" | "desc";
 
 const ClassFeesOverview = () => {
-  const navigate = useNavigate();
   const {
     open,
     setStudentId,
@@ -449,6 +448,7 @@ const ClassFeesOverview = () => {
   const [selectedTermId, setSelectedTermId] = useState<string | undefined>(
     undefined,
   );
+  const [drawerStudent, setDrawerStudent] = useState<StudentBill | null>(null);
 
   // Secondary filters
   const [search, setSearch] = useState("");
@@ -637,17 +637,6 @@ const ClassFeesOverview = () => {
     setMaxBalance("");
   };
 
-  const handleViewStudent = (student: StudentBill) => {
-    navigate("", {
-      state: {
-        studentId: student.studentId,
-        studentName: student.fullName,
-        subLevelId: selectedSubId,
-        yearId: selectedYearId,
-        termId: selectedTermId,
-      },
-    });
-  };
   const handlePayment = (student: StudentBill) => {
     setStudentSubLedgers(student.subLedgerBill);
     setStudentId(student.studentId);
@@ -1755,7 +1744,7 @@ const ClassFeesOverview = () => {
                       >
                         <button
                           type="button"
-                          onClick={() => handleViewStudent(student)}
+                          onClick={() => setDrawerStudent(student)}
                           title={`View ${student.fullName}'s ledger`}
                           className="w-8 h-8 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer hover:scale-110"
                           style={{
@@ -1960,6 +1949,12 @@ const ClassFeesOverview = () => {
         selectedSubId={selectedSubId!}
         selectedYearId={selectedTermId}
         selectedTermId={selectedTermId}
+      />
+
+      <StudentPaymentDrawer
+        student={drawerStudent}
+        open={!!drawerStudent}
+        onClose={() => setDrawerStudent(null)}
       />
     </div>
   );

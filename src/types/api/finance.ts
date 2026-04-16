@@ -199,5 +199,50 @@ export type PaymentPost = z.infer<typeof PaymentPostSchema>;
 export type SavePaymentProps = {
   save: boolean;
   payload: PaymentPost;
-  onSuccessSave?: (payload: MdResponse) => void
+  onSuccessSave?: (payload: MdResponse) => void;
 };
+
+/**
+ * /GetStudentPaymentHistory
+ * params obj {
+ *  studentId: string;
+ *  academicYearId?: string;
+ *  academicTermId?: string;
+ * }
+ */
+export type PaymentMode = "cash" | "momo" | "cheque";
+export type PaymentStatus = "pending" | "paid" | "failed" | "cancelled";
+
+export interface PaymentGet {
+  paymentId: string;
+  label: string;
+  sl?: {
+    slCode: string;
+    sl: string;
+  };
+  paymentMode: PaymentMode;
+  reference?: string;
+  accountNumber?: string;
+  chequeNumber?: string;
+  amount: number;
+  status: PaymentStatus;
+  payer: string;
+  description: string;
+  createdOn: string;
+  updatedOn: string;
+}
+
+export interface StudentBillRef {
+  studentId: string;
+  fullName: string;
+  otherName?: string;
+  totalDebit: number;
+  totalCredit: number;
+  balance: number;
+  subLevelName?: string;
+}
+
+export interface UpdateStatusPayload {
+  paymentId: string;
+  status: "paid" | "cancelled";
+}
