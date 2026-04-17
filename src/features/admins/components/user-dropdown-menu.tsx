@@ -6,22 +6,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSignalRContext } from "@/hooks/signalR/use-signalR-context";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
 import { getInitials, getUserProfileRoute } from "@/utils/string";
+import { Tooltip } from "antd";
 import { DoorOpenIcon, SettingsIcon, User2Icon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const UserMenu = () => {
   const user = useAuth((s) => s.user);
   const open = useUIStore((s) => s.openLogoutMenu);
+  const { isConnected } = useSignalRContext();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center cursor-pointer gap-x-2.5 pl-1 pr-3 py-1.5 rounded-lg hover:bg-slate-100 transition-all duration-200 group">
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+            className="w-8 h-8 relative rounded-full flex items-center justify-center text-xs font-bold shrink-0"
             style={{
               background: "linear-gradient(135deg, #1E3A5F, #2D5A8E)",
               color: "white",
@@ -37,6 +41,14 @@ const UserMenu = () => {
             ) : (
               getInitials(user?.name)
             )}
+            <Tooltip title={isConnected ? "Online" : "Offline"}>
+              <span
+                className={cn(
+                  "absolute cursor-pointer size-2.5 rounded-full bottom-0 -right-0.5",
+                  isConnected ? "bg-green-500" : "bg-red-500",
+                )}
+              />
+            </Tooltip>
           </div>
           <div className="hidden md:block text-left leading-none">
             <p

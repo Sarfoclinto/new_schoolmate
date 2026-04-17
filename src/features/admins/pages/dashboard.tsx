@@ -14,6 +14,7 @@ import { getUserNotices } from "@/services/setup/notice";
 import { get30daysEvents } from "@/services/event";
 import { dashboardKeys, eventKeys, noticeKeys } from "@/config/query-keys";
 import { StatCard } from "../components/stat-card";
+import FinanceDashboardSection from "../components/dashboard-finance-section";
 
 const AdminDashboard = () => {
   const [date] = useState<Dayjs | null>(dayjs());
@@ -27,7 +28,7 @@ const AdminDashboard = () => {
 
   // queries
   const { data, isLoading } = useFetch({
-    queryFn: getAdminDashboardData,
+    queryFn: () => getAdminDashboardData(),
     queryKeys: dashboardKeys.custom("admin"),
   });
 
@@ -126,7 +127,6 @@ const AdminDashboard = () => {
     },
   ];
 
-
   return (
     <section className="flex-1 p-2 min-w-fit w-full h-full overflow-auto">
       {/* ── Page header ── */}
@@ -145,6 +145,11 @@ const AdminDashboard = () => {
           />
         ))}
       </section>
+
+      <FinanceDashboardSection
+        data={data?.financeDashboard}
+        loading={isLoading}
+      />
 
       {/* ── Calendar / Preview / Notice Board -- */}
       <CalendarnPreviewBoard

@@ -23,7 +23,7 @@
  * so the drawer opens pre-filtered to the same period the admin was viewing.
  */
 
-import { Modal, Select } from "antd";
+import { Modal, Select, Tooltip } from "antd";
 import { useState, useMemo } from "react";
 // import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -569,23 +569,25 @@ const SummaryStrip = ({ payments }: { payments: PaymentGet[] }) => {
           icon: <XCircle className="w-3.5 h-3.5" />,
         },
       ].map((s) => (
-        <div
-          key={s.label}
-          className={`flex items-center gap-x-2.5 px-3 py-2.5 rounded-xl border ${s.bg}`}
-        >
-          <span className={s.color}>{s.icon}</span>
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none">
-              {s.label}
-            </p>
-            <p
-              className={`text-xs font-bold mt-0.5 truncate ${s.color}`}
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              {s.value}
-            </p>
+        <Tooltip title={s.value} key={s.label}>
+          <div
+            key={s.label}
+            className={`flex items-center gap-x-2.5 px-3 py-2.5 rounded-xl border ${s.bg}`}
+          >
+            <span className={s.color}>{s.icon}</span>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none">
+                {s.label}
+              </p>
+              <p
+                className={`text-xs font-bold mt-0.5 truncate ${s.color}`}
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
+              >
+                {s.value}
+              </p>
+            </div>
           </div>
-        </div>
+        </Tooltip>
       ))}
     </div>
   );
@@ -750,7 +752,7 @@ export const StudentPaymentDrawer = ({
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className="fixed top-0 right-0 bottom-0 z-50 bg-white flex flex-col"
               style={{
-                width: "min(520px, 100vw)",
+                width: "min(570px, 100vw)",
                 boxShadow: "-8px 0 40px rgba(13,27,46,0.15)",
               }}
             >
