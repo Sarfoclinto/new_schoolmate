@@ -1,6 +1,11 @@
 import { formatCurrency } from "@/services/currency";
 import { usePayment } from "@/store/payment.store";
-import type { DebitObj, PaymentMethod, SplitEntry } from "@/types/api/finance";
+import {
+  validatePaymentPayload,
+  type DebitObj,
+  type PaymentMethod,
+  type SplitEntry,
+} from "@/types/api/finance";
 import {
   Button,
   Form,
@@ -96,8 +101,6 @@ const CashFlow = ({
   loading: boolean;
   form?: FormInstance;
 }) => {
-  const [tendered, setTendered] = useState<number>(total);
-
   return (
     <Form
       form={form}
@@ -128,7 +131,7 @@ const CashFlow = ({
         <Banknote className="w-10 h-10 text-emerald-300" strokeWidth={1} />
       </div>
 
-      <AmountTendered tendered={tendered} setTendered={setTendered} required />
+      <AmountTendered required />
       <SubledgerSelector />
       <PayerNDescription />
 
@@ -143,22 +146,12 @@ const CashFlow = ({
       >
         Save Transaction
       </Button>
-
-      {/* {tendered < total && (
-        <p
-          className="text-xs my-0! py-0! text-yellow-400"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Tendered amount is less than total
-        </p>
-      )} */}
     </Form>
   );
 };
 
 // ── Cheque Flow ─────────────────────────────────────────────────────────────────
 const ChequeFlow = ({
-  total,
   onConfirm,
   loading,
   form,
@@ -172,8 +165,6 @@ const ChequeFlow = ({
   loading: boolean;
   form: FormInstance;
 }) => {
-  const [tendered, setTendered] = useState<number>(total);
-
   return (
     <Form
       form={form}
@@ -183,28 +174,7 @@ const ChequeFlow = ({
       layout="vertical"
       className="flex flex-col gap-5"
     >
-      {/* <div
-        className="flex items-center justify-between px-5 py-4 rounded-2xl"
-        style={{
-          background: "rgba(37,99,235,0.06)",
-          border: "1px solid rgba(37,99,235,0.12)",
-        }}
-      >
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 m-0">
-            Charge to Cheque
-          </p>
-          <p
-            className="text-3xl font-bold text-blue-700 m-0 leading-none mt-1"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            {formatCurrency<"GHS">(total, "GHS", { type: "currency" })}
-          </p>
-        </div>
-        <ReceiptText className="w-10 h-10 text-blue-300" strokeWidth={1} />
-      </div> */}
-
-      <AmountTendered tendered={tendered} setTendered={setTendered} />
+      <AmountTendered />
       <Form.Item
         name="chequeNumber"
         labelCol={{ style: { paddingBottom: 0, marginBottom: 0 } }}
@@ -232,7 +202,7 @@ const ChequeFlow = ({
             className="text-xs font-bold text-slate-500 uppercase tracking-wide"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            Amount
+            Account Number
           </p>
         }
         rules={[{ required: true, message: "Account number is required" }]}
@@ -281,7 +251,6 @@ const MoMoFlow = ({
   const [status, setStatus] = useState<
     "idle" | "pending" | "success" | "failed"
   >("idle");
-  const [tendered, setTendered] = useState(total);
 
   // Generate reference once when component mounts (if not already set)
   useEffect(() => {
@@ -293,6 +262,7 @@ const MoMoFlow = ({
   const payer = usePayment((s) => s.payer);
   const description = usePayment((s) => s.description);
   const sanitizedPhone = useMemo(() => sanitizePhone(phone), [phone]);
+  const tendered = Form.useWatch("tendered", form);
 
   const {
     name: username,
@@ -418,22 +388,6 @@ const MoMoFlow = ({
             ✕ Stop polling
           </button>
         )}
-
-        {/* Recovery options when polling exceeded limits */}
-        {/* {(hasExceededTimeout || hasExceededMaxAttempts) && !isPolling && (
-          <div className="flex gap-2 w-full">
-            <Button
-              icon={<RefreshCw className="w-3.5 h-3.5" />}
-              onClick={() => {
-                // setStatus("idle");
-                close()
-              }}
-              className="flex-1 flex items-center gap-1"
-            >
-              Close
-            </Button>
-          </div>
-        )} */}
       </div>
     );
   }
@@ -492,27 +446,6 @@ const MoMoFlow = ({
       onFinish={onFinish}
       className="flex flex-col gap-5"
     >
-      {/* <div
-        className="flex items-center justify-between px-5 py-4 rounded-2xl"
-        style={{
-          background: "rgba(124,58,237,0.06)",
-          border: "1px solid rgba(124,58,237,0.12)",
-        }}
-      >
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-purple-600 m-0">
-            Mobile Money
-          </p>
-          <p
-            className="text-3xl font-bold text-purple-700 m-0 leading-none mt-1"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            {formatCurrency<"GHS">(total, "GHS", { type: "currency" })}
-          </p>
-        </div>
-        <Smartphone className="w-10 h-10 text-purple-300" strokeWidth={1} />
-      </div> */}
-
       {/* Network Selector */}
       <NetworkSelector value={network} onChange={setNetwork} phone={phone} />
 
@@ -555,7 +488,7 @@ const MoMoFlow = ({
 
       <SubledgerSelector />
 
-      <AmountTendered setTendered={setTendered} />
+      <AmountTendered />
 
       <PayerNDescription />
 
@@ -784,7 +717,7 @@ const PaymentModal = ({
   }, [close, form, isPending, reset]);
 
   const handleCash = (tendered: number) => {
-    mutate({
+    const payload = {
       studentId: studentId!,
       slCode: selectedSubLedger,
       amount: tendered,
@@ -792,7 +725,13 @@ const PaymentModal = ({
       payer,
       description,
       userId: userId ?? "",
-    });
+    };
+    const result = validatePaymentPayload(payload);
+    if (result.success) {
+      mutate(result.data);
+    } else {
+      toast.error(result.error.message);
+    }
   };
 
   const handleCheque = (
@@ -800,7 +739,7 @@ const PaymentModal = ({
     accountNumber: string,
     tendered: number,
   ) => {
-    mutate({
+    const payload = {
       studentId: studentId!,
       slCode: selectedSubLedger,
       amount: tendered,
@@ -812,7 +751,13 @@ const PaymentModal = ({
         accountNumber,
         chequeNumber,
       },
-    });
+    };
+    const result = validatePaymentPayload(payload);
+    if (result.success) {
+      mutate(result.data);
+    } else {
+      toast.error(result.error.message);
+    }
   };
 
   const handleMoMoManual = (ref?: string) => {

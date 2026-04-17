@@ -251,7 +251,8 @@ const endpoints = {
       checkStatus: "/CheckTransactionStatus",
       save: "/SaveTransaction",
       studentHistory: "/GetStudentPaymentHistory",
-      update: "/UpdatePaymentStatus"
+      update: "/UpdatePaymentStatus",
+      pending: "/GetPendingPayments"
     },
   },
   academicRecords: {

@@ -23,7 +23,7 @@ const useSavePayment = ({ save, payload, onSuccessSave }: SavePaymentProps) => {
     if (result.success) {
       mutate(result.data);
     } else {
-      console.log(result.error);
+      toast.error(result.error.message);
     }
   }, [mutate, payload]);
 

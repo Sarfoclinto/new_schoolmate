@@ -180,6 +180,7 @@ export const useDebit = ({
 
       // Success case: stop polling
       if (result.data?.responseMessage === SUCCESS_MESSAGE) {
+        // TODO: Save transaction
         clearPolling();
         setPollError(null);
         return;

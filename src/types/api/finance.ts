@@ -194,6 +194,10 @@ export const PaymentPostSchema = z.object({
     .optional(),
 });
 
+export const validatePaymentPayload = (payload: unknown) => {
+  return PaymentPostSchema.safeParse(payload);
+};
+
 export type PaymentPost = z.infer<typeof PaymentPostSchema>;
 
 export type SavePaymentProps = {
@@ -230,6 +234,12 @@ export interface PaymentGet {
   description: string;
   createdOn: string;
   updatedOn: string;
+}
+
+export interface PendingPayment {
+  studentId: string;
+  studentName: string;
+  pendingPayments: PaymentGet[];
 }
 
 export interface StudentBillRef {

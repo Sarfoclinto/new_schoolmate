@@ -62,6 +62,8 @@ import {
 import useFetch from "@/hooks/api/use-fetch";
 import { yearKeys } from "@/config/query-keys";
 import { getAllYearsFn } from "@/services/setup/year-n-term";
+import { redactString } from "@/utils/string";
+import { useQueryClient } from "@tanstack/react-query";
 
 // ─── Currency ─────────────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -208,29 +210,36 @@ const DetailRow = ({
   );
 };
 
-const PaymentDetailModal = ({
+export const PaymentDetailModal = ({
   payment,
   open,
   onClose,
   onStatusUpdate,
+  closeAfter = true,
 }: {
   payment: PaymentGet | null;
   open: boolean;
   onClose: () => void;
-  onStatusUpdate: (paymentId: string, status: "paid" | "cancelled") => void;
+  onStatusUpdate?: (paymentId: string, status: "paid" | "cancelled") => void;
+  closeAfter?: boolean;
 }) => {
-  //   const qc = useQueryClient();
+  const qc = useQueryClient();
 
   const updateStatus = usePost({
     postFn: updatePaymentStatusFn,
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       if (res.responseCode === 1) {
         toast.success(res.responseMessage);
       } else {
         toast.info(res.responseMessage);
       }
-      onStatusUpdate(payment!.paymentId, updateStatus.variables!.status);
-      onClose();
+      await qc.invalidateQueries({
+        queryKey: ["paymentHistory", "pendingPaymentHistory"],
+      });
+      onStatusUpdate?.(payment!.paymentId, updateStatus.variables!.status);
+      if (closeAfter) {
+        onClose();
+      }
     },
     onError: (e: AxiosError) => toast.error(e.message),
   });
@@ -278,7 +287,7 @@ const PaymentDetailModal = ({
             {payment.label}
           </p>
           <p className="text-white/50 text-[11px] mt-0.5 font-mono truncate">
-            {payment.paymentId}
+            {redactString(payment.paymentId)}
           </p>
         </div>
         <span
@@ -417,7 +426,7 @@ const PaymentDetailModal = ({
 // CUSTOM TIMELINE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const TimelineItem = ({
+export const TimelineItem = ({
   payment,
   isLast,
   onClick,

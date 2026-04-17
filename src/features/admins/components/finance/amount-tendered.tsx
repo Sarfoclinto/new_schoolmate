@@ -1,12 +1,15 @@
+import { usePayment } from "@/store/payment.store";
 import { Form, InputNumber } from "antd";
 
 type Props = {
-  tendered?: number;
-  setTendered?: (v: number) => void;
   required?: boolean;
+  initialValue?: number;
 };
 
-const AmountTendered = ({ setTendered, tendered, required = true }: Props) => {
+const AmountTendered = ({ initialValue = 0, required = true }: Props) => {
+  const amount = usePayment((s) => s.amount);
+  const initial = amount ?? initialValue;
+
   return (
     <Form.Item
       name="tendered"
@@ -21,7 +24,7 @@ const AmountTendered = ({ setTendered, tendered, required = true }: Props) => {
       }
       className="my-0! py-0!"
       labelCol={{ style: { paddingBottom: 0, marginBottom: 0 } }}
-      initialValue={tendered || 0.0}
+      initialValue={initial || undefined}
     >
       <InputNumber
         className="w-full!"
@@ -29,8 +32,6 @@ const AmountTendered = ({ setTendered, tendered, required = true }: Props) => {
         placeholder="0.00"
         min={0}
         precision={2}
-        value={tendered}
-        onChange={(v) => setTendered?.(v ?? 0)}
       />
     </Form.Item>
   );

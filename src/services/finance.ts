@@ -26,6 +26,7 @@ import type {
   PaymentPost,
   PaymentGet,
   UpdateStatusPayload,
+  PendingPayment,
 } from "@/types/api/finance";
 const {
   finance: { fees, ledgers, bills, payment },
@@ -140,6 +141,16 @@ export const getStudentPaymentHistoryFn = async (_p: {
 }): Promise<PaymentGet[]> => {
   return getHelper<PaymentGet[]>(payment.studentHistory, {
     studentId: _p.studentId,
+    academicYearId: _p.academicYearId,
+    academicTermId: _p.academicTermId,
+  });
+};
+
+export const getPendingPaymentFn = async (_p: {
+  academicYearId?: string;
+  academicTermId?: string;
+}) => {
+  return getHelper<PendingPayment[]>(payment.pending, {
     academicYearId: _p.academicYearId,
     academicTermId: _p.academicTermId,
   });

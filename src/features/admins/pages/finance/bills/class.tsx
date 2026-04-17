@@ -29,9 +29,10 @@
  * The UI shows a "Overall" vs "Term-scoped" scope badge accordingly.
  */
 
-import { Select } from "antd";
+import { Select, Button } from "antd";
 import { useMemo, useState } from "react";
 import { AnimatePresence } from "motion/react";
+import { useDisclosure } from "@/hooks/use-disclosure";
 import {
   ChevronRight,
   Wallet,
@@ -69,6 +70,7 @@ import PaymentModal from "@/features/admins/components/finance/payment-modal";
 import { usePayment } from "@/store/payment.store";
 import { useShallow } from "zustand/react/shallow";
 import StudentPaymentDrawer from "@/features/admins/components/finance/payment-drawer";
+import PendingPaymentsDrawer from "@/features/admins/components/finance/pending-payments-drawer";
 
 // ─── Currency formatter ────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -449,6 +451,7 @@ const ClassFeesOverview = () => {
     undefined,
   );
   const [drawerStudent, setDrawerStudent] = useState<StudentBill | null>(null);
+  const {isOpen, open: openPending, close: closePending } = useDisclosure()
 
   // Secondary filters
   const [search, setSearch] = useState("");
@@ -683,6 +686,7 @@ const ClassFeesOverview = () => {
         </div>
 
         <div className="flex items-center gap-x-2 flex-wrap gap-y-2">
+          <Button type="primary" onClick={openPending}>Pending Payments</Button>
           {hasData && (
             <ScopeBadge
               isFiltered={isTermScoped}
@@ -718,9 +722,6 @@ const ClassFeesOverview = () => {
         <div className="p-5 flex flex-col gap-y-5">
           {/* ─ Primary: Edu level, Sub-level, Year (optional), Term (optional) ─ */}
           <div>
-            {/* <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
-              Data Source
-            </p> */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <p className="">
@@ -744,6 +745,36 @@ const ClassFeesOverview = () => {
                   }))}
                   value={selectedSubId ?? undefined}
                   onChange={setSelectedSubId}
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-x-1.5 mb-1.5">
+                  <FL>Academic Term</FL>
+                  <span className="text-[10px] text-slate-300 italic font-medium">
+                    optional
+                  </span>
+                </div>
+                <Select
+                  size="large"
+                  className="w-full"
+                  showSearch={{
+                    filterOption: (i, o) =>
+                      String(o?.label ?? "")
+                        .toLowerCase()
+                        .includes(i.toLowerCase()),
+                  }}
+                  allowClear
+                  placeholder={
+                    selectedSubId ? "All terms…" : "Select class first"
+                  }
+                  loading={loadingTerms}
+                  disabled={!selectedSubId || loadingTerms}
+                  options={terms.map((t) => ({
+                    label: t.academicTermName,
+                    value: t.academicTermId,
+                  }))}
+                  value={selectedTermId ?? undefined}
+                  onChange={(id) => setSelectedTermId(id ?? null)}
                 />
               </div>
               <div>
@@ -775,36 +806,6 @@ const ClassFeesOverview = () => {
                     setSelectedYearId(id ?? null);
                     setSelectedTermId(undefined);
                   }}
-                />
-              </div>
-              <div>
-                <div className="flex items-center gap-x-1.5 mb-1.5">
-                  <FL>Academic Term</FL>
-                  <span className="text-[10px] text-slate-300 italic font-medium">
-                    optional
-                  </span>
-                </div>
-                <Select
-                  size="large"
-                  className="w-full"
-                  showSearch
-                  allowClear
-                  filterOption={(i, o) =>
-                    String(o?.label ?? "")
-                      .toLowerCase()
-                      .includes(i.toLowerCase())
-                  }
-                  placeholder={
-                    selectedYearId ? "All terms…" : "Select year first"
-                  }
-                  loading={loadingTerms}
-                  disabled={!selectedYearId || loadingTerms}
-                  options={terms.map((t) => ({
-                    label: t.academicTermName,
-                    value: t.academicTermId,
-                  }))}
-                  value={selectedTermId ?? undefined}
-                  onChange={(id) => setSelectedTermId(id ?? null)}
                 />
               </div>
             </div>
@@ -1956,6 +1957,8 @@ const ClassFeesOverview = () => {
         open={!!drawerStudent}
         onClose={() => setDrawerStudent(null)}
       />
+
+      <PendingPaymentsDrawer isOpen={isOpen} close={closePending} />
     </div>
   );
 };

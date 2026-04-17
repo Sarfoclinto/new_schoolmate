@@ -849,7 +849,8 @@ export const FinanceDashboardSection = ({ data, loading }: Props) => {
         </div>
 
         <Link
-          to="/admin/finance/fees-overview"
+          // to="/admin/finance/fees-overview"
+          to=""
           className="flex items-center gap-x-1.5 text-xs font-bold text-[#1E3A5F] hover:text-[#C9A84C] transition-colors"
         >
           Full Finance View <ArrowRight className="w-3.5 h-3.5" />
@@ -865,7 +866,7 @@ export const FinanceDashboardSection = ({ data, loading }: Props) => {
           label="Total Billed"
           accent="bg-[#EEF2F8]"
           value={loading ? "—" : fmtShort(kpis?.totalBilled ?? 0)}
-          link="/admin/finance/billing-center"
+          // link="/admin/finance/billing-center"
         />
 
         <FinanceKpiCard
@@ -889,7 +890,7 @@ export const FinanceDashboardSection = ({ data, loading }: Props) => {
           label="Outstanding"
           accent="bg-rose-50"
           value={loading ? "—" : fmtShort(kpis?.outstanding ?? 0)}
-          link="/admin/finance/fees-overview"
+          // link="/admin/finance/fees-overview"
         />
 
         <FinanceKpiCard
@@ -913,7 +914,7 @@ export const FinanceDashboardSection = ({ data, loading }: Props) => {
           label="With Balance"
           accent="bg-amber-50"
           value={loading ? "—" : String(kpis?.studentsWithBalance ?? 0)}
-          link="/admin/finance/fees-overview"
+          // link="/admin/finance/fees-overview"
         />
 
         <FinanceKpiCard
