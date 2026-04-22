@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LiveClock } from "@/components/custom/live-clock";
 import { MotionButton, MotionDiv } from "@/components/custom/motion";
+import useHasPermission from "@/hooks/custom/use-has-permission";
 import { cn } from "@/lib/utils";
 import { Button, Form, Table, type FormInstance, type TableProps } from "antd";
 import { ChevronRight, X } from "lucide-react";
@@ -33,6 +34,10 @@ interface SetupPageProps<T extends object> {
   isPending?: boolean;
   pendingLabel?: string;
   submitLabel?: string;
+
+  // permissions
+  requiredRead?: string;
+  requiredWrite?: string;
 
   showFormsHeader?: boolean;
   showTableHeader?: boolean;
@@ -99,7 +104,14 @@ export function SetupPage<T extends object>({
   showForm = true,
   showFormsHeader = true,
   showTableHeader = true,
+  requiredRead = "",
+  requiredWrite = "",
 }: SetupPageProps<T>) {
+  const hasRead = useHasPermission(requiredRead);
+  const hasWrite = useHasPermission(requiredWrite);
+
+  const resolvedShowForm = showForm && hasWrite;
+
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }} className="p-3">
       {/* ── Page header ── */}
@@ -144,7 +156,7 @@ export function SetupPage<T extends object>({
         )}
       >
         {/* ════ LEFT – Form ════ */}
-        {showForm && (
+        {resolvedShowForm && (
           <MotionDiv
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
@@ -243,9 +255,19 @@ export function SetupPage<T extends object>({
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="bg-white rounded-2xl border border-slate-100 overflow-hidden"
+          className="bg-white relative rounded-2xl border border-slate-100 overflow-hidden"
           style={{ boxShadow: "0 2px 12px rgba(13,27,46,0.06)" }}
         >
+          {!hasRead && (
+            <span
+              aria-disabled="true"
+              className="z-999! absolute inset-0 bg-slate-800/90 backdrop-blur-xs! cursor-not-allowed group flex w-full h-full items-center justify-center"
+            >
+              <span className="group-hover:flex hidden transition-all duration-100 text-white">
+                You don't have permission to view
+              </span>
+            </span>
+          )}
           {showTableHeader && (
             <div
               className="flex items-center gap-x-3 px-6 py-4 border-b border-slate-100"

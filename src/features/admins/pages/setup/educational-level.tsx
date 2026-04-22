@@ -20,6 +20,7 @@ import { TableActions } from "../../components/table-action";
 import { SetupPage } from "../../components/setup-page";
 import { GraduationCap } from "lucide-react";
 import { educationMutationKeys, eduKeys } from "@/config/query-keys";
+// import { ADMINISTRATIVE_PERMISSIONS } from "@/config/permissions";
 
 const EducationalLevel = () => {
   // states

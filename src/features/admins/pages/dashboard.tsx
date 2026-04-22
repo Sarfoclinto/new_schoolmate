@@ -15,12 +15,17 @@ import { get30daysEvents } from "@/services/event";
 import { dashboardKeys, eventKeys, noticeKeys } from "@/config/query-keys";
 import { StatCard } from "../components/stat-card";
 import FinanceDashboardSection from "../components/dashboard-finance-section";
+import { ADMINISTRATIVE_PERMISSIONS } from "@/config/permissions";
+import useHasPermission from "@/hooks/custom/use-has-permission";
 
 const AdminDashboard = () => {
   const [date] = useState<Dayjs | null>(dayjs());
   const [selected, setSelected] = useState<CalendarItem | null>(null);
-  const { user } = useAuth();
+  const user = useAuth((s) => s.user);
   const userId = user?.userId ?? "";
+  const hasFinanceRead = useHasPermission(
+    ADMINISTRATIVE_PERMISSIONS.FINANCE_READ,
+  );
 
   const selectedDate = useMemo(() => {
     return date ? date.format("YYYY-MM-DD") : undefined;
@@ -146,10 +151,12 @@ const AdminDashboard = () => {
         ))}
       </section>
 
-      <FinanceDashboardSection
-        data={data?.financeDashboard}
-        loading={isLoading}
-      />
+      {hasFinanceRead && (
+        <FinanceDashboardSection
+          data={data?.financeDashboard}
+          loading={isLoading}
+        />
+      )}
 
       {/* ── Calendar / Preview / Notice Board -- */}
       <CalendarnPreviewBoard
