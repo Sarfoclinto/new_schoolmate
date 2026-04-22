@@ -3,6 +3,7 @@ import AdminLayoutHeader from "./header";
 import AdminLayoutSidebar from "./sidebar";
 import { SignalRProvider } from "@/providers/signalR-provider";
 import { AUTO_CONNECT, ENABLE_TOAST, signalRConfig } from "@/config/signalr";
+import InfoModal from "@/components/common/info-modal";
 
 const AdminLayout = () => {
   return (
@@ -19,6 +20,7 @@ const AdminLayout = () => {
             <Outlet />
           </div>
         </div>
+        <InfoModal />
       </main>
     </SignalRProvider>
   );
