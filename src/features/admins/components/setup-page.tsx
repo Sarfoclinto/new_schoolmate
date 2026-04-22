@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LiveClock } from "@/components/custom/live-clock";
 import { MotionButton, MotionDiv } from "@/components/custom/motion";
+import { ADMINISTRATIVE_PERMISSIONS } from "@/config/permissions";
 import useHasPermission from "@/hooks/custom/use-has-permission";
 import { cn } from "@/lib/utils";
 import { Button, Form, Table, type FormInstance, type TableProps } from "antd";
@@ -38,6 +39,7 @@ interface SetupPageProps<T extends object> {
   // permissions
   requiredRead?: string;
   requiredWrite?: string;
+  useSetup?: boolean;
 
   showFormsHeader?: boolean;
   showTableHeader?: boolean;
@@ -106,9 +108,14 @@ export function SetupPage<T extends object>({
   showTableHeader = true,
   requiredRead = "",
   requiredWrite = "",
+  useSetup,
 }: SetupPageProps<T>) {
-  const hasRead = useHasPermission(requiredRead);
-  const hasWrite = useHasPermission(requiredWrite);
+  const read = useSetup ? ADMINISTRATIVE_PERMISSIONS.SETUP_READ : requiredRead;
+  const write = useSetup
+    ? ADMINISTRATIVE_PERMISSIONS.SETUP_WRITE
+    : requiredWrite;
+  const hasRead = useHasPermission(read);
+  const hasWrite = useHasPermission(write);
 
   const resolvedShowForm = showForm && hasWrite;
 

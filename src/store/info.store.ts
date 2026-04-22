@@ -63,7 +63,7 @@ export const useInfo = create<InfoState>()(
 
         // Check if 5 minutes have passed since last dismissal
         const fiveMinutes = 5 * 60 * 1000;
-        return now.getTime() - lastDismissed.getTime() > fiveMinutes;
+        return now.getTime() - new Date(lastDismissed).getTime() > fiveMinutes;
       },
     }),
     { name: "infoState" },
