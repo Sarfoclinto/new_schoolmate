@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useFetch from "@/hooks/api/use-fetch";
 import {
   createFeesFn,
-  deleteFeesFn,
+  // deleteFeesFn,
   getAllSubsidiaryLedgerFn,
   getFeesFn,
   updateFeesFn,
@@ -214,24 +214,24 @@ const FeesSetup = () => {
       });
     },
   });
-  const { mutate: deleteFees, isPending: deletingFees } = usePost({
-    postFn: deleteFeesFn,
-    mutationOptions: { mutationKey: ["fees", "delete"] },
-    onSuccess: ({ responseCode, responseMessage }) => {
-      if (responseCode === 1) {
-        invalidate();
-        toast.success(responseMessage);
-        onReset();
-      } else {
-        toast.error(responseMessage);
-      }
-    },
-    onError: (err) => {
-      toast.error(`Failed to delete fee`, {
-        description: err?.message,
-      });
-    },
-  });
+  // const { mutate: deleteFees, isPending: deletingFees } = usePost({
+  //   postFn: deleteFeesFn,
+  //   mutationOptions: { mutationKey: ["fees", "delete"] },
+  //   onSuccess: ({ responseCode, responseMessage }) => {
+  //     if (responseCode === 1) {
+  //       invalidate();
+  //       toast.success(responseMessage);
+  //       onReset();
+  //     } else {
+  //       toast.error(responseMessage);
+  //     }
+  //   },
+  //   onError: (err) => {
+  //     toast.error(`Failed to delete fee`, {
+  //       description: err?.message,
+  //     });
+  //   },
+  // });
 
   // fns
   const onFinish = (values: FormValues) => {
@@ -256,7 +256,7 @@ const FeesSetup = () => {
   };
 
   // data
-  const isPending = addingFees || updatingFees || deletingFees;
+  const isPending = addingFees || updatingFees;
   const columns: ColumnsType<TuitionGet> = [
     {
       key: "sl",
@@ -314,11 +314,11 @@ const FeesSetup = () => {
       render: (_, row) => (
         <TableActions
           onEdit={() => setRecord(row)}
-          onDelete={() => {}}
-          onConfirmDelete={() => {
-            deleteFees(row.id);
-          }}
-          deleteTitle="Delete fees?"
+          // onDelete={() => {}}
+          // onConfirmDelete={() => {
+          //   deleteFees(row.id);
+          // }}
+          // deleteTitle="Delete fees?"
         />
       ),
     },
@@ -343,13 +343,7 @@ const FeesSetup = () => {
       form={form}
       isPending={isPending}
       pendingLabel={
-        updatingFees
-          ? "Updating…"
-          : deletingFees
-            ? "Deleting…"
-            : addingFees
-              ? "Adding…"
-              : "Add Fees"
+        updatingFees ? "Updating…" : addingFees ? "Adding…" : "Add Fees"
       }
       showFormsHeader={false}
       showTableHeader={false}
