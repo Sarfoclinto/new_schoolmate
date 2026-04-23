@@ -1,34 +1,3 @@
-/**
- * ClassFeesOverview.tsx  (Admin)
- *
- * Enterprise-grade fees payment overview for a class.
- *
- * Layout:
- * ┌──────────────────────────────────────────────────────────────────────────┐
- * │  PAGE HEADER  +  scope badge (overall vs term-filtered)                 │
- * ├──────────────────────────────────────────────────────────────────────────┤
- * │  FILTER CARD                                                             │
- * │  Edu Level → Sub-Level  |  Year (opt) → Term (opt)  |  search          │
- * │  Balance status filter  |  Sub-ledger spotlight      |  sort controls   │
- * ├──────────────────────────────────────────────────────────────────────────┤
- * │  SUMMARY CHIPS (animated)                                                │
- * │  Students · Total Billed · Total Paid · Outstanding · Fully Paid count  │
- * ├──────────────────────────────────────────────────────────────────────────┤
- * │  COLLECTION BAR  (visual progress of overall collection rate)            │
- * ├──────────────────────────────────────────────────────────────────────────┤
- * │  FEES TABLE                                                              │
- * │  Sticky #/Name cols │ dynamic sub-ledger cols │ sticky Debit/Credit/Bal │
- * │  Sort any col · heat balance cells · action → detail page               │
- * └──────────────────────────────────────────────────────────────────────────┘
- *
- * Data contract:
- *   GET /GetClassBill?subLevelId=&academicYearId=&academicTermId=
- *   Returns ClassBill (StudentBill[])
- *
- * When year/term not provided the backend returns overall figures.
- * The UI shows a "Overall" vs "Term-scoped" scope badge accordingly.
- */
-
 import { Select, Button } from "antd";
 import { useMemo, useState } from "react";
 import { AnimatePresence } from "motion/react";
@@ -39,18 +8,13 @@ import {
   Users,
   TrendingDown,
   TrendingUp,
-  CheckCircle2,
   AlertTriangle,
   Search,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
   GraduationCap,
   X,
   CalendarDays,
   BookOpen,
   Filter,
-  Eye,
   Receipt,
   BadgeCheck,
   BadgeAlert,
@@ -74,6 +38,13 @@ import PendingPaymentsDrawer from "@/features/admins/components/finance/pending-
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUIStore } from "@/store/ui.store";
 import { cn } from "@/lib/utils";
+import {
+  ClassbillFooter,
+  ClassBillTabelHead,
+  ClassBillTable,
+  ClassBillTableBody,
+  ClassBillTableFooterMeta,
+} from "@/features/admins/components/finance/primitives";
 
 // ─── Currency formatter ────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -182,26 +153,6 @@ const StatChip = ({
   );
 };
 
-const SortIcon = ({
-  col,
-  active,
-  dir,
-}: {
-  col: string;
-  active: string;
-  dir: "asc" | "desc";
-}) => {
-  if (active !== col)
-    return (
-      <ArrowUpDown className="w-3 h-3 text-slate-300 ml-1 inline-block shrink-0" />
-    );
-  return dir === "asc" ? (
-    <ArrowUp className="w-3 h-3 text-[#C9A84C] ml-1 inline-block shrink-0" />
-  ) : (
-    <ArrowDown className="w-3 h-3 text-[#C9A84C] ml-1 inline-block shrink-0" />
-  );
-};
-
 const EmptyState = ({
   icon,
   message,
@@ -235,27 +186,6 @@ const SkeletonRows = ({ n = 7 }: { n?: number }) => (
     ))}
   </div>
 );
-
-// Balance cell — colour by whether owed (balance > 0), clear (= 0), overpaid (< 0)
-function balanceColor(balance: number): {
-  bg: string;
-  text: string;
-  border: string;
-} {
-  if (balance <= 0)
-    return {
-      bg: "bg-emerald-50",
-      text: "text-emerald-700",
-      border: "border-emerald-200",
-    };
-  if (balance <= 200)
-    return {
-      bg: "bg-amber-50",
-      text: "text-amber-700",
-      border: "border-amber-200",
-    };
-  return { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-200" };
-}
 
 // ─── Balance status filter options ────────────────────────────────────────────
 type BalanceFilter =
@@ -1213,176 +1143,20 @@ const ClassFeesOverview = () => {
           <div
             className={cn(
               "overflow-x-auto",
-              collapsed ? "max-w-[94.1dvw]" : "max-w-[85dvw]",
+              collapsed ? "max-w-[94.1dvw]" : "max-w-[81dvw]",
               isMobile && "max-w-[94.1dvw]",
             )}
           >
-            <table
-              style={{
-                minWidth: `${tableMinW}px`,
-                width: "100%",
-                borderCollapse: "separate",
-                borderSpacing: 0,
-              }}
-            >
+            <ClassBillTable tableMinW={tableMinW}>
               {/* ─ THEAD ─ */}
-              <thead>
-                <tr style={{ background: "#F8FAFC" }}>
-                  {/* # sticky */}
-                  <th
-                    style={{
-                      position: "sticky",
-                      left: 0,
-                      zIndex: 3,
-                      background: "#F8FAFC",
-                      width: 44,
-                      minWidth: 44,
-                      padding: "10px 8px",
-                      borderBottom: "1px solid #E2E8F0",
-                      borderRight: "1px solid #E2E8F0",
-                      textAlign: "center",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#64748B",
-                      fontFamily: "'DM Sans', sans-serif",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    #
-                  </th>
-
-                  {/* Name sticky */}
-                  <th
-                    onClick={() => toggleSort("fullName")}
-                    style={{
-                      position: "sticky",
-                      left: 44,
-                      zIndex: 3,
-                      background: "#F8FAFC",
-                      minWidth: 200,
-                      padding: "10px 14px",
-                      cursor: "pointer",
-                      borderBottom: "1px solid #E2E8F0",
-                      borderRight: "1px solid #E2E8F0",
-                      textAlign: "left",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#64748B",
-                      fontFamily: "'DM Sans', sans-serif",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    Student{" "}
-                    <SortIcon col="fullName" active={sortCol} dir={sortDir} />
-                  </th>
-
-                  {/* Sub-ledger columns */}
-                  {allSubLedgers.map((sl) => (
-                    <th
-                      key={sl.code}
-                      onClick={() => toggleSort(sl.code)}
-                      style={{
-                        minWidth: 120,
-                        padding: "10px 10px",
-                        cursor: "pointer",
-                        borderBottom: "1px solid #E2E8F0",
-                        borderRight: "1px solid #EEF2F8",
-                        textAlign: "center",
-                        fontSize: "10px",
-                        fontWeight: 700,
-                        color: slSpotlight === sl.code ? "#1E3A5F" : "#94A3B8",
-                        background:
-                          slSpotlight === sl.code ? "#EEF2F8" : "#F8FAFC",
-                        fontFamily: "'DM Sans', sans-serif",
-                        whiteSpace: "nowrap",
-                        maxWidth: 150,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {sl.name.length > 14
-                        ? sl.name.slice(0, 13) + "…"
-                        : sl.name}
-                      <br />
-                      <span
-                        style={{
-                          fontWeight: 400,
-                          fontSize: "9px",
-                          color: "#CBD5E1",
-                        }}
-                      >
-                        balance
-                      </span>
-                      <SortIcon col={sl.code} active={sortCol} dir={sortDir} />
-                    </th>
-                  ))}
-
-                  {/* Sticky right: Debit / Credit / Balance */}
-                  {[
-                    { key: "totalDebit", label: "Billed", sub: "total debit" },
-                    { key: "totalCredit", label: "Paid", sub: "total credit" },
-                    { key: "balance", label: "Balance", sub: "outstanding" },
-                  ].map((col) => (
-                    <th
-                      key={col.key}
-                      onClick={() => toggleSort(col.key)}
-                      style={{
-                        position: col.key === "balance" ? "sticky" : undefined,
-                        right: col.key === "balance" ? 56 : undefined,
-                        zIndex: col.key === "balance" ? 3 : 1,
-                        background: "#EEF2F8",
-                        minWidth: 100,
-                        padding: "10px 10px",
-                        cursor: "pointer",
-                        borderBottom: "1px solid #E2E8F0",
-                        borderLeft: "1px solid #D0DCF0",
-                        textAlign: "center",
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        color: "#1E3A5F",
-                        fontFamily: "'DM Sans', sans-serif",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {col.label}
-                      <br />
-                      <span
-                        style={{
-                          fontWeight: 400,
-                          fontSize: "9px",
-                          color: "#94A3B8",
-                        }}
-                      >
-                        {col.sub}
-                      </span>
-                      <SortIcon col={col.key} active={sortCol} dir={sortDir} />
-                    </th>
-                  ))}
-
-                  {/* Action sticky far-right */}
-                  <th
-                    style={{
-                      position: "sticky",
-                      right: 0,
-                      zIndex: 3,
-                      background: "#EEF2F8",
-                      width: actionCoWidth,
-                      minWidth: actionCoWidth,
-                      padding: "10px 8px",
-                      borderBottom: "1px solid #E2E8F0",
-                      borderLeft: "1px solid #D0DCF0",
-                      textAlign: "center",
-                      fontSize: "10px",
-                      fontWeight: 700,
-                      color: "#94A3B8",
-                      fontFamily: "'DM Sans', sans-serif",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    Pay / View
-                  </th>
-                </tr>
-              </thead>
+              <ClassBillTabelHead
+                toggleSort={toggleSort}
+                allSubLedgers={allSubLedgers}
+                slSpotlight={slSpotlight}
+                sortCol={sortCol}
+                sortDir={sortDir}
+                actionColWidth={actionCoWidth}
+              />
 
               {/* ─ TBODY ─ */}
               <tbody>
@@ -1402,561 +1176,34 @@ const ClassFeesOverview = () => {
                   </tr>
                 )}
 
-                {filteredRows.map((student, idx) => {
-                  const rowBg = idx % 2 === 0 ? "#FFFFFF" : "#FAFBFD";
-                  const balHeat = balanceColor(student.balance);
-                  const isFullyPaid = student.balance <= 0;
-                  const isOverpaid = student.balance < 0;
-                  const overrideCollors = isFullyPaid || isOverpaid;
-                  const initials = student.fullName
-                    .split(" ")
-                    .slice(0, 2)
-                    .map((n) => n[0]?.toUpperCase() ?? "")
-                    .join("");
-                  const creditPct =
-                    student.totalDebit > 0
-                      ? Math.min(
-                          100,
-                          (student.totalCredit / student.totalDebit) * 100,
-                        )
-                      : 0;
-
-                  return (
-                    <tr key={student.studentId}>
-                      {/* # */}
-                      <td
-                        style={{
-                          position: "sticky",
-                          left: 0,
-                          zIndex: 1,
-                          background: rowBg,
-                          width: 44,
-                          padding: "9px 6px",
-                          borderBottom: "1px solid #F1F5F9",
-                          borderRight: "1px solid #E2E8F0",
-                          textAlign: "center",
-                          fontSize: "12px",
-                          color: "#94A3B8",
-                          fontWeight: 600,
-                          fontFamily: "'DM Sans', sans-serif",
-                        }}
-                      >
-                        {idx + 1}
-                      </td>
-
-                      {/* Name */}
-                      <td
-                        style={{
-                          position: "sticky",
-                          left: 44,
-                          zIndex: 1,
-                          background: rowBg,
-                          minWidth: 200,
-                          padding: "8px 14px",
-                          borderBottom: "1px solid #F1F5F9",
-                          borderRight: "1px solid #E2E8F0",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: 30,
-                              height: 30,
-                              borderRadius: 8,
-                              flexShrink: 0,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "11px",
-                              fontWeight: 700,
-                              color: "#C9A84C",
-                              background:
-                                "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                            }}
-                          >
-                            {initials}
-                          </div>
-                          <div style={{ minWidth: 0 }}>
-                            <div
-                              style={{
-                                fontSize: "13px",
-                                fontWeight: 600,
-                                color: "#0D1B2E",
-                                fontFamily: "'DM Sans', sans-serif",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {student.fullName}
-                            </div>
-                            {student.otherName && (
-                              <div
-                                style={{
-                                  fontSize: "11px",
-                                  color: "#94A3B8",
-                                  marginTop: 1,
-                                }}
-                              >
-                                {student.otherName}
-                              </div>
-                            )}
-                            {/* Mini progress bar */}
-                            <div
-                              style={{
-                                height: 2,
-                                background: "#EEF2F8",
-                                borderRadius: 4,
-                                marginTop: 3,
-                                overflow: "hidden",
-                                width: "100%",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  height: "100%",
-                                  borderRadius: 4,
-                                  width: `${creditPct}%`,
-                                  background:
-                                    creditPct >= 100
-                                      ? "#10B981"
-                                      : creditPct >= 60
-                                        ? "#F59E0B"
-                                        : "#EF4444",
-                                  transition: "width 0.6s ease",
-                                }}
-                              />
-                            </div>
-                          </div>
-                          {/* Status icon */}
-                          {isOverpaid && (
-                            <span
-                              title="Overpaid"
-                              style={{ color: "#7C3AED", flexShrink: 0 }}
-                            >
-                              <TrendingUp className="w-3.5 h-3.5" />
-                            </span>
-                          )}
-                          {isFullyPaid && !isOverpaid && (
-                            <span
-                              title="Fully Paid"
-                              style={{ color: "#059669", flexShrink: 0 }}
-                            >
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                            </span>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Sub-ledger balance cells */}
-                      {allSubLedgers.map((sl) => {
-                        const found = student.subLedgerBill.find(
-                          (s) => s.slCode === sl.code,
-                        );
-                        const bal = found?.balance;
-                        const isSpot = slSpotlight === sl.code;
-                        const heat =
-                          typeof bal === "number" ? balanceColor(bal) : null;
-                        const barPct =
-                          found && found.debit > 0
-                            ? Math.min(100, (found.credit / found.debit) * 100)
-                            : 0;
-
-                        return (
-                          <td
-                            key={sl.code}
-                            style={{
-                              minWidth: 120,
-                              padding: "7px 10px",
-                              borderBottom: "1px solid #F1F5F9",
-                              borderRight: "1px solid #EEF2F8",
-                              textAlign: "center",
-                              background: isSpot ? "#EEF2F8" : rowBg,
-                            }}
-                          >
-                            {found && typeof bal === "number" ? (
-                              <div>
-                                <span
-                                  className={`inline-flex items-center justify-center px-2 py-0.5 rounded-lg text-[11px] font-bold border ${overrideCollors ? "bg-emerald-50" : heat!.bg} ${overrideCollors ? "text-emerald-700" : heat!.text} ${overrideCollors ? "border-emerald-200" : heat!.border}`}
-                                >
-                                  {fmt(bal)}
-                                </span>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    gap: "4px",
-                                    marginTop: 2,
-                                    justifyContent: "center",
-                                    fontSize: "9px",
-                                    color: "#94A3B8",
-                                  }}
-                                >
-                                  <span>Dr:{found.debit.toFixed(0)}</span>
-                                  <span>Cr:{found.credit.toFixed(0)}</span>
-                                </div>
-                                <div
-                                  style={{
-                                    height: 2,
-                                    background: "#E2E8F0",
-                                    borderRadius: 4,
-                                    marginTop: 2,
-                                    overflow: "hidden",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      height: "100%",
-                                      borderRadius: 4,
-                                      width: overrideCollors
-                                        ? "100%"
-                                        : `${barPct}%`,
-                                      background: overrideCollors
-                                        ? "#10B981"
-                                        : barPct >= 100
-                                          ? "#10B981"
-                                          : barPct >= 60
-                                            ? "#F59E0B"
-                                            : "#EF4444",
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            ) : (
-                              <span
-                                style={{ color: "#E2E8F0", fontSize: "11px" }}
-                              >
-                                —
-                              </span>
-                            )}
-                          </td>
-                        );
-                      })}
-
-                      {/* Billed (Debit) */}
-                      <td
-                        style={{
-                          minWidth: 100,
-                          padding: "8px 10px",
-                          borderBottom: "1px solid #F1F5F9",
-                          borderLeft: "1px solid #D0DCF0",
-                          textAlign: "right",
-                          background: "#F8FAFC",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            color: "#0D1B2E",
-                            fontFamily: "'DM Sans', sans-serif",
-                          }}
-                        >
-                          {fmt(student.totalDebit)}
-                        </span>
-                      </td>
-
-                      {/* Paid (Credit) */}
-                      <td
-                        style={{
-                          minWidth: 100,
-                          padding: "8px 10px",
-                          borderBottom: "1px solid #F1F5F9",
-                          borderLeft: "1px solid #D0DCF0",
-                          textAlign: "right",
-                          background: "#F8FAFC",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            color:
-                              student.totalCredit > 0 ? "#059669" : "#94A3B8",
-                            fontFamily: "'DM Sans', sans-serif",
-                          }}
-                        >
-                          {fmt(student.totalCredit)}
-                        </span>
-                      </td>
-
-                      {/* Balance — sticky right, heat-coloured */}
-                      <td
-                        style={{
-                          position: "sticky",
-                          right: 56,
-                          zIndex: 1,
-                          minWidth: 100,
-                          padding: "8px 10px",
-                          borderBottom: "1px solid #D0DCF0",
-                          borderLeft: "1px solid #D0DCF0",
-                          textAlign: "right",
-                          background: rowBg,
-                        }}
-                      >
-                        <div
-                          className={`inline-flex items-center justify-center flex-col gap-1. px-2.5 py-1.5. rounded-lg border ${balHeat.bg} ${balHeat.text} ${balHeat.border}`}
-                          style={{
-                            minWidth: "80px",
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: 800,
-                              fontFamily: "'DM Sans', sans-serif",
-                            }}
-                          >
-                            {fmt(student.balance)}
-                          </span>
-                          {isOverpaid && (
-                            <div
-                              style={{
-                                fontSize: "9px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              overpaid
-                            </div>
-                          )}
-                          {isFullyPaid && !isOverpaid && (
-                            <div
-                              style={{
-                                fontSize: "9px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              cleared
-                            </div>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Action */}
-                      <td
-                        style={{
-                          position: "sticky",
-                          right: 0,
-                          zIndex: 1,
-                          background: rowBg,
-                          width: actionCoWidth,
-                          minWidth: actionCoWidth,
-                          padding: "8px 3px",
-                          borderBottom: "1px solid #F1F5F9",
-                          borderLeft: "1px solid #D0DCF0",
-                          textAlign: "center",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          height: "60px",
-                          columnGap: "2px",
-                        }}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setDrawerStudent(student)}
-                          title={`View ${student.fullName}'s ledger`}
-                          className="w-8 h-8 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer hover:scale-110"
-                          style={{
-                            background:
-                              "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                          }}
-                        >
-                          <Eye className="w-3.5 h-3.5 text-[#C9A84C]" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handlePayment(student)}
-                          title={`Pay ${student.fullName}'s ledger`}
-                          className="w-8 h-8 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer hover:scale-110"
-                          style={{
-                            background:
-                              "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                          }}
-                        >
-                          <CircleDollarSign className="w-3.5 h-3.5 text-[#C9A84C]" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                <ClassBillTableBody
+                  filteredRows={filteredRows}
+                  allSubLedgers={allSubLedgers}
+                  slSpotlight={slSpotlight}
+                  actionColWidth={actionCoWidth}
+                  handlePayment={handlePayment}
+                  setDrawerStudent={setDrawerStudent}
+                />
               </tbody>
 
               {/* ─ FOOTER ROW ─ */}
-              {filteredRows.length > 0 && (
-                <tfoot>
-                  <tr
-                    style={{
-                      background:
-                        "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                    }}
-                  >
-                    <td
-                      style={{
-                        position: "sticky",
-                        left: 0,
-                        zIndex: 2,
-                        background:
-                          "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                        padding: "10px 8px",
-                        textAlign: "center",
-                        borderTop: "1px solid #1E3A5F",
-                      }}
-                    />
-                    <td
-                      style={{
-                        position: "sticky",
-                        left: 44,
-                        zIndex: 2,
-                        background:
-                          "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                        padding: "10px 14px",
-                        borderTop: "1px solid #1E3A5F",
-                        fontSize: "12px",
-                        fontWeight: 800,
-                        color: "#C9A84C",
-                        fontFamily: "'DM Sans', sans-serif",
-                      }}
-                    >
-                      Class Total
-                    </td>
-                    {allSubLedgers.map((sl) => {
-                      const total = filteredRows.reduce((sum, s) => {
-                        const found = s.subLedgerBill.find(
-                          (sl2) => sl2.slCode === sl.code,
-                        );
-                        return sum + (found?.balance ?? 0);
-                      }, 0);
-                      const heat = balanceColor(total);
-                      return (
-                        <td
-                          key={sl.code}
-                          style={{
-                            minWidth: 120,
-                            padding: "10px 10px",
-                            borderTop: "1px solid #1E3A5F",
-                            textAlign: "center",
-                            background:
-                              slSpotlight === sl.code
-                                ? "rgba(255,255,255,0.08)"
-                                : "transparent",
-                          }}
-                        >
-                          <span
-                            className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border ${heat.bg} ${heat.text} ${heat.border}`}
-                          >
-                            {fmt(total)}
-                          </span>
-                        </td>
-                      );
-                    })}
-                    {/* Billed total */}
-                    <td
-                      style={{
-                        minWidth: 100,
-                        padding: "10px 10px",
-                        borderTop: "1px solid #1E3A5F",
-                        borderLeft: "1px solid rgba(255,255,255,0.1)",
-                        textAlign: "right",
-                        fontSize: "12px",
-                        fontWeight: 800,
-                        color: "#fff",
-                        fontFamily: "'DM Sans', sans-serif",
-                      }}
-                    >
-                      {fmt(filteredRows.reduce((s, r) => s + r.totalDebit, 0))}
-                    </td>
-                    {/* Paid total */}
-                    <td
-                      style={{
-                        minWidth: 100,
-                        padding: "10px 10px",
-                        borderTop: "1px solid #1E3A5F",
-                        borderLeft: "1px solid rgba(255,255,255,0.1)",
-                        textAlign: "right",
-                        fontSize: "12px",
-                        fontWeight: 800,
-                        color: "#C9A84C",
-                        fontFamily: "'DM Sans', sans-serif",
-                      }}
-                    >
-                      {fmt(filteredRows.reduce((s, r) => s + r.totalCredit, 0))}
-                    </td>
-                    {/* Balance total sticky */}
-                    <td
-                      style={{
-                        position: "sticky",
-                        right: 56,
-                        zIndex: 2,
-                        minWidth: 100,
-                        padding: "10px 10px",
-                        borderTop: "1px solid rgba(255,255,255,0.1)",
-                        borderLeft: "1px solid rgba(255,255,255,0.1)",
-                        textAlign: "right",
-                        fontSize: "12px",
-                        fontWeight: 800,
-                        color:
-                          filteredRows.reduce((s, r) => s + r.balance, 0) <= 0
-                            ? "#10B981"
-                            : "#F87171",
-                        background:
-                          "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                        fontFamily: "'DM Sans', sans-serif",
-                      }}
-                    >
-                      {fmt(filteredRows.reduce((s, r) => s + r.balance, 0))}
-                    </td>
-                    {/* Action col spacer */}
-                    <td
-                      style={{
-                        position: "sticky",
-                        right: 0,
-                        zIndex: 2,
-                        background:
-                          "linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 100%)",
-                        borderTop: "1px solid rgba(255,255,255,0.1)",
-                        borderLeft: "1px solid rgba(255,255,255,0.1)",
-                      }}
-                    />
-                  </tr>
-                </tfoot>
-              )}
-            </table>
+              <ClassbillFooter
+                allSubLedgers={allSubLedgers}
+                filteredRows={filteredRows}
+                slSpotlight={slSpotlight}
+              />
+            </ClassBillTable>
           </div>
 
           {/* Table footer meta */}
-          {filteredRows.length > 0 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex-wrap gap-2">
-              <span className="text-[11px] text-slate-400 font-medium">
-                {filteredRows.length} of {classBill.length} students
-                {subLevelName && ` · ${subLevelName}`}
-                {isTermScoped ? ` · ${termName} (${yearName})` : " · All time"}
-              </span>
-              <div className="flex items-center gap-x-3 text-[10px] text-slate-400 flex-wrap gap-y-1">
-                <span className="flex items-center gap-x-1">
-                  <span className="w-2 h-2 rounded-sm bg-emerald-400 inline-block" />
-                  Balance cleared
-                </span>
-                <span className="flex items-center gap-x-1">
-                  <span className="w-2 h-2 rounded-sm bg-amber-400 inline-block" />
-                  Balance ≤ 200
-                </span>
-                <span className="flex items-center gap-x-1">
-                  <span className="w-2 h-2 rounded-sm bg-rose-400 inline-block" />
-                  Balance &gt; 200
-                </span>
-                <span className="flex items-center gap-x-1">
-                  <span className="w-2 h-2 rounded-sm bg-violet-400 inline-block" />
-                  Overpaid
-                </span>
-              </div>
-            </div>
-          )}
+          <ClassBillTableFooterMeta
+            classBillLength={classBill.length}
+            filteredRowsLength={filteredRows.length}
+            subLevelName={subLevelName}
+            isTermScoped={isTermScoped}
+            termName={termName}
+            yearName={yearName}
+          />
         </MotionDiv>
       )}
 

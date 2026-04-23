@@ -30,6 +30,7 @@ const SubledgerSelector = () => {
         }
         className="flex flex-col w-full my-0! py-0!"
         labelCol={{ style: { paddingBottom: 0, marginBottom: 0 } }}
+        extra={<span className="text-[10px] my-0! py-0! italic text-slate-400">Optional but neccessary</span>}
       >
         <Select
           size="large"

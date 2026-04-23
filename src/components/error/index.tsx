@@ -1,10 +1,10 @@
 import type { FallbackProps } from "react-error-boundary";
-import { useLocation } from "react-router-dom";
+
 export const MainErrorFallback = ({
   error,
   resetErrorBoundary,
 }: FallbackProps) => {
-  const { pathname } = useLocation();
+  const pathname = window.location.pathname;
   return (
     <div
       className="flex h-screen w-screen flex-col items-center justify-center"

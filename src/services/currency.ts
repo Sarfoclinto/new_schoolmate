@@ -37,3 +37,10 @@ export function formatCurrency<C extends SupportedCurrency>(
 
   return formatter.format(amount);
 }
+
+export const fmt = (n: number) =>
+  new Intl.NumberFormat("en-GH", {
+    style: "currency",
+    currency: "GHS",
+    minimumFractionDigits: 2,
+  }).format(n);
