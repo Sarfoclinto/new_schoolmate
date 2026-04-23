@@ -23,7 +23,7 @@ const AntDConfig = ({ children }: PropsWithChildren) => {
             darkItemBg: SIDEBAR_BG,
             darkSubMenuItemBg: "rgba(0,0,0,0.15)",
             darkItemSelectedBg: SELECTED_BG,
-            darkItemSelectedColor: TEXT_SELECTED,
+            // darkItemSelectedColor: TEXT_SELECTED,
             darkItemHoverBg: HOVER_BG,
             darkItemHoverColor: TEXT_SELECTED,
             darkItemColor: TEXT_DEFAULT,

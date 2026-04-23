@@ -1594,6 +1594,30 @@ const BillingCenter = () => {
             />
           </div>
           <div>
+            <FL>Academic Term</FL>
+            <Select
+              size="large"
+              className="w-full"
+              showSearch={{
+                filterOption: (i, o) =>
+                  String(o?.label ?? "")
+                    .toLowerCase()
+                    .includes(i.toLowerCase()),
+              }}
+              placeholder={
+                selectedEduId ? "Select term…" : "Select edu level first"
+              }
+              loading={loadingTerms}
+              disabled={!selectedEduId || loadingTerms}
+              options={terms.map((t) => ({
+                label: t.academicTermName,
+                value: t.academicTermId,
+              }))}
+              value={selectedTermId ?? undefined}
+              onChange={setSelectedTermId}
+            />
+          </div>
+          <div>
             <FL>Academic Year</FL>
             <Select
               size="large"
@@ -1614,32 +1638,7 @@ const BillingCenter = () => {
               value={selectedYearId ?? undefined}
               onChange={(id) => {
                 setSelectedYearId(id);
-                setSelectedTermId(null);
               }}
-            />
-          </div>
-          <div>
-            <FL>Academic Term</FL>
-            <Select
-              size="large"
-              className="w-full"
-              showSearch={{
-                filterOption: (i, o) =>
-                  String(o?.label ?? "")
-                    .toLowerCase()
-                    .includes(i.toLowerCase()),
-              }}
-              placeholder={
-                selectedEduId ? "Select term…" : "Select ediu level first"
-              }
-              loading={loadingTerms}
-              disabled={!selectedEduId || loadingTerms}
-              options={terms.map((t) => ({
-                label: t.academicTermName,
-                value: t.academicTermId,
-              }))}
-              value={selectedTermId ?? undefined}
-              onChange={setSelectedTermId}
             />
           </div>
         </div>

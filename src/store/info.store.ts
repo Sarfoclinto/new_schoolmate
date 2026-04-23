@@ -53,7 +53,7 @@ export const useInfo = create<InfoState>()(
 
       shouldShowModal: (hasUnopenedLevels: boolean) => {
         const state = get();
-        if (state.dontShowAgain) return false;
+        // if (state.dontShowAgain) return false;
         if (!hasUnopenedLevels) return false;
 
         const now = new Date();

@@ -71,6 +71,9 @@ import { usePayment } from "@/store/payment.store";
 import { useShallow } from "zustand/react/shallow";
 import StudentPaymentDrawer from "@/features/admins/components/finance/payment-drawer";
 import PendingPaymentsDrawer from "@/features/admins/components/finance/pending-payments-drawer";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useUIStore } from "@/store/ui.store";
+import { cn } from "@/lib/utils";
 
 // ─── Currency formatter ────────────────────────────────────────────────────────
 const fmt = (n: number) =>
@@ -451,7 +454,7 @@ const ClassFeesOverview = () => {
     undefined,
   );
   const [drawerStudent, setDrawerStudent] = useState<StudentBill | null>(null);
-  const {isOpen, open: openPending, close: closePending } = useDisclosure()
+  const { isOpen, open: openPending, close: closePending } = useDisclosure();
 
   // Secondary filters
   const [search, setSearch] = useState("");
@@ -648,6 +651,9 @@ const ClassFeesOverview = () => {
     open();
   };
 
+  const isMobile = useIsMobile();
+  const collapsed = useUIStore((s) => s.menuCollapsed);
+
   // Table min width (+56 --> +86)
   const actionCoWidth = 56 + 30;
   const tableMinW =
@@ -686,7 +692,9 @@ const ClassFeesOverview = () => {
         </div>
 
         <div className="flex items-center gap-x-2 flex-wrap gap-y-2">
-          <Button type="primary" onClick={openPending}>Pending Payments</Button>
+          <Button type="primary" onClick={openPending}>
+            Pending Payments
+          </Button>
           {hasData && (
             <ScopeBadge
               isFiltered={isTermScoped}
@@ -787,13 +795,13 @@ const ClassFeesOverview = () => {
                 <Select
                   size="large"
                   className="w-full"
-                  showSearch
+                  showSearch={{
+                    filterOption: (i, o) =>
+                      String(o?.label ?? "")
+                        .toLowerCase()
+                        .includes(i.toLowerCase()),
+                  }}
                   allowClear
-                  filterOption={(i, o) =>
-                    String(o?.label ?? "")
-                      .toLowerCase()
-                      .includes(i.toLowerCase())
-                  }
                   placeholder="All years…"
                   loading={loadingYears}
                   disabled={loadingYears}
@@ -1202,7 +1210,13 @@ const ClassFeesOverview = () => {
           </AnimatePresence>
 
           {/* Table */}
-          <div className="overflow-x-auto">
+          <div
+            className={cn(
+              "overflow-x-auto",
+              collapsed ? "max-w-[94.1dvw]" : "max-w-[85dvw]",
+              isMobile && "max-w-[94.1dvw]",
+            )}
+          >
             <table
               style={{
                 minWidth: `${tableMinW}px`,
