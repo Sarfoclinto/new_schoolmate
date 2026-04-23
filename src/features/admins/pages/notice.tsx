@@ -1,26 +1,3 @@
-/**
- * Notice.tsx
- *
- * Layout:
- * ┌──────────────────────────────────────────────────────────────┐
- * │  PAGE HEADER  breadcrumb                                     │
- * ├─────────────────────┬────────────────────────────────────────┤
- * │  COMPOSE PANEL      │  NOTICE BOARD                         │
- * │  Title / Body /     │  Search + Date filter                 │
- * │  Target cascader    │  Notice cards (own = editable)        │
- * │  Post button        │  Pagination                           │
- * └─────────────────────┴────────────────────────────────────────┘
- *
- * Notice cards:
- *  ─ Unread: left accent border in navy
- *  ─ Read: muted grey
- *  ─ Own notices: edit + delete controls
- *  ─ Target chips: show who received the notice
- *  ─ Click to expand body if truncated
- *
- * Design: navy × gold system, DM Sans + Playfair Display
- */
-
 import { Cascader, DatePicker, Form, Input, Modal, Popconfirm } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
