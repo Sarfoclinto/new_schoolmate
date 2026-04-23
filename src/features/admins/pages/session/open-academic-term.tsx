@@ -1,28 +1,3 @@
-/**
- * OpenAcademicTerm.tsx
- *
- * Onboarding-style wizard for re-opening a new academic term.
- *
- * Steps:
- *  1. Context      — shows the recently closed term + auto-detected re-opening term
- *  2. Settings     — only shows settings NOT already handled during close
- *  3. Review       — full summary before submission
- *
- * Key behaviours:
- * - Fetches the most-recently-closed term record for the selected edu level.
- *   That record contains: { closedTermId, nextTermId, settingsApplied: { publishReport, billStudents, … } }
- * - Settings that were already applied at close are omitted (with a subtle
- *   "Already done at close ✓" chip so the admin can see what was pre-handled).
- * - If ALL settings were applied at close, step 2 is collapsed / skipped-label
- *   but still navigable so the admin can optionally override.
- * - Progress bar has animated fill + step labels.
- *
- * Reuses primitives from CloseAcademicTerm:
- *   Section, FL, TextInput, TextArea, SettingToggle, ReviewPill
- * — they are copy-imported here so the file is self-contained, but you
- *   can extract them to a shared file and import instead.
- */
-
 import { AnimatePresence } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
