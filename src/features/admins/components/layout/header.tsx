@@ -23,6 +23,7 @@ const AdminLayoutHeader = () => {
       openSidebar: s.openSidebar,
     })),
   );
+
   const isMobile = useIsMobile();
   const terms = useSignalRStore(signalRSelectors.academicTerms);
   const year = useSignalRStore(signalRSelectors.academicYear);
@@ -72,13 +73,23 @@ const AdminLayoutHeader = () => {
         <div className="w-px h-5 bg-slate-200" />
 
         {/* Search bar */}
-        <div className="relative hidden sm:flex items-center">
-          <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
+        <div
+          data-tour="custom-search-input"
+          className="relative hidden sm:flex items-center cursor-pointer group"
+          onClick={() => {
+            const event = new KeyboardEvent("keydown", {
+              key: "k",
+              ctrlKey: true,
+            });
+            document.dispatchEvent(event);
+          }}
+        >
+          <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none group-hover:text-slate-600 transition-colors" />
           <input
             type="text"
-            disabled
-            placeholder="Search..."
-            className="pl-9 pr-4 py-2 disabled:cursor-not-allowed disabled:opacity-50 text-sm bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-[#1E3A5F] focus:bg-white transition-all duration-200 w-56 placeholder:text-slate-400"
+            readOnly
+            placeholder="Search features... (Ctrl+K)"
+            className="pl-9 pr-4 py-2 cursor-pointer text-sm bg-slate-50 border border-slate-200 rounded-lg outline-none hover:border-[#1E3A5F] hover:bg-white focus:border-[#1E3A5F] focus:bg-white transition-all duration-200 w-56 placeholder:text-slate-400"
             style={{ fontFamily: "'DM Sans', sans-serif", color: "#1E3A5F" }}
           />
         </div>

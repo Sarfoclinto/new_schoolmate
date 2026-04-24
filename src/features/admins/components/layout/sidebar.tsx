@@ -70,6 +70,7 @@ const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
   const filteredMenu = useFilteredMenu(adminMenu) as ItemType[];
   return (
     <div
+      data-tour="sidebar"
       className="flex flex-col h-full m-0!"
       style={{ background: SIDEBAR_BG }}
     >

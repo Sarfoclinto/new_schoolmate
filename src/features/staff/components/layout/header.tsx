@@ -3,7 +3,7 @@ import UserMenu from "@/features/admins/components/user-dropdown-menu";
 import { useUnreadStaffNoticeCount } from "@/hooks/custom/use-unread-staff-notice";
 import { useAuth } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
-import { Bell, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Bell, PanelLeftClose, PanelLeftOpen, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -81,15 +81,25 @@ const StaffLayoutHeader = () => {
         <div className="w-px h-5 bg-slate-200" />
 
         {/* Search bar */}
-        {/* <div className="relative hidden sm:flex items-center">
-          <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
+        <div
+          className="relative hidden sm:flex items-center cursor-pointer group"
+          onClick={() => {
+            const event = new KeyboardEvent("keydown", {
+              key: "k",
+              ctrlKey: true,
+            });
+            document.dispatchEvent(event);
+          }}
+        >
+          <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none group-hover:text-slate-600 transition-colors" />
           <input
             type="text"
-            placeholder="Search..."
-            className="pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-[#1E3A5F] focus:bg-white transition-all duration-200 w-56 placeholder:text-slate-400"
+            readOnly
+            placeholder="Search features... (Ctrl+K)"
+            className="pl-9 pr-4 py-2 cursor-pointer text-sm bg-slate-50 border border-slate-200 rounded-lg outline-none hover:border-[#1E3A5F] hover:bg-white focus:border-[#1E3A5F] focus:bg-white transition-all duration-200 w-56 placeholder:text-slate-400"
             style={{ fontFamily: "'DM Sans', sans-serif", color: "#1E3A5F" }}
           />
-        </div> */}
+        </div>
 
         {/* welcome */}
         <h3 className="text-xl font-[roboto]">

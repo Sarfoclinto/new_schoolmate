@@ -10,18 +10,25 @@ import { useSignalRContext } from "@/hooks/signalR/use-signalR-context";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
+// import { useTourStore } from "@/store/tour.store";
 import { getInitials, getUserProfileRoute } from "@/utils/string";
 import { Tooltip } from "antd";
-import { DoorOpenIcon, SettingsIcon, User2Icon } from "lucide-react";
+import {
+  // SettingsIcon,
+  DoorOpenIcon,
+  User2Icon,
+  // HelpCircle,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const UserMenu = () => {
   const user = useAuth((s) => s.user);
   const open = useUIStore((s) => s.openLogoutMenu);
   const { isConnected } = useSignalRContext();
+  // const { startManualTour } = useTourStore();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu data-tour="user-menu">
       <DropdownMenuTrigger asChild>
         <button className="flex items-center cursor-pointer gap-x-2.5 pl-1 pr-3 py-1.5 rounded-lg hover:bg-slate-100 transition-all duration-200 group">
           <div
@@ -74,10 +81,13 @@ const UserMenu = () => {
               Profile
             </DropdownMenuItem>
           </Link>
-          <DropdownMenuItem className="flex items-center gap-x-2">
-            <SettingsIcon />
-            Settings
-          </DropdownMenuItem>
+          {/* <DropdownMenuItem
+            onClick={startManualTour}
+            className="flex items-center gap-x-2"
+          >
+            <HelpCircle />
+            Take Tour
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
