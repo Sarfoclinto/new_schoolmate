@@ -286,7 +286,7 @@ const getCategory = (key: string): string => {
 // ─────────────────────────────────────────────────────────────────────────────
 // KBD chip — small keyboard shortcut badge
 // ─────────────────────────────────────────────────────────────────────────────
-const Kbd = ({ children }: { children: React.ReactNode }) => (
+export const Kbd = ({ children }: { children: React.ReactNode }) => (
   <kbd
     className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md
       text-[10px] font-bold font-mono text-slate-500 bg-slate-100 border border-slate-200
@@ -362,37 +362,6 @@ const SearchCommand = () => {
   return (
     <>
       {/* ── Trigger button (shown in the top bar / sidebar) ── */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="group flex items-center gap-x-2 px-3 h-9 rounded-xl border border-slate-200 bg-white
-          text-slate-400 hover:text-slate-600 hover:border-slate-300 hover:shadow-sm
-          transition-all cursor-pointer text-sm"
-        style={{ fontFamily: "'DM Sans', sans-serif" }}
-      >
-        <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
-          <circle
-            cx="6.5"
-            cy="6.5"
-            r="5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M10.5 10.5L14 14"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-        <span className="hidden sm:inline text-xs font-medium flex-1 text-left">
-          Search…
-        </span>
-        <div className="hidden sm:flex items-center gap-x-1 shrink-0">
-          <Kbd>⌘</Kbd>
-          <Kbd>K</Kbd>
-        </div>
-      </button>
 
       {/* ── Command dialog ── */}
       <CommandDialog

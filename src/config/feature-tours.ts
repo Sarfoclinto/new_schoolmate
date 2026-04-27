@@ -66,7 +66,9 @@ export const featureTours: FeatureTour[] = [
         description:
           "Use this search bar to quickly find and navigate to any feature in the app. Press Ctrl+K anytime to open it!",
         // target: "[data-tour='search-input']",
-        target: document.querySelector("[data-tour='custom-search-input']"),
+        // target:
+        //   document.querySelector("[data-tour='custom-search-input']") ??
+        //   undefined,
         // target:  (async () => await waitForElement("[data-tour='search-input']"))(),
         placement: "bottom",
         nextButtonProps: {
@@ -83,7 +85,8 @@ export const featureTours: FeatureTour[] = [
         title: "📂 Organized by Categories",
         description:
           "Features are organized into logical categories like Students, Staff, Reports, Finance, and more for easy discovery.",
-        target: document.querySelector("[data-tour='command-list']"),
+        // target:
+        //   document.querySelector("[data-tour='command-list']") ?? undefined,
         placement: "bottom",
       },
       {
@@ -133,28 +136,30 @@ export const generalTours: FeatureTour[] = [
         title: "👋 Welcome to the Dashboard",
         description:
           "This is your main dashboard. Here you can see an overview of all your institution data and quick access to important actions.",
-        target: document.querySelector("body"),
+        // target: document.querySelector("body") ?? undefined,
         placement: "center",
       },
       {
         title: "🧭 Navigation Sidebar",
         description:
           "Use the left sidebar to navigate between different sections like Students, Staff, Reports, Finance, and more. Press Ctrl+B to collapse/expand it.",
-        target: document.querySelector("[data-tour='sidebar']"),
+        // target: document.querySelector("[data-tour='sidebar']") ?? undefined,
         placement: "right",
       },
       {
         title: "🔍 Smart Search",
         description:
           "Press Ctrl+K anytime to open the smart search. Search for any feature and navigate instantly!",
-        target: document.querySelector("[data-tour='custom-search-input']"),
+        // target:
+        //   document.querySelector("[data-tour='custom-search-input']") ??
+        // undefined,
         placement: "bottom",
       },
       {
         title: "👤 User Menu",
         description:
           "Click your profile picture in the top right to access your profile, settings, and logout.",
-        target: document.querySelector("[data-tour='user-menu']"),
+        // target: document.querySelector("[data-tour='user-menu']") ?? undefined,
         placement: "bottom",
       },
     ],

@@ -823,7 +823,7 @@ export const FinanceDashboardSection = ({ data, loading }: Props) => {
   return (
     <section style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* ── Section header ─────────────────────────────────────────── */}
-      <MotionDiv
+      {/* <MotionDiv
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -855,7 +855,7 @@ export const FinanceDashboardSection = ({ data, loading }: Props) => {
         >
           Full Finance View <ArrowRight className="w-3.5 h-3.5" />
         </Link>
-      </MotionDiv>
+      </MotionDiv> */}
 
       {/* ── KPI cards row ───────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">

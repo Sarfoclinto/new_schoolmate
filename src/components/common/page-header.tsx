@@ -87,22 +87,22 @@ export const PageHeader = ({
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbLink href={getUserDashboardRoute()}>
-              <HomeIcon className="size-4" />
+              <HomeIcon className="size-3.5" />
             </BreadcrumbLink>
             <BreadcrumbSeparator />
             {breadcrumbs?.map((crumb, index) => (
               <React.Fragment key={crumb.label}>
                 <BreadcrumbItem className="min-w-fit">
                   {index === breadcrumbs.length - 1 ? (
-                    <span className="min-w-fit cursor-pointer text-slate-400 flex items-center gap-x-1">
+                    <span className="min-w-fit cursor-pointer text-slate-400 flex items-center gap-x-1 text-xs">
                       {crumb.icon} {crumb.label}
                     </span>
                   ) : crumb.type !== "link" ? (
-                    <span className="text-[#1E3A5F] font-semibold cursor-pointer">
+                    <span className="text-[#1E3A5F] font-semibold cursor-pointer text-xs">
                       {crumb.icon} {crumb.label}
                     </span>
                   ) : (
-                    <BreadcrumbLink href={crumb.path}>
+                    <BreadcrumbLink href={crumb.path} className=" text-xs">
                       {crumb.icon} {crumb.label}
                     </BreadcrumbLink>
                   )}

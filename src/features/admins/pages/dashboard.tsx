@@ -13,7 +13,7 @@ import { getAdminDashboardData } from "@/services/setup/admin";
 import { getUserNotices } from "@/services/setup/notice";
 import { get30daysEvents } from "@/services/event";
 import { dashboardKeys, eventKeys, noticeKeys } from "@/config/query-keys";
-import { StatCard } from "../components/stat-card";
+import { StatCard, CompactStatPill } from "../components/stat-card";
 import FinanceDashboardSection from "../components/dashboard-finance-section";
 import { ADMINISTRATIVE_PERMISSIONS } from "@/config/permissions";
 import useHasPermission from "@/hooks/custom/use-has-permission";
@@ -35,6 +35,7 @@ const AdminDashboard = () => {
   const { data, isLoading } = useFetch({
     queryFn: () => getAdminDashboardData(),
     queryKeys: dashboardKeys.custom("admin"),
+    queryOptions: { staleTime: 60000 },
   });
 
   const { data: notices, isLoading: noticesLoading } = useFetch({
@@ -133,23 +134,41 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <section className="flex-1 p-2 min-w-fit w-full h-full overflow-auto">
+    <section className="flex-1. p-2 min-w-fit w-full! h-full overflow-auto">
       {/* ── Page header ── */}
       <PageHeader className="mb-6" title="Dashboard" breadcrumbs={crumbs} />
 
-      {/* ── Stat cards grid ── */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-        {ADMINSTATS.map((stat, i) => (
-          <StatCard
-            key={stat.key}
-            stat={stat}
-            index={i}
-            loading={isLoading}
-            value={data?.dashboardDetails[stat.key]}
-            link={stat.link}
-          />
-        ))}
-      </section>
+      {/* ── Stat cards grid (full cards when finance is hidden) ── */}
+      {!hasFinanceRead && (
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+          {ADMINSTATS.map((stat, i) => (
+            <StatCard
+              key={stat.key}
+              stat={stat}
+              index={i}
+              loading={isLoading}
+              value={data?.dashboardDetails[stat.key]}
+              link={stat.link}
+            />
+          ))}
+        </section>
+      )}
+
+      {/* ── Compact stat pills (shown when finance is visible) ── */}
+      {hasFinanceRead && (
+        <section className="flex gap-3 mb-6 overflow-x-auto pb-2">
+          {ADMINSTATS.map((stat, i) => (
+            <CompactStatPill
+              key={stat.key}
+              stat={stat}
+              index={i}
+              loading={isLoading}
+              value={data?.dashboardDetails[stat.key]}
+              link={stat.link}
+            />
+          ))}
+        </section>
+      )}
 
       {hasFinanceRead && (
         <FinanceDashboardSection

@@ -1,5 +1,5 @@
 import { useUIStore } from "@/store/ui.store";
-import { Search, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 import UserMenu from "../user-dropdown-menu";
 import {
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 import { useHotkey } from "@tanstack/react-hotkeys";
+import { Kbd } from "@/components/common/search-command-1";
 
 const AdminLayoutHeader = () => {
   const { collapsed, toggleCollapsed, isOpen, openSidebar } = useUIStore(
@@ -72,10 +73,8 @@ const AdminLayoutHeader = () => {
         {/* Divider */}
         <div className="w-px h-5 bg-slate-200" />
 
-        {/* Search bar */}
-        <div
-          data-tour="custom-search-input"
-          className="relative hidden sm:flex items-center cursor-pointer group"
+        <button
+          type="button"
           onClick={() => {
             const event = new KeyboardEvent("keydown", {
               key: "k",
@@ -83,16 +82,34 @@ const AdminLayoutHeader = () => {
             });
             document.dispatchEvent(event);
           }}
+          className="group flex items-center gap-x-2 px-3 h-9 rounded-xl border border-slate-200 bg-white
+                  text-slate-400 hover:text-slate-600 hover:border-slate-300 hover:shadow-sm
+                  transition-all cursor-pointer text-sm"
+          style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
-          <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none group-hover:text-slate-600 transition-colors" />
-          <input
-            type="text"
-            readOnly
-            placeholder="Search features... (Ctrl+K)"
-            className="pl-9 pr-4 py-2 cursor-pointer text-sm bg-slate-50 border border-slate-200 rounded-lg outline-none hover:border-[#1E3A5F] hover:bg-white focus:border-[#1E3A5F] focus:bg-white transition-all duration-200 w-56 placeholder:text-slate-400"
-            style={{ fontFamily: "'DM Sans', sans-serif", color: "#1E3A5F" }}
-          />
-        </div>
+          <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
+            <circle
+              cx="6.5"
+              cy="6.5"
+              r="5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M10.5 10.5L14 14"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className="hidden sm:inline text-xs font-medium flex-1 text-left">
+            Search…
+          </span>
+          <div className="hidden sm:flex items-center gap-x-1 shrink-0">
+            <Kbd>⌘</Kbd>
+            <Kbd>K</Kbd>
+          </div>
+        </button>
       </div>
 
       {/* Right section */}

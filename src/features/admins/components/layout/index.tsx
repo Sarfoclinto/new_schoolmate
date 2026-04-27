@@ -17,7 +17,7 @@ const AdminLayout = () => {
     >
       <main className="w-full min-h-dvh flex bg-[#F4F6FA] relative">
         <AdminLayoutSidebar data-tour="sidebar" />
-        <div className="w-full h-full flex flex-col min-h-dvh transition-all duration-300 relative pt-15">
+        <div className="w-full! h-full flex flex-col min-h-dvh transition-all duration-300 relative pt-15 ">
           <AdminLayoutHeader />
           <div className="flex-1 p-2 overflow-auto">
             <Outlet />
