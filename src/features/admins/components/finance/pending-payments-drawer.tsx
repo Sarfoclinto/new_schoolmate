@@ -76,6 +76,25 @@ const PendingPaymentsDrawer = ({
     return tots;
   }, [pendings]);
 
+  const filteredPendings = useMemo(() => {
+    if (!pendings.length) return pendings;
+    return pendings.filter((p) => {
+      if (p.studentName.toLowerCase().includes(search.toLowerCase())) {
+        return true;
+      }
+      if (
+        p.pendingPayments.some(
+          (ph) =>
+            ph.chequeNumber?.toLowerCase().includes(search.toLowerCase()) ||
+            ph.accountNumber?.toLowerCase().includes(search.toLowerCase()),
+        )
+      ) {
+        return true;
+      }
+      return false;
+    });
+  }, [pendings, search]);
+
   return (
     <>
       <AnimatePresence>
@@ -182,13 +201,13 @@ const PendingPaymentsDrawer = ({
               </div>
 
               {/* ── Search ─── */}
-              {!isLoading && pendings.length > 0 && (
+              {!isLoading && filteredPendings.length > 0 && (
                 <div className="px-5 py-3 border-b border-slate-100 shrink-0">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none" />
                     <input
                       type="text"
-                      placeholder="Search payments…"
+                      placeholder="Search payments eg. cheque number, account number…"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       className="w-full h-9 pl-9 pr-3 rounded-xl border border-slate-200 bg-white text-sm placeholder:text-slate-300 focus:outline-none focus:border-[#1E3A5F] focus:ring-1 focus:ring-[#1E3A5F]/20 transition-all"
@@ -216,7 +235,7 @@ const PendingPaymentsDrawer = ({
                 )}
 
                 {/* Empty state */}
-                {!isLoading && pendings.length === 0 && (
+                {!isLoading && filteredPendings.length === 0 && (
                   <div className="flex flex-col items-center py-16 gap-3">
                     <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300">
                       <Receipt className="w-7 h-7" />
@@ -234,7 +253,7 @@ const PendingPaymentsDrawer = ({
 
                 {/* Timeline groups */}
                 {!isLoading &&
-                  pendings.map((student) => (
+                  filteredPendings.map((student) => (
                     <div key={student.studentId} className="mb-6">
                       {/* Date section label */}
                       <div className="flex items-center gap-x-3 mb-4">
