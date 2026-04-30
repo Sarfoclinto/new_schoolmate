@@ -127,6 +127,9 @@ const adminPaths = {
     href: "/admin/reports/bulk-report-print",
   },
 
+  // guardian
+  guardian: { label: "Guardian", href: "/admin/guardians" },
+
   // finance
   finance: { label: "Finance", href: "/admin/finance" },
   fees: { label: "Fees", href: "/admin/finance/fees" },
@@ -136,7 +139,6 @@ const adminPaths = {
   },
   bills: { label: "Bills", href: "/admin/finance/bills" },
   classBill: { label: "Class Bill", href: "/admin/finance/class-bill" },
-
 
   // events & notice
   notice: { label: "Notices", href: "/admin/notices" },

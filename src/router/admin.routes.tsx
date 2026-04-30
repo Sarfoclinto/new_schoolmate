@@ -56,6 +56,9 @@ const {
   bills,
   classBill,
 
+  // guardian
+  guardian,
+
   // events & notice
   notice,
   allEvents,
@@ -174,6 +177,9 @@ const ClassBills = lazy(
   () => import("@/features/admins/pages/finance/bills/class"),
 );
 
+// guardian
+const Guardian = lazy(() => import("@/features/admins/pages/guardian-mng"));
+
 // events & notices
 const Notice = lazy(() => import("@/features/admins/pages/notice"));
 const AllEvents = lazy(() => import("@/features/admins/pages/events/view"));
@@ -210,8 +216,8 @@ const Request = lazy(() => import("@/features/admins/pages/request"));
 // for the given path. Otherwise returns the element unwrapped.
 //
 // The layout-level ProtectAdminRoutes has already confirmed:
-//   ✅ user is authenticated
-//   ✅ user has dashboardType === "admin"
+//    user is authenticated
+//    user has dashboardType === "admin"
 //
 // This guard only adds the finer per-page permission check on top of that.
 // =============================================================================
@@ -371,6 +377,12 @@ const adminRoutes: RouteObject[] = [
       {
         path: classBill.href,
         element: guarded(classBill.href, <ClassBills />),
+      },
+
+      // ── Guardian ─────────────────────────────────────────────────────────────
+      {
+        path: guardian.href,
+        element: guarded(guardian.href, <Guardian />),
       },
 
       // ── Events & Notices ────────────────────────────────────────────────────

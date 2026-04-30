@@ -311,14 +311,14 @@ const FeesSetup = () => {
     {
       key: "action",
       title: "",
-      render: (_, row) => (
+      render: () => (
         <TableActions
-          onEdit={() => setRecord(row)}
-          // onDelete={() => {}}
-          // onConfirmDelete={() => {
-          //   deleteFees(row.id);
-          // }}
-          // deleteTitle="Delete fees?"
+        // onEdit={() => setRecord(row)}
+        // onDelete={() => {}}
+        // onConfirmDelete={() => {
+        //   deleteFees(row.id);
+        // }}
+        // deleteTitle="Delete fees?"
         />
       ),
     },

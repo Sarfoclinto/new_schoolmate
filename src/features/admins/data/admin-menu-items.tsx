@@ -490,6 +490,18 @@ const adminMenu: AppMenuItem[] = [
     ],
   }),
 
+  // ── Guardian ────────────────────────────────────────────────────────────────
+  item({
+    key: admin.guardian.href,
+    label: (
+      <SidebarLabel to={admin.guardian.href} type="link">
+        {admin.guardian.label}
+      </SidebarLabel>
+    ),
+    icon: <ShieldCheck className="size-3.75" />,
+    permission: PERMISSIONS.GUARDIAN_WRITE,
+  }),
+
   // ── Events & Notices ───────────────────────────────────────────────────────
   item({
     key: admin.events.href,

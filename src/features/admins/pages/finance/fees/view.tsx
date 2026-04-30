@@ -132,6 +132,12 @@ const FeeDetailModal = ({
 
   const columns: ColumnsType<TuitionGet> = [
     {
+      key: "sn",
+      title: "S/N",
+      width: 5,
+      render: (_, __, index) => index + 1,
+    },
+    {
       key: "sl",
       title: "Ledger Item",
       dataIndex: "sl",
@@ -189,6 +195,8 @@ const FeeDetailModal = ({
     },
   ];
 
+  console.log(card.items);
+
   return (
     <Modal
       open={open}
@@ -203,7 +211,11 @@ const FeeDetailModal = ({
       }
       styles={{
         wrapper: { padding: 0, borderRadius: 20, overflow: "hidden" },
-        container: { padding: 1 },
+        container: {
+          padding: 1,
+          maxHeight: "90vh",
+          overflow: "auto",
+        },
         body: { padding: 0 },
       }}
     >
@@ -257,11 +269,11 @@ const FeeDetailModal = ({
         </div>
 
         {/* Table */}
-        <Table
-          rowKey="id"
+        <Table<TuitionGet>
+          rowKey={(r) => r.id}
           dataSource={card.items}
           columns={columns}
-          pagination={{ pageSize: 10, showSizeChanger: false }}
+          pagination={{ showSizeChanger: true }}
           size="small"
           bordered={false}
           styles={{

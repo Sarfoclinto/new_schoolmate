@@ -45,10 +45,7 @@ export const requestKeys = createQueryKeys("request");
 
 export const remarksKeys = createQueryKeys("remarks");
 
-
-
-
-
+export const guardianKeys = createQueryKeys("guardian");
 
 // educational level
 export const eduKeys = {

@@ -259,3 +259,15 @@ export interface UpdateStudentEnrollment {
     AcademicTermId: string;
   };
 }
+
+export interface StudentOption {
+  studentId: string;
+  fullName: string;
+  gender: string;
+  dateOfBirth: string;
+  subLevelId: string;
+  subLevelName: string;
+  guardianId: string;
+  guardianName: string;
+  guardianContact: string;
+}

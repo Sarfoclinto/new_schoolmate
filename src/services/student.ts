@@ -1,13 +1,19 @@
-import { getHelper, postWithFile, updateHelper, updateWithFile } from "@/api/crud";
+import {
+  getHelper,
+  postWithFile,
+  updateHelper,
+  updateWithFile,
+} from "@/api/crud";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/config/constants";
 import endpoints from "@/config/endpoints";
-import type { RegisterResponse } from "@/types/api";
+import type { PaginatedRes, RegisterResponse } from "@/types/api";
 import type {
   AcademicLevelStudentsGet,
   AcaStudentsResponse,
   AllStudentsResponse,
   EduStudentsResponse,
   StudentGet,
+  StudentOption,
   StudentTerminalReportGet,
   StudentUpdateWithFile,
   SubLevelStudentsGet,
@@ -23,6 +29,18 @@ export const getAllStuPnFn = async (
   limit = DEFAULT_LIMIT,
 ) => {
   return getHelper<AllStudentsResponse>(students.getAllPn, { page, limit });
+};
+
+type Params = {
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
+export const searchStudentFn = async (
+  params: Params = { search: "", page: 1, limit: 10 },
+) => {
+  return getHelper<PaginatedRes<StudentOption[]>>(students.search, params);
 };
 export const getAllEduStuFn = async (
   eduId: string,
@@ -83,6 +101,8 @@ export const updateStuGuardiansInfoFn = async (
 ) => {
   return updateWithFile(updates.guardians(update.id), update.data);
 };
-export const updateStuEnrollmentInfoFn = async (update: UpdateStudentEnrollment) => {
+export const updateStuEnrollmentInfoFn = async (
+  update: UpdateStudentEnrollment,
+) => {
   return updateHelper(updates.enrollment(update.id), update.data);
 };

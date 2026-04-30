@@ -68,6 +68,7 @@ import useFetch from "@/hooks/api/use-fetch";
 import usePost from "@/hooks/api/use-post";
 import { toast } from "sonner";
 import { useSignalRStore } from "@/store/signalr.store";
+import { CardHeader } from "../../components/teacher-util-components";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // REQUEST TYPE CONFIG — THE ONLY PLACE YOU NEED TO EDIT WHEN ADDING A NEW TYPE
@@ -195,40 +196,6 @@ const STATUS_CONFIG: Record<
     border: "border-rose-200",
   },
 };
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// PRIMITIVES
-// ═══════════════════════════════════════════════════════════════════════════════
-
-const CardHeader = ({
-  icon,
-  title,
-  badge,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  badge?: string | number;
-}) => (
-  <div
-    className="flex items-center gap-x-3 px-5 py-3.5"
-    style={{ background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)" }}
-  >
-    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C] shrink-0">
-      {icon}
-    </div>
-    <span
-      className="text-white font-semibold text-sm flex-1"
-      style={{ fontFamily: "'DM Sans', sans-serif" }}
-    >
-      {title}
-    </span>
-    {badge !== undefined && (
-      <span className="text-[10px] font-bold text-[#C9A84C] bg-white/10 px-2 py-0.5 rounded-full">
-        {badge}
-      </span>
-    )}
-  </div>
-);
 
 const StatusBadge = ({ status }: { status: RequestStatus }) => {
   const c = STATUS_CONFIG[status];

@@ -186,6 +186,7 @@ const endpoints = {
         `/GetStudentTerminalReport/Student/${paths.studentId}/AcademicYear/${paths.academicYearId}/AcademicTerm/${paths.academicTermId}/SubLevel/${paths.subLevelId}`,
     },
 
+    search: "/SearchStudent",
     getAllPn: "/GetAllStudents",
     getAllUnPn: "/GetUnPaginatedStudents",
     getById: (id: string) => `/GetStudentProfile/${id}`,
@@ -252,8 +253,16 @@ const endpoints = {
       save: "/SaveTransaction",
       studentHistory: "/GetStudentPaymentHistory",
       update: "/UpdatePaymentStatus",
-      pending: "/GetPendingPayments"
+      pending: "/GetPendingPayments",
     },
+  },
+  guardian: {
+    getAll: "/GetAllGuardians",
+    getAllPn: "/GetPaginatedGuardians",
+    getAllWithWards: "/GetAllGuardiansWithWards",
+    getByStudentId: (id: string) => `/GetStudentGuardian/${id}`,
+    getGuardianStudents: (id: string) => `/GetGuardianStudents/${id}`,
+    mapStudentToGuardian: "/MapStudentToGuardian",
   },
   academicRecords: {
     passmark: {

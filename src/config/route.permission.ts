@@ -46,6 +46,9 @@ export const ADMIN_ROUTE_PERMISSIONS: Record<string, Permission> = {
   [admin.fees.href]: ADMINISTRATIVE_PERMISSIONS.FINANCE_WRITE,
   [admin.subLedgers.href]: ADMINISTRATIVE_PERMISSIONS.FINANCE_WRITE,
 
+  // guardian
+  [admin.guardian.href]: ADMINISTRATIVE_PERMISSIONS.GUARDIAN_WRITE,
+
   // events & notice
   [admin.notice.href]: ADMINISTRATIVE_PERMISSIONS.EVENTS_WRITE,
   [admin.allEvents.href]: ADMINISTRATIVE_PERMISSIONS.EVENTS_WRITE,

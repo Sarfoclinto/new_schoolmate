@@ -47,6 +47,10 @@ export const ADMINISTRATIVE_PERMISSIONS = {
   FINANCE_READ: "admin:finance:read", // view fees setup
   FINANCE_WRITE: "admin:finance:write", // manage fees
 
+  // ── Guardian ────────────────────────────────────────────────────────────────
+  GUARDIAN_READ: "admin:guardian:read", // view guardian
+  GUARDIAN_WRITE: "admin:guardian:write", // create guardian
+
   // ── Events & Notices ───────────────────────────────────────────────────────
   EVENTS_READ: "admin:events:read", // view events and notices
   EVENTS_WRITE: "admin:events:write", // create events
@@ -140,6 +144,12 @@ export const ADMIN_PERMISSION_GROUPS: PermissionGroup[] = [
     description: "Oversee tuition fees and financial ledgers.",
     icon: Wallet,
     permissions: [PERMISSIONS.FINANCE_READ, PERMISSIONS.FINANCE_WRITE],
+  },
+  {
+    label: "Guardian",
+    description: "Manage student guardian information.",
+    icon: Shield,
+    permissions: [PERMISSIONS.GUARDIAN_READ, PERMISSIONS.GUARDIAN_WRITE],
   },
   {
     label: "Events & Notices",
