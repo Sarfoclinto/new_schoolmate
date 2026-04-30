@@ -20,7 +20,7 @@ type Params = {
   limit?: number;
 };
 
-export const getPaginatedGuardiansFn = (
+export const searchGuardianFn = (
   params: Params = { search: "", page: 1, limit: 10 },
 ) => {
   return getHelper<PaginatedRes<GuardianWithoutWards[]>>(

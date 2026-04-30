@@ -1,5 +1,6 @@
 import { useDebounce } from "@/hooks/use-debounce";
-import { searchStudentFn } from "@/services/student";
+import { mockSearchStudentFn } from "@/services/mock-data";
+// import { searchStudentFn } from "@/services/student";
 import type { StudentOption } from "@/types/api/student";
 import { useQuery } from "@tanstack/react-query";
 import { Select, Spin, type SelectProps } from "antd";
@@ -30,7 +31,12 @@ const StudentSearchSelect = ({
   const { data, isFetching } = useQuery({
     queryKey: ["student-search", debouncedSearch],
     queryFn: () =>
-      searchStudentFn({
+      // searchStudentFn({
+      //   search: debouncedSearch || undefined,
+      //   page: 1,
+      //   limit: 30,
+      // }),
+      mockSearchStudentFn({
         search: debouncedSearch || undefined,
         page: 1,
         limit: 30,

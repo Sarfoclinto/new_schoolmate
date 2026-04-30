@@ -1,5 +1,6 @@
 import { useDebounce } from "@/hooks/use-debounce";
-import { getPaginatedGuardiansFn } from "@/services/guardian";
+// import { searchGuardianFn } from "@/services/guardian";
+import { mockSearchGuardianFn } from "@/services/mock-data";
 import type { GuardianOption } from "@/types/api/guardian";
 import { useQuery } from "@tanstack/react-query";
 import { Select, Spin, type SelectProps } from "antd";
@@ -29,8 +30,14 @@ const GuardianSearchSelect = ({
 
   const { data, isFetching } = useQuery({
     queryKey: ["guardian-search", debouncedSearch],
+    // queryFn: () =>
+    //   searchGuardianFn({
+    //     search: debouncedSearch || undefined,
+    //     page: 1,
+    //     limit: 30,
+    //   }),
     queryFn: () =>
-      getPaginatedGuardiansFn({
+      mockSearchGuardianFn({
         search: debouncedSearch || undefined,
         page: 1,
         limit: 30,
