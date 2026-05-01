@@ -19,6 +19,11 @@ import GuardianSearchSelect from "../../components/guardian-select-search";
 import StudentSearchSelect from "../../components/student-select-search";
 import { useState } from "react";
 import type { StudentOption } from "@/types/api/student";
+import usePost from "@/hooks/api/use-post";
+import { mapStudentToGuardianFn } from "@/services/guardian";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { guardianKeys } from "@/config/query-keys";
 
 type Props = {
   isOpen: boolean;
@@ -241,7 +246,7 @@ const MappingTree = ({
                               )}
                               <span className="flex items-center gap-x-1 text-[10px] text-slate-400">
                                 <Hash className="w-2.5 h-2.5" />
-                                {stu.studentId.slice(0, 8)}…
+                                {stu?.studentId?.slice(0, 8)}…
                               </span>
                             </div>
                           </div>
@@ -335,6 +340,7 @@ const MappingTree = ({
 // ═══════════════════════════════════════════════════════════════════════════════
 const GuardianMap = ({ close, isOpen, count }: Props) => {
   const [form] = Form.useForm<GuardianStudentMapPost>();
+  const qc = useQueryClient();
 
   // Track selected objects for the live preview
   const [selectedGuardian, setSelectedGuardian] =
@@ -350,6 +356,22 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
       setSelectedStudents([]);
     }, 320);
   };
+
+  const { mutate, isPending } = usePost({
+    postFn: mapStudentToGuardianFn,
+    onSuccess: ({ responseCode, responseMessage }) => {
+      if (responseCode === 1) {
+        toast.success(responseMessage);
+        qc.invalidateQueries({
+          queryKey: guardianKeys.custom("without-wards"),
+        });
+      } else {
+        toast.warning(responseMessage);
+      }
+    },
+    onError: (err) =>
+      toast.error("An error occurred", { description: err.message }),
+  });
 
   return (
     <AnimatePresence>
@@ -421,6 +443,9 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
                   form={form}
                   layout="vertical"
                   requiredMark={false}
+                  onFinish={(values) => {
+                    mutate(values);
+                  }}
                 >
                   {/* Guardian select */}
                   <Form.Item
@@ -439,6 +464,7 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
                     className="mb-4!"
                   >
                     <GuardianSearchSelect
+                      allowClear
                       onGuardianSelect={(g) => setSelectedGuardian(g)}
                       onChange={(val) => {
                         if (!val) setSelectedGuardian(null);
@@ -469,23 +495,22 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
                   >
                     <StudentSearchSelect
                       mode="multiple"
-                      onStudentSelect={(stu) => {
-                        setSelectedStudents((prev) => {
-                          // avoid duplicates
-                          if (prev.find((s) => s.studentId === stu.studentId))
-                            return prev;
-                          return [...prev, stu];
+                      allowClear
+                      onStudentSelect={(stus) => {
+                        setSelectedStudents(() => {
+                          return stus;
                         });
                       }}
-                      onChange={(vals) => {
-                        // When user removes a chip, sync the preview
-                        const ids = Array.isArray(vals)
-                          ? (vals as string[])
-                          : [];
-                        setSelectedStudents((prev) =>
-                          prev.filter((s) => ids.includes(s.studentId)),
-                        );
-                      }}
+                      // onChange={(vals) => {
+                      //   console.log("onchange values: ", vals);
+                      //   // When user removes a chip, sync the preview
+                      //   const ids = Array.isArray(vals)
+                      //     ? (vals as string[])
+                      //     : [];
+                      //   setSelectedStudents((prev) =>
+                      //     prev.filter((s) => ids.includes(s.studentId)),
+                      //   );
+                      // }}
                     />
                   </Form.Item>
                 </Form>
@@ -512,10 +537,15 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
                 <button
                   type="button"
                   onClick={() => form.submit()}
-                  disabled={!selectedGuardian || selectedStudents.length === 0}
+                  disabled={
+                    !selectedGuardian ||
+                    selectedStudents.length === 0 ||
+                    isPending
+                  }
                   className={`flex-2 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-x-2 transition-all
                     ${
-                      selectedGuardian && selectedStudents.length > 0
+                      (selectedGuardian && selectedStudents.length > 0) ||
+                      isPending
                         ? "text-white hover:opacity-90 active:scale-[0.98] cursor-pointer shadow-[0_4px_14px_rgba(13,27,46,0.2)]"
                         : "bg-slate-100 text-slate-400 cursor-not-allowed"
                     }`}

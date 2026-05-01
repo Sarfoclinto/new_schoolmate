@@ -13,9 +13,14 @@ interface StudentSearchSelectProps extends Omit<
 > {
   /** Placeholder label */
   placeholder?: string;
-  /** Called when a guardian is selected — returns the full option object */
-  onStudentSelect?: (guardian: StudentOption) => void;
+  /** Called when a student is selected — returns the full option object */
+  onStudentSelect?: (student: StudentOption[]) => void;
 }
+
+type Option =
+  | { value: string; label: string; student: StudentOption }
+  | { value: string; label: string; student: StudentOption }[]
+  | undefined;
 
 const StudentSearchSelect = ({
   placeholder = "Search student by name or phone...",
@@ -57,14 +62,14 @@ const StudentSearchSelect = ({
     student: s satisfies StudentOption,
   }));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleChange = (val: string, option: any) => {
-    onChange?.(val, option);
-    if (option && onStudentSelect) {
-      onStudentSelect(option.student);
+  const handleChange = (val: string, options: Option) => {
+    onChange?.(val, options);
+    if (options && onStudentSelect) {
+      const finalOpt = Array.isArray(options) ? options : [options];
+      onStudentSelect(finalOpt.map(s => s.student));
     }
   };
-
+  //
   const handleSearch = (val: string) => {
     setSearchText(val);
   };
@@ -150,7 +155,7 @@ const StudentSearchSelect = ({
                     className="text-[10px] text-slate-400"
                     style={{ fontFamily: "'DM Sans', sans-serif" }}
                   >
-                    |{stu.guardianName} · {stu.guardianContact}
+                    | {stu.guardianName} · {stu.guardianContact}
                   </span>
                 )}
               </div>
