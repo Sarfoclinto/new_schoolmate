@@ -148,7 +148,7 @@ const LivingStatusDot = ({ status }: { status: string }) => {
     </span>
   );
 };
-
+// [build]
 // ─── Ward chip ────────────────────────────────────────────────────────────────
 const WardChip = ({ ward }: { ward: GuardianWard }) => (
   <motion.div
