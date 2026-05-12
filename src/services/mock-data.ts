@@ -1,5 +1,6 @@
 import type { Pagination, PaginatedRes } from "@/types/api";
-import type { StudentOption, GuardianWithoutWards } from "@/types/api/guardian";
+import type { GuardianWithoutWards } from "@/types/api/guardian";
+import type { StudentOption } from "@/types/api/student";
 
 // ── Mock Data Generators ────────────────────────────────────────────────────
 

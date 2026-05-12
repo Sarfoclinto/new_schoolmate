@@ -40,7 +40,10 @@ type Params = {
 export const searchStudentFn = async (
   params: Params = { search: "", page: 1, limit: 10 },
 ) => {
-  return getHelper<PaginatedRes<StudentOption[]>>(students.search, params);
+  return getHelper<PaginatedRes<StudentOption[]>>(
+    students.searchStudents,
+    params,
+  );
 };
 export const getAllEduStuFn = async (
   eduId: string,

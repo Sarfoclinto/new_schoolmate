@@ -13,8 +13,9 @@ import {
   Hash,
   ChevronRight,
   CheckCircle2,
+  Loader,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import GuardianSearchSelect from "../../components/guardian-select-search";
 import StudentSearchSelect from "../../components/student-select-search";
 import { useState } from "react";
@@ -88,7 +89,7 @@ const MappingTree = ({
 
   return (
     <AnimatePresence>
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
@@ -138,7 +139,7 @@ const MappingTree = ({
             {/* ── Guardian node ── */}
             <AnimatePresence mode="wait">
               {hasGuardian && guardian ? (
-                <motion.div
+                <MotionDiv
                   key="guardian"
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -173,9 +174,9 @@ const MappingTree = ({
                   <span className="shrink-0 text-[10px] font-black text-[#1E3A5F] bg-white border border-[#D0DCF0] px-2 py-0.5 rounded-full uppercase tracking-widest">
                     Guardian
                   </span>
-                </motion.div>
+                </MotionDiv>
               ) : (
-                <motion.div
+                <MotionDiv
                   key="guardian-placeholder"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -191,7 +192,7 @@ const MappingTree = ({
                   >
                     Guardian not selected yet
                   </p>
-                </motion.div>
+                </MotionDiv>
               )}
             </AnimatePresence>
 
@@ -208,7 +209,7 @@ const MappingTree = ({
                   {/* Mapped students */}
                   <AnimatePresence mode="popLayout">
                     {students.map((stu, i) => (
-                      <motion.div
+                      <MotionDiv
                         key={stu.studentId}
                         layout
                         initial={{ opacity: 0, x: 12 }}
@@ -257,23 +258,28 @@ const MappingTree = ({
                                 title={`Already linked to ${stu.guardianName}`}
                                 className="shrink-0 text-[9px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full whitespace-nowrap"
                               >
-                                Has guardian
+                                {/* Has guardian */}
+                                Different
                               </div>
                             )}
                           {stu.guardianId &&
                             stu.guardianId === guardian?.guardianId && (
-                              <div className="shrink-0 text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                                Already linked
+                              <div
+                                title={`Already linked to ${stu.guardianName}`}
+                                className="shrink-0 text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full whitespace-nowrap"
+                              >
+                                {/* Already linked */}
+                                Default
                               </div>
                             )}
                         </div>
-                      </motion.div>
+                      </MotionDiv>
                     ))}
                   </AnimatePresence>
 
                   {/* Empty student placeholder */}
                   {students.length === 0 && (
-                    <motion.div
+                    <MotionDiv
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="flex items-center gap-x-2"
@@ -290,7 +296,7 @@ const MappingTree = ({
                           No students selected yet
                         </p>
                       </div>
-                    </motion.div>
+                    </MotionDiv>
                   )}
                 </div>
               </div>
@@ -299,7 +305,7 @@ const MappingTree = ({
             {/* ── Summary footer ── */}
             <AnimatePresence>
               {isReady && (
-                <motion.div
+                <MotionDiv
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
@@ -325,12 +331,12 @@ const MappingTree = ({
                     </span>
                     <span className="text-slate-300">will be linked</span>
                   </div>
-                </motion.div>
+                </MotionDiv>
               )}
             </AnimatePresence>
           </div>
         </div>
-      </motion.div>
+      </MotionDiv>
     </AnimatePresence>
   );
 };
@@ -363,8 +369,12 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
       if (responseCode === 1) {
         toast.success(responseMessage);
         qc.invalidateQueries({
-          queryKey: guardianKeys.custom("without-wards"),
+          queryKey: guardianKeys.custom("with-wards"),
         });
+        handleClose();
+        // setSelectedGuardian(null);
+        // setSelectedStudents([]);
+        // form.resetFields();
       } else {
         toast.warning(responseMessage);
       }
@@ -444,6 +454,7 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
                   layout="vertical"
                   requiredMark={false}
                   onFinish={(values) => {
+                    console.log("values: ", values);
                     mutate(values);
                   }}
                 >
@@ -501,16 +512,6 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
                           return stus;
                         });
                       }}
-                      // onChange={(vals) => {
-                      //   console.log("onchange values: ", vals);
-                      //   // When user removes a chip, sync the preview
-                      //   const ids = Array.isArray(vals)
-                      //     ? (vals as string[])
-                      //     : [];
-                      //   setSelectedStudents((prev) =>
-                      //     prev.filter((s) => ids.includes(s.studentId)),
-                      //   );
-                      // }}
                     />
                   </Form.Item>
                 </Form>
@@ -559,9 +560,13 @@ const GuardianMap = ({ close, isOpen, count }: Props) => {
                       : { fontFamily: "'DM Sans', sans-serif" }
                   }
                 >
-                  <Link2
-                    className={`w-4 h-4 ${selectedGuardian && selectedStudents.length > 0 ? "text-[#C9A84C]" : ""}`}
-                  />
+                  {isPending ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Link2
+                      className={`w-4 h-4 ${selectedGuardian && selectedStudents.length > 0 ? "text-[#C9A84C]" : ""}`}
+                    />
+                  )}
                   {selectedStudents.length > 0
                     ? `Create Mapping (${selectedStudents.length})`
                     : "Create Mapping"}

@@ -21,10 +21,10 @@ type Params = {
 };
 
 export const searchGuardianFn = (
-  params: Params = { search: "", page: 1, limit: 10 },
+  params: Params = { search: "", page: 1, limit: 30 },
 ) => {
   return getHelper<PaginatedRes<GuardianWithoutWards[]>>(
-    guardian.getAllPn,
+    guardian.searchGuardian,
     params,
   );
 };
@@ -42,5 +42,7 @@ export const getStudentGuardianFn = async (id: string) => {
 };
 
 export const mapStudentToGuardianFn = async (data: GuardianStudentMapPost) => {
-  return postHelper(guardian.mapStudentToGuardian, data);
+  return postHelper(guardian.mapStudentToGuardian, data.studentIds, {
+    guardianId: data.guardianId,
+  });
 };

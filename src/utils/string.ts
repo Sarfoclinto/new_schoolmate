@@ -106,6 +106,7 @@ export const getInitials = (text = "Fist Last") =>
         .split(" ")
         .filter(Boolean)
         .map((n) => n[0])
+        .slice(0,3)
         .join("")
     : "N/A";
 

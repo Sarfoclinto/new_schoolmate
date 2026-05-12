@@ -1,5 +1,6 @@
 import { useDebounce } from "@/hooks/use-debounce";
-import { mockSearchStudentFn } from "@/services/mock-data";
+// import { mockSearchStudentFn } from "@/services/mock-data";
+import { searchStudentFn } from "@/services/student";
 // import { searchStudentFn } from "@/services/student";
 import type { StudentOption } from "@/types/api/student";
 import { useQuery } from "@tanstack/react-query";
@@ -36,16 +37,16 @@ const StudentSearchSelect = ({
   const { data, isFetching } = useQuery({
     queryKey: ["student-search", debouncedSearch],
     queryFn: () =>
-      // searchStudentFn({
-      //   search: debouncedSearch || undefined,
-      //   page: 1,
-      //   limit: 30,
-      // }),
-      mockSearchStudentFn({
-        search: debouncedSearch || undefined,
+      searchStudentFn({
+        search: debouncedSearch || "",
         page: 1,
         limit: 30,
       }),
+    // mockSearchStudentFn({
+    //   search: debouncedSearch || undefined,
+    //   page: 1,
+    //   limit: 30,
+    // }),
     // Keep previous results visible while fetching new ones
     placeholderData: (prev) => prev,
     // Don't refetch on window focus for a search box
@@ -66,7 +67,7 @@ const StudentSearchSelect = ({
     onChange?.(val, options);
     if (options && onStudentSelect) {
       const finalOpt = Array.isArray(options) ? options : [options];
-      onStudentSelect(finalOpt.map(s => s.student));
+      onStudentSelect(finalOpt.map((s) => s.student));
     }
   };
   //

@@ -186,7 +186,7 @@ const endpoints = {
         `/GetStudentTerminalReport/Student/${paths.studentId}/AcademicYear/${paths.academicYearId}/AcademicTerm/${paths.academicTermId}/SubLevel/${paths.subLevelId}`,
     },
 
-    search: "/SearchStudent",
+    searchStudents: "/SearchStudents",
     getAllPn: "/GetAllStudents",
     getAllUnPn: "/GetUnPaginatedStudents",
     getById: (id: string) => `/GetStudentProfile/${id}`,
@@ -258,11 +258,11 @@ const endpoints = {
   },
   guardian: {
     getAll: "/GetAllGuardians",
-    getAllPn: "/GetPaginatedGuardians",
-    getAllWithWards: "/GetAllGuardiansWithWards",
+    searchGuardian: "/SearchGuardians",
+    getAllWithWards: "/GetStudentGuardianMap",
     getByStudentId: (id: string) => `/GetStudentGuardian/${id}`,
     getGuardianStudents: (id: string) => `/GetGuardianStudents/${id}`,
-    mapStudentToGuardian: "/MapStudentToGuardian",
+    mapStudentToGuardian: "/CreateStudentGuardianMap",
   },
   academicRecords: {
     passmark: {
