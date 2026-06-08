@@ -52,17 +52,25 @@ import UpdateStudentParents from "./updates/parents-info";
 import UpdateStudentGuardian from "./updates/guardian";
 import UpdateImages from "./updates/images";
 import UpdateStudentEnrollmentInfo from "./updates/enrollment-info";
+import { useDisclosure } from "@/hooks/use-disclosure";
+import logo from "/logo.png";
+import StudentCard, { type CardSize } from "@/components/custom/student-card";
+import { useSignalRStore } from "@/store/signalr.store";
 
 type TabKey = "subjects" | "parents" | "guardian" | "fees";
 
 const StudentDetails = () => {
   const location = useLocation();
   const { studentId } = location.state || {};
+  const institutionName = useSignalRStore((s) => s.institution?.name);
 
   const [activeTab, setActiveTab] = useState<TabKey>("subjects");
   const [modalOpen, setModalOpen] = useState(false); // "choose section" modal
   const [drawerOpen, setDrawerOpen] = useState(false); // actual form drawer
   const [updateKey, setUpdateKey] = useState<UpdateKey>("personal");
+  const [size, setSize] = useState<CardSize | null>(null);
+
+  const { isOpen, open, close } = useDisclosure();
 
   // ── Query ────────────────────────────────────────────
   const { data: student, isLoading } = useFetch({
@@ -256,17 +264,33 @@ const StudentDetails = () => {
         </div>
 
         {/* Edit button */}
-        <button
-          type="button"
-          onClick={() => setModalOpen(true)}
-          className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
-          style={{
-            background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
-          }}
-        >
-          <Pencil className="w-3.5 h-3.5 text-[#C9A84C]" />
-          Edit Profile
-        </button>
+        <div className="flex items-center gap-x-2">
+          {!!student && !!studentId && (
+            <button
+              type="button"
+              onClick={open}
+              className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
+              style={{
+                background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
+              }}
+            >
+              <User className="w-3.5 h-3.5 text-[#C9A84C]" />
+              Student Card
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setModalOpen(true)}
+            className="flex items-center gap-x-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
+            style={{
+              background: "linear-gradient(135deg, #0D1B2E 0%, #1E3A5F 100%)",
+            }}
+          >
+            <Pencil className="w-3.5 h-3.5 text-[#C9A84C]" />
+            Edit Profile
+          </button>
+        </div>
       </MotionDiv>
 
       {/* ═══ PROFILE CARDS ROW ═══════════════════════ */}
@@ -664,6 +688,25 @@ const StudentDetails = () => {
           </AnimatePresence>
         </div>
       </Drawer>
+
+      <Modal
+        open={isOpen}
+        footer={null}
+        width={size === "lg" ? 600 : undefined}
+        centered
+        onCancel={close}
+        closable={false}
+      >
+        <StudentCard
+          studentId={studentId!}
+          data={student}
+          schoolName={institutionName!}
+          schoolLogo={logo}
+          onSizeChange={(size) => {
+            setSize(size);
+          }}
+        />
+      </Modal>
     </div>
   );
 };
