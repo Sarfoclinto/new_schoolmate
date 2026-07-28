@@ -38,6 +38,7 @@ import {
   FileStackIcon,
   PrinterIcon,
   SendIcon,
+  CreditCardIcon,
 } from "lucide-react";
 
 const { admin } = paths;
@@ -52,8 +53,11 @@ export type AppMenuItem = {
   icon?: React.ReactNode;
   /** If set, the item is hidden unless the user holds this permission. */
   permission?: Permission;
+  showOnExpiry?: boolean;
   type?: "submenu" | "group" | "divider";
   children?: AppMenuItem[];
+  /** If true, this item stays enabled even when the subscription has expired. */
+  exemptFromExpiry?: boolean;
 };
 
 // Cast helper — keeps JSX clean below
@@ -66,6 +70,7 @@ const adminMenu: AppMenuItem[] = [
     key: index.href,
     label: <SidebarLabel to={index.href}>{index.label}</SidebarLabel>,
     icon: <HomeIcon className="size-3.75" />,
+    exemptFromExpiry: true,
   }),
   // ── Permission ──────────────────────────────────────────────────────────────
   // Parent guarded by PERMISSIONS_READ; children can be individually tightened
@@ -79,6 +84,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <ShieldCheck className="size-3.75" />,
     permission: PERMISSIONS.PERMISSIONS_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -90,6 +96,7 @@ const adminMenu: AppMenuItem[] = [
           </SidebarLabel>
         ),
         permission: PERMISSIONS.PERMISSIONS_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.staff_permissions.href,
@@ -100,6 +107,7 @@ const adminMenu: AppMenuItem[] = [
           </SidebarLabel>
         ),
         permission: PERMISSIONS.PERMISSIONS_WRITE,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -116,6 +124,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <SettingsIcon className="size-3.75" />,
     permission: PERMISSIONS.SETUP_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -127,6 +136,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <UserCircleIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.roles.href,
@@ -137,6 +147,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <ShieldIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.educationalLevel.href,
@@ -147,6 +158,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <GraduationCapIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.academicLevel.href,
@@ -157,6 +169,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <LayoutGridIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.promotionPath.href,
@@ -167,6 +180,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <DoorOpenIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.subLevel.href,
@@ -177,6 +191,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <Building className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.facultyNClassroom.href,
@@ -187,6 +202,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <LibraryIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.studyModules.href,
@@ -197,6 +213,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <BookOpenIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.assessmentNGrading.href,
@@ -207,6 +224,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <ClipboardCheckIcon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.facilities.href,
@@ -217,6 +235,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <Building2Icon className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.yearsNTerms.href,
@@ -227,6 +246,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <Clock10 className="size-3.5" />,
         permission: PERMISSIONS.SETUP_WRITE,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -241,6 +261,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <UsersIcon className="size-3.75" />,
     permission: PERMISSIONS.STUDENTS_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -252,6 +273,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <UserPlusIcon className="size-3.5" />,
         permission: PERMISSIONS.STUDENTS_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.viewAll.href,
@@ -262,6 +284,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <UsersRoundIcon className="size-3.5" />,
         permission: PERMISSIONS.STUDENTS_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.viewBySub.href,
@@ -272,6 +295,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <Building className="size-3.5" />,
         permission: PERMISSIONS.STUDENTS_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.viewByAca.href,
@@ -282,6 +306,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <LayoutGridIcon className="size-3.5" />,
         permission: PERMISSIONS.STUDENTS_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.viewByEdu.href,
@@ -292,6 +317,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <GraduationCapIcon className="size-3.5" />,
         permission: PERMISSIONS.STUDENTS_READ,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -306,6 +332,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <BriefcaseIcon className="size-3.75" />,
     permission: PERMISSIONS.STAFF_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -317,6 +344,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <UserPlusIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.staffAssignment.href,
@@ -327,6 +355,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <ClipboardCheckIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.principalTeacher.href,
@@ -337,6 +366,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <UserCogIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.allStaff.href,
@@ -347,6 +377,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <UsersRoundIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.staffByMode.href,
@@ -357,6 +388,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <UserCogIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.staffByRole.href,
@@ -367,6 +399,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <ShieldCheckIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_READ,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -392,6 +425,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <ClipboardList className="size-3.5" />,
         permission: PERMISSIONS.REPORTS_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.stuTermReport.href,
@@ -410,6 +444,8 @@ const adminMenu: AppMenuItem[] = [
             {admin.classRanking.label}
           </SidebarLabel>
         ),
+        permission: PERMISSIONS.REPORTS_READ,
+        exemptFromExpiry: true,
         icon: <ClipboardList className="size-3.5" />,
       }),
       item({
@@ -419,6 +455,7 @@ const adminMenu: AppMenuItem[] = [
             {admin.bulkReportPrint.label}
           </SidebarLabel>
         ),
+        permission: PERMISSIONS.REPORTS_READ,
         icon: <PrinterIcon className="size-3.5" />,
       }),
 
@@ -431,6 +468,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <CalendarCheckIcon className="size-3.5" />,
         permission: PERMISSIONS.REPORTS_READ,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -445,6 +483,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <WalletIcon className="size-3.75" />,
     permission: PERMISSIONS.FINANCE_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -456,6 +495,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <CoinsIcon className="size-3.5" />,
         permission: PERMISSIONS.FINANCE_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.fees.href,
@@ -466,6 +506,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <ReceiptIcon className="size-3.5" />,
         permission: PERMISSIONS.FINANCE_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.bills.href,
@@ -476,6 +517,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <FileStackIcon className="size-3.5" />,
         permission: PERMISSIONS.FINANCE_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.classBill.href,
@@ -486,6 +528,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <LayersIcon className="size-3.5" />,
         permission: PERMISSIONS.FINANCE_WRITE,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -500,6 +543,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <ShieldCheck className="size-3.75" />,
     permission: PERMISSIONS.GUARDIAN_WRITE,
+    exemptFromExpiry: true,
   }),
 
   // ── Events & Notices ───────────────────────────────────────────────────────
@@ -512,6 +556,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <CalendarCheck2Icon className="size-3.75" />,
     permission: PERMISSIONS.EVENTS_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -523,6 +568,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <AlertOctagon className="size-3.5" />,
         permission: PERMISSIONS.EVENTS_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.allEvents.href,
@@ -533,6 +579,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <CalendarDaysIcon className="size-3.5" />,
         permission: PERMISSIONS.EVENTS_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.createEvent.href,
@@ -543,6 +590,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <CalendarPlusIcon className="size-3.5" />,
         permission: PERMISSIONS.EVENTS_WRITE,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -557,6 +605,7 @@ const adminMenu: AppMenuItem[] = [
     ),
     icon: <Clock10 className="size-3.75" />,
     permission: PERMISSIONS.SESSION_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -568,6 +617,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <CalendarXIcon className="size-3.5" />,
         permission: PERMISSIONS.SESSION_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: admin.openAcademicTerm.href,
@@ -578,6 +628,7 @@ const adminMenu: AppMenuItem[] = [
         ),
         icon: <CalendarRangeIcon className="size-3.5" />,
         permission: PERMISSIONS.SESSION_WRITE,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -591,6 +642,19 @@ const adminMenu: AppMenuItem[] = [
       </SidebarLabel>
     ),
     icon: <SendIcon className="size-3.5" />,
+    exemptFromExpiry: true,
+  }),
+
+  // ── Subscription ────────────────────────────────────────────────────────────────
+  item({
+    key: admin.subscription.href,
+    label: (
+      <SidebarLabel type="link" to={admin.subscription.href}>
+        {admin.subscription.label}
+      </SidebarLabel>
+    ),
+    icon: <CreditCardIcon className="size-3.5" />,
+    exemptFromExpiry: true,
   }),
 ];
 

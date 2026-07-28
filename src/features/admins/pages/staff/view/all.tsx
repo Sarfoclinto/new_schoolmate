@@ -9,20 +9,25 @@ import {
   staffPhoneCol,
   staffRoleCol,
   staffSnCol,
+  staffStatusCol,
   staffTitleCol,
   staffViewActionCol,
 } from "@/features/admins/components/staff/staff-columns";
 import useFetch from "@/hooks/api/use-fetch";
+import useUpdate from "@/hooks/api/use-update";
 import { getAllRolesFn } from "@/services/setup/roles";
-import { getAllStaffUnPnFn } from "@/services/staff";
+import { getAllStaffUnPnFn, updateStaffStatus } from "@/services/staff";
 import type { StaffGet } from "@/types/api/staff";
+import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "antd";
 import { UsersRoundIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const ViewAllStaff = () => {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
 
   // queries
@@ -33,6 +38,21 @@ const ViewAllStaff = () => {
   const { data: roles } = useFetch({
     queryFn: getAllRolesFn,
     queryKeys: roleKeys.list(),
+  });
+
+  const { mutate: toggleStatus, isPending } = useUpdate({
+    updateFn: updateStaffStatus,
+    onSuccess: ({ responseCode, responseMessage }) => {
+      if (responseCode == 1) {
+        toast.success(responseMessage);
+      } else {
+        toast.info(responseMessage);
+      }
+      qc.invalidateQueries({ queryKey: staffKeys.list() });
+    },
+    onError: (err) => {
+      toast.error("Sorry, an error occured", { description: err.message });
+    },
   });
 
   // memoized values
@@ -62,9 +82,10 @@ const ViewAllStaff = () => {
       staffModeCol<StaffGet>(170),
       staffRoleCol<StaffGet>(160, roleFilters),
       staffPhoneCol<StaffGet>(160),
-      staffViewActionCol<StaffGet>(navigate),
+      staffStatusCol<StaffGet>(160),
+      staffViewActionCol<StaffGet>(navigate, isPending, toggleStatus),
     ],
-    [navigate, roleFilters],
+    [isPending, navigate, roleFilters, toggleStatus],
   );
 
   return (

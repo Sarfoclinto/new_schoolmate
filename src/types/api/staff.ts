@@ -107,6 +107,11 @@ export interface AdminUpdateStaffType {
   };
 }
 
+export interface AdminUpdateStaffStatus {
+  staffId: string;
+  newStatus: "Active" | "Inactive";
+}
+
 export interface AssignPermissionsPayload {
   userId: string;
   userPermissions: Permission[];

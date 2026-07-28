@@ -23,7 +23,7 @@ const usePost = <TData = MdResponse, TVariables = unknown, TError = AxiosError>(
 > => {
   const mutation = useMutation<TData, TError, TVariables>({
     mutationFn: postFn,
-    onSuccess: (data) => {
+    onSuccess: (data,variables) => {
       if (showSuccessNotification) {
         const message =
           successMsg ??
@@ -33,14 +33,14 @@ const usePost = <TData = MdResponse, TVariables = unknown, TError = AxiosError>(
 
       // consumer callback
       try {
-        onSuccess?.(data);
+        onSuccess?.(data, variables);
       } catch (err) {
         // swallow errors thrown in user's handler to avoid breaking react-query flow
         // optionally log here
         console.error("onSuccess handler error", err);
       }
     },
-    onError: (err: TError) => {
+    onError: (err: TError,variables) => {
       if (mutationIsCanceledError(err)) return;
 
       if (showErrorNotification) {
@@ -48,7 +48,7 @@ const usePost = <TData = MdResponse, TVariables = unknown, TError = AxiosError>(
       }
 
       try {
-        onError?.(err);
+        onError?.(err, variables);
       } catch (e) {
         console.error("onError handler error", e);
         // swallow

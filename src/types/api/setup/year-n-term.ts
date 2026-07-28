@@ -2,6 +2,7 @@ import type { Permission } from "@/config/permissions";
 import type { EventGet } from "../event";
 import type { InstitutionGet } from "./institution";
 import type { NoticeGet } from "./notice";
+import type { ExpiryInfoWithBool } from "../finance";
 
 export interface AcademicTermGet {
   academicTermId: string;
@@ -85,6 +86,7 @@ export interface Others {
   academicTerm: AcademicTermGet[];
   institution: InstitutionGet;
   permissions: Permission[];
+  expiryStatus: ExpiryInfoWithBool;
 }
 
 export interface CloseTermPayload {

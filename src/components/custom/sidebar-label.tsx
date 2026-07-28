@@ -71,7 +71,7 @@ const SidebarLabel = ({
   return (
     <NavLink
       {...props}
-      to={to}
+      to={to}      
       className={({ isActive }) =>
         cn(
           baseClasses,

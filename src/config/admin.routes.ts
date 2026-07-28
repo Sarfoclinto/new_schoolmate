@@ -184,6 +184,9 @@ const adminPaths = {
 
   // requests
   request: { label: "Requests", href: "/admin/requests" },
+
+  // subscription
+  subscription: { label: "Subscription", href: "/admin/subscription" },
 };
 
 export default adminPaths;

@@ -10,22 +10,16 @@ import { useSignalRContext } from "@/hooks/signalR/use-signalR-context";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
-// import { useTourStore } from "@/store/tour.store";
 import { getInitials, getUserProfileRoute } from "@/utils/string";
 import { Tooltip } from "antd";
-import {
-  // SettingsIcon,
-  DoorOpenIcon,
-  User2Icon,
-  // HelpCircle,
-} from "lucide-react";
+import { DoorOpenIcon, Loader, User2Icon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const UserMenu = () => {
   const user = useAuth((s) => s.user);
   const open = useUIStore((s) => s.openLogoutMenu);
-  const { isConnected } = useSignalRContext();
-  // const { startManualTour } = useTourStore();
+  const { isConnected, connectionState } = useSignalRContext();
+  const isReconnecting = connectionState === "Reconnecting";
 
   return (
     <DropdownMenu data-tour="user-menu">
@@ -49,12 +43,16 @@ const UserMenu = () => {
               getInitials(user?.name)
             )}
             <Tooltip title={isConnected ? "Online" : "Offline"}>
-              <span
-                className={cn(
-                  "absolute cursor-pointer size-2.5 rounded-full bottom-0 -right-0.5",
-                  isConnected ? "bg-green-500" : "bg-red-500",
-                )}
-              />
+              {isReconnecting ? (
+                <Loader className="size-2.5 animate-spin" />
+              ) : (
+                <span
+                  className={cn(
+                    "absolute cursor-pointer size-2.5 rounded-full bottom-0 -right-0.5",
+                    isConnected ? "bg-green-500" : "bg-red-500",
+                  )}
+                />
+              )}
             </Tooltip>
           </div>
           <div className="hidden md:block text-left leading-none">

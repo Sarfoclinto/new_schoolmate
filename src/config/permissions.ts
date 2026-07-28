@@ -4,6 +4,7 @@ import {
   Briefcase,
   Calendar,
   ClipboardCheck,
+  CreditCard,
   FileText,
   GraduationCap,
   LayoutDashboard,
@@ -72,6 +73,9 @@ export const ADMINISTRATIVE_PERMISSIONS = {
   // ── Session (staff) ───────────────────────────────────────────────
   SESSION_READ: "admin:session:read", // view session records
   SESSION_WRITE: "admin:session:write", // add/edit session records
+
+  // ── SUBSCRIPTION ──────────────────────────────────────────────────────────────────
+  SUBSCRIPTION: "admin:subscription:write", // create subscription
 };
 
 export const STAFF_PERMISSIONS = {
@@ -180,6 +184,12 @@ export const ADMIN_PERMISSION_GROUPS: PermissionGroup[] = [
     description: "Access session records and attendance summaries.",
     icon: LockOpen,
     permissions: [PERMISSIONS.SESSION_READ, PERMISSIONS.SESSION_WRITE],
+  },
+  {
+    label: "Subscription",
+    description: "View and subscription.",
+    icon: CreditCard,
+    permissions: [PERMISSIONS.SUBSCRIPTION],
   },
 ];
 

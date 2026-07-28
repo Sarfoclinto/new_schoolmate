@@ -173,6 +173,10 @@ export class SignalRClient {
       this.emit("updateRequestStatus", requestId, status);
     });
 
+    this.connection.on("receiveSubscriptionStatus", (subscription) => {
+      this.emit("receiveSubscriptionStatus", subscription);
+    });
+
     this.connection.on("error", (err) => this.emit("error", err));
   }
 

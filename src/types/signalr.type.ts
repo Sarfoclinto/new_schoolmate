@@ -1,6 +1,7 @@
 import type { Permission } from "@/config/permissions";
 import type { AcademicTermGet, AcademicYearGet } from "./api/setup/year-n-term";
 import type { RequestItem } from "./api/request";
+import type { SubscriptionRes } from "./api/finance";
 
 /**
  * SignalR Event Map - Strongly typed event handlers
@@ -28,6 +29,9 @@ export interface SignalREventMap {
     requestId: string,
     status: "approved" | "declined",
   ) => void;
+
+  // subscription status
+  receiveSubscriptionStatus: (status: SubscriptionRes) => void;
 }
 /**
  * SignalR Connection State

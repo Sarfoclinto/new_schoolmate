@@ -2,11 +2,13 @@ import {
   ProtectAdminRoutes,
   ProtectRoute,
 } from "@/components/custom/protect-routes";
+import SubscriptionGuard from "@/components/custom/subscription-guard";
+// import UnderConstruction from "@/components/custom/under-construction";
 import { ADMIN_ROUTE_PERMISSIONS } from "@/config/route.permission";
 import paths from "@/config/routes";
 import AdminLayout from "@/features/admins/components/layout";
 import { lazy } from "react";
-import type { RouteObject } from "react-router-dom";
+import { type RouteObject } from "react-router-dom";
 
 const {
   // profile
@@ -75,6 +77,9 @@ const {
 
   // requests
   request,
+
+  // subscription
+  subscription,
 } = paths.admin;
 
 // admin pages component
@@ -210,25 +215,107 @@ const CloseAcademicYear = lazy(
 // request
 const Request = lazy(() => import("@/features/admins/pages/request"));
 
+// subscription
+const Subscription = lazy(() => import("@/features/admins/pages/subscription"));
+
+// =============================================================================
+// Pages that stay reachable even when the subscription has expired.
+// Keep this in sync with `exemptFromExpiry` items in admin-menu-items.ts.
+// =============================================================================
+const EXEMPT_FROM_EXPIRY = new Set<string>([
+  // profile
+  adminProfile.href,
+  // setup
+  index.href,
+  profile.href,
+  roles.href,
+  educationalLevel.href,
+  academicLevel.href,
+  subLevel.href,
+  promotionPath.href,
+  studyModules.href,
+  facultyNClassroom.href,
+  assessmentNGrading.href,
+  facilities.href,
+  yearsNTerms.href,
+
+  // students
+  registerStudent.href,
+  viewAll.href,
+  viewBySub.href,
+  viewByAca.href,
+  viewByEdu.href,
+  studentDetails.href,
+
+  // staff
+  createStaff.href,
+  staffAssignment.href,
+  staffDetails.href,
+  allStaff.href,
+  staffByMode.href,
+  staffByRole.href,
+  principalTeacher.href,
+
+  // reports
+  stuAttReport.href,
+  academicRecords.href,
+  classRanking.href,
+
+  // finance
+  fees.href,
+  subLedgers.href,
+  bills.href,
+  classBill.href,
+
+  // guardian
+  guardian.href,
+
+  // events & notice
+  notice.href,
+  allEvents.href,
+  createEvent.href,
+
+  // permissions
+  admin_permissions.href,
+  staff_permissions.href,
+
+  // sessions
+  closeAcademicTerm.href,
+  openAcademicTerm.href,
+  closeAcademicYear.href,
+
+  // requests
+  request.href,
+
+  // subscription
+  subscription.href,
+]);
+
 // =============================================================================
 // guard helper
 // Wraps a page element in <ProtectRoute> if ROUTE_PERMISSIONS has an entry
-// for the given path. Otherwise returns the element unwrapped.
+// for the given path, then wraps the result in <SubscriptionGuard> unless
+// the path is explicitly exempt (e.g. the subscription page itself — wrapping
+// it would redirect it to itself in an infinite loop).
 //
 // The layout-level ProtectAdminRoutes has already confirmed:
 //    user is authenticated
 //    user has dashboardType === "admin"
-//
-// This guard only adds the finer per-page permission check on top of that.
 // =============================================================================
 const guarded = (path: string, element: React.ReactNode): React.ReactNode => {
   const permission = ADMIN_ROUTE_PERMISSIONS[path];
-  if (!permission) return element;
-  return (
+
+  const permissionChecked = permission ? (
     <ProtectRoute requiredPermission={permission} intendedPath={path}>
       {element}
     </ProtectRoute>
+  ) : (
+    element
   );
+
+  if (EXEMPT_FROM_EXPIRY.has(path)) return permissionChecked;
+
+  return <SubscriptionGuard>{permissionChecked}</SubscriptionGuard>;
 };
 
 // =============================================================================
@@ -345,6 +432,19 @@ const adminRoutes: RouteObject[] = [
       {
         path: stuTermReport.href,
         element: guarded(stuTermReport.href, <ViewTerminalReport />),
+        // element: guarded(
+        //   stuTermReport.href,
+        //   <UnderConstruction
+        //     variant="unavailable"
+        //     title="Student terminal report"
+        //     description="This page is temporarily unavailable because your subscription has expired. Renew your subscription to regain access to terminal reports and related features."
+        //     action={
+        //       <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 transition-colors">
+        //         Renew subscription
+        //       </button>
+        //     }
+        //   />,
+        // ),
       },
       {
         path: stuAttReport.href,
@@ -365,6 +465,14 @@ const adminRoutes: RouteObject[] = [
       {
         path: bulkReportPrint.href,
         element: guarded(bulkReportPrint.href, <BulkReportPrint />),
+        // element: guarded(
+        //   bulkReportPrint.href,
+        //   <UnderConstruction
+        //     showTag={false}
+        //     title="Bulk Student report  print"
+        //     description="Page is currently unavailable due to expired subscription"
+        //   />,
+        // ),
       },
 
       // ── Finance ─────────────────────────────────────────────────────────────
@@ -415,6 +523,18 @@ const adminRoutes: RouteObject[] = [
       {
         path: closeAcademicYear.href,
         element: guarded(closeAcademicYear.href, <CloseAcademicYear />),
+      },
+      {
+        path: subscription.href,
+        element: guarded(subscription.href, <Subscription />),
+        // element: guarded(
+        //   subscription.href,
+        //   <UnderConstruction
+        //     showTag={false}
+        //     title="Subscription"
+        //     description="This page is currently under construction."
+        //   />,
+        // ),
       },
 
       // ── Profile (no permission guard — always accessible) ───────────────────

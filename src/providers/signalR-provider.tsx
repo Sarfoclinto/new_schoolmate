@@ -49,6 +49,7 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
     addRequest,
     removeRequest,
     updateStatus,
+    updateSubscription,
   } = useSignalRStore(
     useShallow((s) => ({
       setStoreConnectionState: s.setConnectionState,
@@ -59,6 +60,7 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
       addRequest: s.addRequest,
       removeRequest: s.deleteRequest,
       updateStatus: s.updateReqStatus,
+      updateSubscription: s.setExpiryStatus,
     })),
   );
 
@@ -123,19 +125,19 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
       setStoreConnectionState("Reconnecting");
 
       if (enableToasts) {
-        reconnectToastIdRef.current = toast.loading("Reconnecting....", {
-          duration: Infinity,
-          closeButton: true,
-          action: {
-            label: "Dismiss",
-            onClick: () => {
-              if (reconnectToastIdRef.current) {
-                toast.dismiss(reconnectToastIdRef.current);
-                reconnectToastIdRef.current = null;
-              }
-            },
-          },
-        });
+        // reconnectToastIdRef.current = toast.loading("Reconnecting....", {
+        //   duration: Infinity,
+        //   closeButton: true,
+        //   action: {
+        //     label: "Dismiss",
+        //     onClick: () => {
+        //       if (reconnectToastIdRef.current) {
+        //         toast.dismiss(reconnectToastIdRef.current);
+        //         reconnectToastIdRef.current = null;
+        //       }
+        //     },
+        //   },
+        // });
       }
     });
 
@@ -208,6 +210,15 @@ export const SignalRProvider: React.FC<SignalRProviderProps> = ({
           } else if (status === "declined") {
             toast.warning("Request declined");
           }
+        }
+      }
+    });
+
+    client.on("receiveSubscriptionStatus", (subscription) => {
+      if (subscription.subscriptionHistoryId) {
+        updateSubscription(subscription.expiryInfo);
+        if (enableToasts) {
+          toast.info("Subscription updated successfully");
         }
       }
     });

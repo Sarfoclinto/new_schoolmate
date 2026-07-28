@@ -121,3 +121,9 @@ body {
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
   overflow: hidden !important;
 }
+
+.cms-sider .ant-menu-item-disabled,
+.cms-sider .ant-menu-submenu-disabled > .ant-menu-submenu-title {
+  color: rgba(0, 0, 0, 0.35) !important;
+  cursor: not-allowed !important;
+}

@@ -59,8 +59,8 @@ export type CreateProps<TData, TVariables, TError = unknown> = {
   /**
    * Optional callbacks. Both are invoked after built-in notification handling.
    */
-  onSuccess?: (data: TData) => void;
-  onError?: (err: TError) => void;
+  onSuccess?: (data: TData, variables: TVariables) => void;
+  onError?: (err: TError, variables: TVariables) => void;
 
   /**
    * Extra `useMutation` options (retry, onSettled, etc.). Note:

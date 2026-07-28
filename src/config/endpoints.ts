@@ -203,6 +203,7 @@ const endpoints = {
     updateImage: (id: string) => `/UpdateStaffImage/${id}`,
     updatePassword: (id: string) => `/UpdateStaffPassword/${id}`,
     updateStaff: (id: string) => `/StaffUpdatedByAdmin/${id}`,
+    updateStatus: (staffId: string) => `/UpdateStaffStatus/${staffId}`,
     postPrincipalTeacher: "/PostPrincipalTeacher",
     unAssignPrincipal: "/UnAssignPrincipal",
     createMapping: "/CreateTeacherMappings",
@@ -254,6 +255,7 @@ const endpoints = {
       studentHistory: "/GetStudentPaymentHistory",
       update: "/UpdatePaymentStatus",
       pending: "/GetPendingPayments",
+      saveSubscription: "/Subscription"
     },
   },
   guardian: {

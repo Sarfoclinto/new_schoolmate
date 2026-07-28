@@ -194,16 +194,36 @@ export const PaymentPostSchema = z.object({
     .optional(),
 });
 
+export const SubscriptionPostSchema = z.object({
+  amount: z.number().positive("Amount must be greater than 0"),
+  description: z.string().min(1, "Description is required"),
+  reference: z.string().optional(),
+  network: z.string().min(1, "Network is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  accountHolderName: z.string().min(1, "Account holder name is required"),
+  userId: z.string().min(1, "UserId is required"),
+});
+
 export const validatePaymentPayload = (payload: unknown) => {
   return PaymentPostSchema.safeParse(payload);
 };
+export const validateSubscriptionPayload = (payload: unknown) => {
+  return SubscriptionPostSchema.safeParse(payload);
+};
 
 export type PaymentPost = z.infer<typeof PaymentPostSchema>;
+export type SubscriptionPost = z.infer<typeof SubscriptionPostSchema>;
 
 export type SavePaymentProps = {
   save: boolean;
   payload: PaymentPost;
   onSuccessSave?: (payload: MdResponse) => void;
+};
+
+export type SaveSubscriptionProps = {
+  save: boolean;
+  payload: SubscriptionPost;
+  onSuccessSave?: (payload: SubscriptionRes) => void;
 };
 
 /**
@@ -216,6 +236,21 @@ export type SavePaymentProps = {
  */
 export type PaymentMode = "cash" | "momo" | "cheque";
 export type PaymentStatus = "pending" | "paid" | "failed" | "cancelled";
+
+export type ExpiryInfo = {
+  expiryDate: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export type ExpiryInfoWithBool = ExpiryInfo & {
+  isExpired: boolean;
+};
+export type SubscriptionRes = {
+  subscriptionHistoryId: string;
+  amount: number;
+  createdAt: string;
+  expiryInfo: ExpiryInfoWithBool;
+};
 
 export interface PaymentGet {
   paymentId: string;

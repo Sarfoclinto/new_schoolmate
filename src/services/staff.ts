@@ -12,6 +12,7 @@ import type { Permission } from "@/config/permissions";
 import type { RegisterResponse } from "@/types/api";
 import type { UpdateReturn } from "@/types/api/setup/auth-n-user";
 import type {
+  AdminUpdateStaffStatus,
   AdminUpdateStaffType,
   AssignPermissionsPayload,
   DeleteMapping,
@@ -81,6 +82,10 @@ export const createStaffFn = async (data: FormData) => {
 };
 export const adminUpdateStaffFn = async (update: AdminUpdateStaffType) => {
   return updateHelper(staffMn.updateStaff(update.id), update.data);
+};
+
+export const updateStaffStatus = async (update: AdminUpdateStaffStatus) => {
+  return updateHelper(staffMn.updateStatus(update.staffId), update.newStatus);
 };
 export const updateStaffProfileFn = async (update: StaffUpdateWithFile) => {
   return updateWithFile<UpdateReturn>(

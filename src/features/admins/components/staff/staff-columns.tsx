@@ -9,16 +9,28 @@ import {
   Button,
   Image,
   Input,
+  Popconfirm,
   Tooltip,
   type TableColumnType,
 } from "antd";
 import type { NavigateFunction } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, ToggleLeft, ToggleRight } from "lucide-react";
 import { formatDate } from "@/utils/date-n-time";
 import { buildMediaUrl } from "@/utils/media";
 import paths from "@/config/routes";
 import { getInitials } from "@/utils/string";
+import type { UseMutateFunction } from "@tanstack/react-query";
+import type { MdResponse } from "@/types/api";
+import type { AxiosError } from "axios";
+import type { AdminUpdateStaffStatus } from "@/types/api/staff";
 
+type ToggleStatusType = UseMutateFunction<
+  MdResponse,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  AxiosError<unknown, any>,
+  AdminUpdateStaffStatus,
+  unknown
+>;
 // ─── Inline search filter helper ─────────────────────────────
 function searchFilter<T>(
   dataIndex: keyof T,
@@ -281,10 +293,15 @@ export function staffPhoneCol<T extends { staffPhone: string }>(
   };
 }
 
-export function staffViewActionCol<T extends { staffId: string }>(
+export function staffViewActionCol<
+  T extends { staffId: string; status?: string },
+>(
   navigate: NavigateFunction,
+  isPending: boolean = false,
+  toggleStatus?: ToggleStatusType,
   detailPath = paths.admin.staffDetails.href,
   width = 94,
+  showToggleActive = true,
 ): TableColumnType<T> {
   return {
     key: "action",
@@ -292,17 +309,88 @@ export function staffViewActionCol<T extends { staffId: string }>(
     align: "center",
     width,
     fixed: "right" as const,
-    render: (_: unknown, record: T) => (
-      <Tooltip title="View Staff">
-        <Button
-          size="small"
-          onClick={() =>
-            navigate(detailPath, { state: { staffId: record.staffId } })
-          }
-          className="rounded-lg! w-8! h-8! p-0! border-[#1E3A5F]/20! text-[#1E3A5F]! hover:bg-[#0D1B2E]! hover:text-[#C9A84C]! hover:border-[#0D1B2E]! flex items-center justify-center"
-          icon={<Eye className="w-3.5 h-3.5" />}
-        />
-      </Tooltip>
+    render: (_: unknown, record: T) => {
+      const isActive = record.status?.toLowerCase() === "active";
+      const Icon = isActive ? ToggleRight : ToggleLeft;
+      return (
+        <div className="flex items-center gap-x-1">
+          <Tooltip title="View Staff">
+            <Button
+              size="small"
+              onClick={() =>
+                navigate(detailPath, { state: { staffId: record.staffId } })
+              }
+              className="rounded-lg! w-8! h-8! p-0! border-[#1E3A5F]/20! text-[#1E3A5F]! hover:bg-[#0D1B2E]! hover:text-[#C9A84C]! hover:border-[#0D1B2E]! flex items-center justify-center"
+              icon={<Eye className="w-3.5 h-3.5" />}
+            />
+          </Tooltip>
+
+          {showToggleActive && (
+            <Popconfirm
+              title={
+                isActive
+                  ? "Are you sure you want to deactive?"
+                  : "Are you sure you want to activate"
+              }
+              okText={isActive ? "Yes Deactivate" : "Yes Activate"}
+              cancelText="No"
+              onConfirm={() => {
+                toggleStatus?.({
+                  staffId: record.staffId,
+                  newStatus: isActive ? "Inactive" : "Active",
+                });
+              }}
+              disabled={isPending}
+            >
+              <Tooltip title={isActive ? "Deactivate" : "Activate"}>
+                <Button
+                  size="small"
+                  onClick={() => {}}
+                  disabled={isPending}
+                  loading={isPending}
+                  className={`rounded-lg! w-8! h-8! p-0! ${
+                    isActive
+                      ? "border-red-500/20! text-red-500! hover:bg-red-50! hover:text-red-500/30! hover:border-red-500!"
+                      : "border-green-500/20! text-green-500! hover:bg-green-50! hover:text-green-500/30! hover:border-green-500!"
+                  } 
+                  flex items-center justify-center`}
+                  icon={<Icon className="w-3.5 h-3.5" />}
+                />
+              </Tooltip>
+            </Popconfirm>
+          )}
+        </div>
+      );
+    },
+  };
+}
+
+export function staffStatusCol<T extends { status: string }>(
+  width = 135,
+): TableColumnType<T> {
+  return {
+    key: "staffStatus",
+    title: "Status",
+    dataIndex: "status",
+    width,
+    align: "center",
+    filters: [
+      { text: "Active", value: "Active" },
+      { text: "Inactive", value: "Inactive" },
+    ],
+    onFilter: (value, record) =>
+      record.status.toLowerCase() === value.toString().toLowerCase(),
+    render: (status) => (
+      <span
+        className={`text-[11px] font-bold px-2.5 py-1 rounded-full capitalize ${
+          status === "Active"
+            ? "bg-green-50 text-green-700 border border-green-200"
+            : "bg-pink-50 text-pink-700 border border-pink-200"
+        }`}
+      >
+        {status}
+      </span>
     ),
   };
 }
+

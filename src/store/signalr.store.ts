@@ -1,4 +1,5 @@
 import type { Permission } from "@/config/permissions";
+import type { ExpiryInfoWithBool } from "@/types/api/finance";
 import type { RequestItem } from "@/types/api/request";
 import type { InstitutionGet } from "@/types/api/setup/institution";
 import type {
@@ -27,6 +28,9 @@ interface SignalRState {
 
   // institution
   institution: InstitutionGet | null;
+
+  // stats
+  expiryStatus: ExpiryInfoWithBool | null;
 
   // requests
   requests: RequestItem[];
@@ -61,6 +65,9 @@ interface SignalRActions {
   deleteRequest: (id: string) => void;
   updateReqStatus: (id: string, status: "approved" | "declined") => void;
 
+  // expirystatus:
+  setExpiryStatus: (status: ExpiryInfoWithBool) => void;
+
   // reset
   resetStore: () => void;
 }
@@ -86,6 +93,8 @@ const initialState: SignalRState = {
   institution: null,
 
   requests: [],
+
+  expiryStatus: null,
 };
 
 /**
@@ -156,6 +165,7 @@ export const useSignalRStore = create<SignalRStore>()(
               academicYear: data.academicYear,
               academicTerms: data.academicTerm,
               institution: data.institution,
+              expiryStatus: data.expiryStatus,
             },
             false,
             "setPermissionAndSessions",
@@ -199,6 +209,15 @@ export const useSignalRStore = create<SignalRStore>()(
             "updateReqStatus",
           ),
 
+        setExpiryStatus: (expiryStatus) =>
+          set(
+            {
+              expiryStatus,
+            },
+            false,
+            "setExpiryStatus",
+          ),
+
         // reset
         resetStore: () => set({ ...initialState }, false, "resetStore"),
       }),
@@ -212,6 +231,7 @@ export const useSignalRStore = create<SignalRStore>()(
           academicYear: state.academicYear,
           academicTerms: state.academicTerms,
           institution: state.institution,
+          expiryStatus: state.expiryStatus,
         }),
       },
     ),

@@ -62,6 +62,8 @@ export const ADMIN_ROUTE_PERMISSIONS: Record<string, Permission> = {
   [admin.openAcademicTerm.href]: ADMINISTRATIVE_PERMISSIONS.SESSION_WRITE,
   [admin.closeAcademicTerm.href]: ADMINISTRATIVE_PERMISSIONS.SESSION_WRITE,
   [admin.closeAcademicYear.href]: ADMINISTRATIVE_PERMISSIONS.SESSION_WRITE,
+
+  [admin.subscription.href]: ADMINISTRATIVE_PERMISSIONS.SUBSCRIPTION,
 };
 
 export const STAFF_ROUTE_PERMISSIONS: Record<string, Permission> = {

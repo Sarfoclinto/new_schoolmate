@@ -10,7 +10,6 @@ import { loginFn } from "@/services/auth";
 import { useShallow } from "zustand/react/shallow";
 import { getUserDashboardRoute } from "@/utils/auth";
 import { useSignalRStore } from "@/store/signalr.store";
-// import { getUserDashboardRoute } from "@/utils/string";
 
 const LoginPage = () => {
   const [form] = Form.useForm<LoginPayload>();

@@ -27,6 +27,7 @@ import type {
   PaymentGet,
   UpdateStatusPayload,
   PendingPayment,
+  SubscriptionRes,
 } from "@/types/api/finance";
 const {
   finance: { fees, ledgers, bills, payment },
@@ -132,6 +133,10 @@ export const checkStatusFn = async (
 
 export const savePaymentFn = async (payload: PaymentPost) => {
   return postHelper(payment.save, payload);
+};
+
+export const saveSubscription = async (payload: object) => {
+  return postHelper<SubscriptionRes>(payment.saveSubscription, payload);
 };
 
 export const getStudentPaymentHistoryFn = async (_p: {
