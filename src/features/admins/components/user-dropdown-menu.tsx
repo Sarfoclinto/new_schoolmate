@@ -95,7 +95,7 @@ const UserMenu = () => {
             Log out
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        {!isExpired && (
+        {isExpired && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="flex items-center gap-x-2 text-red-500 bg-red-100">

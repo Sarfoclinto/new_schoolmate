@@ -115,13 +115,15 @@ const AdminLayoutHeader = () => {
 
       {/* Right section */}
       <div className="flex items-center gap-x-2">
-        {!isExpired && (
-          <div className="bg-red-100 text-red-800 px-2.5 py-0.5 rounded-md font-bold text-[10px] uppercase tracking-wider cursor-pointer">
-            Expired
-          </div>
+        {isExpired && (
+          <>
+            <div className="bg-red-100 text-red-800 px-2.5 py-0.5 rounded-md font-bold text-[10px] uppercase tracking-wider cursor-pointer">
+              Expired
+            </div>
+            {/* Divider */}
+            <div className="w-px h-5 bg-slate-200 mx-1" />
+          </>
         )}
-        {/* Divider */}
-        <div className="w-px h-5 bg-slate-200 mx-1" />
 
         {/* Notification bell */}
         <div className="flex flex-col gap-1">
