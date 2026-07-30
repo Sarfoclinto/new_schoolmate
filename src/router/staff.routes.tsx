@@ -2,6 +2,7 @@ import {
   ProtectRoute,
   ProtectStaffRoutes,
 } from "@/components/custom/protect-routes";
+import SubscriptionGuard from "@/components/custom/subscription-guard";
 import { STAFF_ROUTE_PERMISSIONS } from "@/config/route.permission";
 import paths from "@/config/routes";
 import StaffLayout from "@/features/staff/components/layout";
@@ -38,6 +39,9 @@ const {
 
   // notification
   notification,
+
+  //subscription
+  subscription,
 } = staff;
 
 // admin pages component
@@ -85,6 +89,22 @@ const Remarks = lazy(() => import("@/features/staff/pages/remarks"));
 // notification
 const Notifications = lazy(() => import("@/features/staff/pages/notification"));
 
+// subscription
+const Subscription = lazy(() => import("@/features/staff/pages/subscription"));
+
+// =============================================================================
+// Pages that stay reachable even when the subscription has expired.
+// Keep this in sync with `exemptFromExpiry` items in staff-menu-items.ts.
+// =============================================================================
+const EXEMPT_FROM_EXPIRY = new Set<string>([
+  index.href,
+  classesnSubjects.href,
+  students.href,
+  viewAttendance.href,
+  addRecord.href,
+  viewRecords.href,
+]);
+
 // =============================================================================
 // guard helper
 // Wraps a page element in <ProtectRoute> if ROUTE_PERMISSIONS has an entry
@@ -98,8 +118,18 @@ const Notifications = lazy(() => import("@/features/staff/pages/notification"));
 // =============================================================================
 const guarded = (path: string, element: React.ReactNode): React.ReactNode => {
   const permission = STAFF_ROUTE_PERMISSIONS[path];
-  if (!permission) return element;
-  return <ProtectRoute requiredPermission={permission}>{element}</ProtectRoute>;
+
+  const permissionChecked = permission ? (
+    <ProtectRoute requiredPermission={permission} intendedPath={path}>
+      {element}
+    </ProtectRoute>
+  ) : (
+    element
+  );
+
+  if (EXEMPT_FROM_EXPIRY.has(path)) return permissionChecked;
+
+  return <SubscriptionGuard>{permissionChecked}</SubscriptionGuard>;
 };
 
 const staffRoutes: RouteObject[] = [
@@ -113,7 +143,7 @@ const staffRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Dashboard />,
+        element: guarded(index.href, <Dashboard />),
       },
       // assignments
       {
@@ -158,25 +188,31 @@ const staffRoutes: RouteObject[] = [
       // requests
       {
         path: request.href,
-        element: <Request />,
+        element: guarded(request.href, <Request />),
       },
 
       // profile
       {
         path: profile.href,
-        element: <Profile />,
+        element: guarded(profile.href, <Profile />),
       },
 
       // remarks
       {
         path: remarks.href,
-        element: <Remarks />,
+        element: guarded(remarks.href, <Remarks />),
       },
 
       // notifications
       {
         path: notification.href,
-        element: <Notifications />,
+        element: guarded(notification.href, <Notifications />),
+      },
+
+      // subscription
+      {
+        path: subscription.href,
+        element: <Subscription />,
       },
     ],
   },

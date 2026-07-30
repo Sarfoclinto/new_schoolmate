@@ -29,6 +29,7 @@ const staffMenu: AppMenuItem[] = [
     key: staff.index.href,
     label: <SidebarLabel to={index.href}>{index.label}</SidebarLabel>,
     icon: <HomeIcon className="size-3.75" />,
+    exemptFromExpiry: true,
     // No guard — visible to all staff dashboard users
   }),
 
@@ -42,6 +43,7 @@ const staffMenu: AppMenuItem[] = [
     ),
     icon: <BriefcaseIcon className="size-3.75" />,
     permission: PERMISSIONS.STAFF_ASSIGNMENTS_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -53,6 +55,7 @@ const staffMenu: AppMenuItem[] = [
         ),
         icon: <BookOpenIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_ASSIGNMENTS_READ,
+        exemptFromExpiry: true,
       }),
       item({
         key: staff.students.href,
@@ -63,6 +66,7 @@ const staffMenu: AppMenuItem[] = [
         ),
         icon: <GraduationCapIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_ASSIGNMENTS_READ,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -77,6 +81,7 @@ const staffMenu: AppMenuItem[] = [
     ),
     icon: <BookOpenIcon className="size-3.75" />,
     permission: PERMISSIONS.STAFF_RECORDS_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -88,6 +93,7 @@ const staffMenu: AppMenuItem[] = [
         ),
         icon: <TargetIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_RECORDS_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: staff.addRecord.href,
@@ -98,6 +104,7 @@ const staffMenu: AppMenuItem[] = [
         ),
         icon: <PlusCircleIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_RECORDS_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: staff.viewRecords.href,
@@ -108,6 +115,7 @@ const staffMenu: AppMenuItem[] = [
         ),
         icon: <ClipboardListIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_RECORDS_READ,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -122,6 +130,7 @@ const staffMenu: AppMenuItem[] = [
     ),
     icon: <CalendarCheckIcon className="size-3.75" />,
     permission: PERMISSIONS.STAFF_ATTENDANCE_READ,
+    exemptFromExpiry: true,
     type: "submenu",
     children: [
       item({
@@ -133,6 +142,7 @@ const staffMenu: AppMenuItem[] = [
         ),
         icon: <UserCheckIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_ATTENDANCE_WRITE,
+        exemptFromExpiry: true,
       }),
       item({
         key: staff.viewAttendance.href,
@@ -143,6 +153,7 @@ const staffMenu: AppMenuItem[] = [
         ),
         icon: <ClipboardListIcon className="size-3.5" />,
         permission: PERMISSIONS.STAFF_ATTENDANCE_READ,
+        exemptFromExpiry: true,
       }),
     ],
   }),
@@ -158,6 +169,7 @@ const staffMenu: AppMenuItem[] = [
     ),
     icon: <AlertOctagon className="size-3.5" />,
     permission: PERMISSIONS.STAFF_NOTICES_WRITE,
+    exemptFromExpiry: true,
   }),
 
   // ── Request ────────────────────────────────────────────────────────────────
@@ -169,6 +181,7 @@ const staffMenu: AppMenuItem[] = [
       </SidebarLabel>
     ),
     icon: <SendIcon className="size-3.5" />,
+    exemptFromExpiry: true,
   }),
 
   // ── Remarks ────────────────────────────────────────────────────────────────
@@ -180,6 +193,7 @@ const staffMenu: AppMenuItem[] = [
       </SidebarLabel>
     ),
     icon: <MessageSquareTextIcon className="size-3.5" />,
+    exemptFromExpiry: true,
   }),
 ];
 

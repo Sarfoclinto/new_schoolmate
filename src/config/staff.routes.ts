@@ -58,6 +58,9 @@ const staffPaths = {
 
   // remarks
   remarks: { label: "Remarks", href: "/staff/remarks" },
+
+  // subscription
+  subscription: { label: "Subscription", href: "/staff/subscription" },
 };
 
 export default staffPaths;
