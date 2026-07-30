@@ -11,6 +11,8 @@ import staffMenu from "../../data/staff-menu-items";
 import type { ItemType } from "antd/es/menu/interface";
 import { useFilteredMenu } from "@/hooks/use-filtered-menu";
 import { getUserDashboardRoute } from "@/utils/auth";
+import { useCallback, useState } from "react";
+import NavigationSubtitle from "@/components/common/navigations-subtitle";
 
 const SIDEBAR_BG = "#0D1B2E";
 const SIDEBAR_WIDTH = 260;
@@ -68,19 +70,15 @@ const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
   const { pathname } = useLocation();
   const user = useAuth((s) => s.user);
   const filteredMenu = useFilteredMenu(staffMenu) as ItemType[];
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+  const collapseAll = useCallback(() => {
+    setOpenKeys([]);
+  }, []);
+
   return (
     <div className="flex flex-col h-full" style={{ background: SIDEBAR_BG }}>
       <LogoSection collapsed={collapsed} />
-      {!collapsed && (
-        <div className="px-5 pt-5 pb-2">
-          <span
-            className="text-[10px] font-semibold tracking-[0.18em] uppercase"
-            style={{ color: "#4A6080", fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Navigation
-          </span>
-        </div>
-      )}
+      {!collapsed && <NavigationSubtitle onClick={collapseAll} />}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 scrollbar-thin scrollbar-thumb-white/10">
         <Menu
           mode="inline"
@@ -88,6 +86,8 @@ const SidebarContent = ({ collapsed }: { collapsed: boolean }) => {
           defaultSelectedKeys={[pathname]}
           className="cms-sider"
           items={filteredMenu}
+          openKeys={openKeys}
+          onOpenChange={(keys) => setOpenKeys(keys as string[])}
           style={{ background: "transparent", border: "none" }}
           styles={menuStyle}
         />

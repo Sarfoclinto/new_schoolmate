@@ -14,6 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { signalRSelectors, useSignalRStore } from "@/store/signalr.store";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { Kbd } from "@/components/common/search-command-1";
+import { useExpiredSubscription } from "@/hooks/use-expired";
 
 const AdminLayoutHeader = () => {
   const { collapsed, toggleCollapsed, isOpen, openSidebar } = useUIStore(
@@ -24,10 +25,10 @@ const AdminLayoutHeader = () => {
       openSidebar: s.openSidebar,
     })),
   );
-
   const isMobile = useIsMobile();
   const terms = useSignalRStore(signalRSelectors.academicTerms);
   const year = useSignalRStore(signalRSelectors.academicYear);
+  const { isExpired } = useExpiredSubscription();
 
   useHotkey("Control+B", () => {
     if (!isOpen) {
@@ -114,6 +115,14 @@ const AdminLayoutHeader = () => {
 
       {/* Right section */}
       <div className="flex items-center gap-x-2">
+        {!isExpired && (
+          <div className="bg-red-100 text-red-800 px-2.5 py-0.5 rounded-md font-bold text-[10px] uppercase tracking-wider cursor-pointer">
+            Expired
+          </div>
+        )}
+        {/* Divider */}
+        <div className="w-px h-5 bg-slate-200 mx-1" />
+
         {/* Notification bell */}
         <div className="flex flex-col gap-1">
           {year && year.academicYearId ? (

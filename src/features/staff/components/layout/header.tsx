@@ -102,7 +102,7 @@ const StaffLayoutHeader = () => {
         </div>
 
         {/* welcome */}
-        <h3 className="text-xl font-[roboto]">
+        <h3 className="max-md:text-xs font-[roboto]">
           Welcome back, {user?.name.split(" ")[0] ?? ""}
         </h3>
       </div>

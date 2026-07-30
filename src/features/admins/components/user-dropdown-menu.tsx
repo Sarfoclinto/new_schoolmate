@@ -7,17 +7,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSignalRContext } from "@/hooks/signalR/use-signalR-context";
+import { useExpiredSubscription } from "@/hooks/use-expired";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/store/auth.store";
 import { useUIStore } from "@/store/ui.store";
 import { getInitials, getUserProfileRoute } from "@/utils/string";
 import { Tooltip } from "antd";
-import { DoorOpenIcon, Loader, User2Icon } from "lucide-react";
+import { DoorOpenIcon, HelpCircle, Loader, User2Icon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const UserMenu = () => {
   const user = useAuth((s) => s.user);
   const open = useUIStore((s) => s.openLogoutMenu);
+  const { isExpired } = useExpiredSubscription();
   const { isConnected, connectionState } = useSignalRContext();
   const isReconnecting = connectionState === "Reconnecting";
 
@@ -44,7 +46,9 @@ const UserMenu = () => {
             )}
             <Tooltip title={isConnected ? "Online" : "Offline"}>
               {isReconnecting ? (
-                <Loader className="size-2.5 animate-spin" />
+                <div className="absolute cursor-pointer size-3 bottom-0 -right-0.5 p-0.5 rounded-full bg-white flex items-center justify-center">
+                  <Loader className="animate-spin text-black" />
+                </div>
               ) : (
                 <span
                   className={cn(
@@ -79,18 +83,11 @@ const UserMenu = () => {
               Profile
             </DropdownMenuItem>
           </Link>
-          {/* <DropdownMenuItem
-            onClick={startManualTour}
-            className="flex items-center gap-x-2"
-          >
-            <HelpCircle />
-            Take Tour
-          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem
-            className="flex items-center gap-x-1"
+            className="flex items-center gap-x-1 font-bold!"
             variant="destructive"
             onClick={open}
           >
@@ -98,6 +95,17 @@ const UserMenu = () => {
             Log out
           </DropdownMenuItem>
         </DropdownMenuGroup>
+        {!isExpired && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="flex items-center gap-x-2 text-red-500 bg-red-100">
+              <HelpCircle className="text-red-500" />
+              <span className="py-0.5 text-red-500 rounded-md font-bold text-[10px] uppercase tracking-wider">
+                Expired
+              </span>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
