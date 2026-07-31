@@ -203,9 +203,9 @@ const StaffPermissions = lazy(
 );
 
 // sessions
-// const CloseAcademicTerm = lazy(
-//   () => import("@/features/admins/pages/session/close-academic-term"),
-// );
+const CloseAcademicTerm = lazy(
+  () => import("@/features/admins/pages/session/close-academic-term"),
+);
 // const OpenAcademicTerm = lazy(
 //   () => import("@/features/admins/pages/session/open-academic-term"),
 // );
@@ -527,15 +527,7 @@ const adminRoutes: RouteObject[] = [
       },
       {
         path: closeAcademicTerm.href,
-        // element: guarded(closeAcademicTerm.href, <CloseAcademicTerm />),
-        element: guarded(
-          closeAcademicTerm.href,
-          <UnderConstruction
-            showTag={false}
-            title="Close Academic Term"
-            description="This page is currently under construction."
-          />,
-        ),
+        element: guarded(closeAcademicTerm.href, <CloseAcademicTerm />),
       },
       {
         path: closeAcademicYear.href,
